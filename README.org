@@ -1,0 +1,284 @@
+#+TITLE: Inverted Translational Control of Eukaryotic Gene Expression by Ribosome Collisions
+
+Park H, Subramaniam AR. PLoS Biol 17(9): e3000396 (2019)
+
+https://doi.org/10.1371/journal.pbio.3000396
+
+[[http://rasilab.fredhutch.org/]]
+
+This repository contains raw experimental data, code, and instructions for:
+ - running simulations
+ - analyzing high-throughput sequencing data and flow cytometry data generated for this study
+ - analysis of publicly available datasets 
+ - quantification of western blots
+ - generating figures in the manuscript
+
+** Contents                                                          :toc_3:
+  - [[#source-data-for-figures][Source Data for Figures]]
+  - [[#modeling][Modeling]]
+    - [[#default-run][Default Run]]
+    - [[#parameter-sweep][Parameter Sweep]]
+  - [[#data-analysis][Data Analysis]]
+    - [[#high-throughput-sequencing][High-Throughput Sequencing]]
+    - [[#flow-cytometry][Flow Cytometry]]
+    - [[#western-blots][Western Blots]]
+    - [[#identification-of-putative-rqc-stalls][Identification of putative RQC stalls]]
+    - [[#analysis-of-dvir-et-al-2013-data][Analysis of Dvir et al. 2013 data]]
+    - [[#analysis-of-weinberg-et-al-2016-data][Analysis of Weinberg et al. 2016 data]]
+    - [[#analysis-of-sitron-et-al-2017-data][Analysis of Sitron et al. 2017 data]]
+
+** Source Data for Figures
+- [[file:analysis/flow/no_insert.md#source-data-for-fig-1b][Fig 1B]] 
+- [[file:analysis/flow/10xaag_wt.md#source-data-for-fig-1c-left-panel][Fig 1C, 10xAAG and 10xAGA]]; [[file:analysis/flow/8xccg_wt.md#source-data-for-fig-1c-middle-panel][Fig 1C, 8xCCG and 8xCCA]]; [[file:analysis/flow/cgg_position_number.md#source-data-for-fig-1c-right-panel][Fig 1C, 5xCGG and 5xAGA]]
+- [[file:analysis/htseq/analyze_barcode_counts.md#source-data-for-fig-2b][Fig 2B]]
+- [[file:analysis/htseq/analyze_barcode_counts.md#source-data-for-fig-2c][Fig 2C]]
+- [[file:modeling/simulation_runs/preterm_compare_models/analyze_results.md#source-data-for-fig-3b][Fig 3B]]
+- [[file:modeling/simulation_runs/csat_model_vary_num_stalls/analyze_results.md#source-data-for-fig-3c][Fig 3C]]
+- [[file:modeling/simulation_runs/mrna_endocleave_compare_models/analyze_results.md#source-data-for-fig-4b][Fig 4B]]
+- [[file:modeling/simulation_runs/mrna_endocleave_compare_models/analyze_results.md#source-data-for-fig-4c][Fig 4C]]
+- [[file:analysis/flow/lowmedhigh_8xcgg_4ko.md#source-data-for-fig-5a][Fig 5A]]
+- [[file:analysis/htseq/analyze_barcode_counts.md#source-data-for-fig-5c][Fig 5C]]
+- [[file:analysis/flow/hel2_asc1_mutants.md#source-data-for-fig-5d-and-s4-fig-panel-b-hel2-mutants][Fig 5D, Hel2 mutants]]; [[file:analysis/flow/hel2_asc1_mutants.md#source-data-for-fig-5d-and-s4-fig-panel-b-asc1-mutants][Fig 5D, Asc1 mutants]]
+- [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/plot_ribo_density_around_rqc_stalls.md#source-data-for-fig-6a-and-s5-fig-panel-a][Fig 6A]]
+- [[file:analysis/flow/endogenous_gene_stall.md#source-data-for-fig-6b-right-panel][Fig 6B]]
+- [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/analyze_te_genes.md#source-data-for-fig-6c][Fig 6C]]
+- [[file:analysis/public_datasets/sitron_2017_rqc_riboseq/scripts/analyze_gene_fold_change.md#source-data-for-fig-6d][Fig 6D]]
+- [[file:analysis/flow/cgg_position_number.md#source-data-for-s1-fig-panel-b][S1 Fig Panel B]]
+- [[file:analysis/public_datasets/dvir_2013_kozak_library/scripts/plot_kozak_strength.md#source-data-for-s1-fig-panel-c][S1 Fig Panel C]]
+- [[file:modeling/simulation_runs/preterm_compare_models/analyze_results.md#source-data-for-s2-fig-panel-a][S2 Fig Panel A]]
+- [[file:modeling/simulation_runs/preterm_compare_models/analyze_results.md#source-data-for-s2-fig-panel-b][S2 Fig Panel B]]
+- [[file:modeling/simulation_runs/preterm_compare_models/analyze_results.md#source-data-for-s2-fig-panel-c][S2 Fig Panel C]]
+- [[file:modeling/simulation_runs/preterm_compare_models/analyze_results.md#source-data-for-s2-fig-panel-d][S2 Fig Panel D]]
+- [[file:modeling/simulation_runs/mrna_endocleave_compare_models/analyze_results.md#source-data-for-s3-fig-panel-a][S3 Fig Panel A]]
+- [[file:modeling/simulation_runs/csec_model_vary_num_stalls/analyze_results.md#source-data-for-s3-fig-panel-b][S3 Fig Panel B]]
+- [[file:analysis/flow/5xcgg_3ko.md#source-data-for-s4-fig-panel-a-left-and-middle-columns][S4 Fig Panel A, ΔLTN1 and ΔHEL2]]; [[file:analysis/flow/5xcgg_asc1ko.md#source-data-for-s4-fig-panel-a-right-two-columns][S4 Fig Panel A, ΔASC1]]
+- [[file:analysis/flow/hel2_asc1_mutants.md#source-data-for-fig-5d-and-s4-fig-panel-b-hel2-mutants][S4 Fig Panel B, Hel2 mutants]]; [[file:analysis/flow/hel2_asc1_mutants.md#source-data-for-fig-5d-and-s4-fig-panel-b-asc1-mutants][S4 Fig Panel B, Asc1 mutants]]
+- [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/plot_ribo_density_around_rqc_stalls.md#source-data-for-fig-6a-and-s5-fig-panel-a][S5 Fig Panel A]]
+- [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/plot_te_for_only_preceding_stall_region.md#source-data-for-s5-fig-panel-b][S5 Fig Panel B]]
+** Modeling
+
+*** Default Run
+
+To run the simulations, install our lab's customized versions of:
+- [[https://www.ncbi.nlm.nih.gov/pubmed/23423320][PySB]]: https://github.com/rasilab/PySB
+- [[https://www.ncbi.nlm.nih.gov/pubmed/27402907][BioNetGen]]: https://github.com/rasilab/BioNetGen
+- [[https://www.ncbi.nlm.nih.gov/pubmed/21186362][NFsim]]: https://github.com/rasilab/NFsim
+
+The instructions for installing the above software are provided in the respective links.
+
+Our kinetic model for quality control during eukaryotic translation is defined in [[file:modeling/tasep.py]]. 
+This model is defined using the [[http://pysb.org/][PySB]] syntax.
+To simulate this model with its default parameters, run:
+#+BEGIN_SRC sh :exports code
+cd modeling
+python tasep.py
+#+END_SRC
+
+The above run displays the following output:
+#+BEGIN_SRC 
+BioNetGen version 2.4.0
+Reading from file ./tasep.bngl (level 0)
+Read 32 parameters.
+Read 5 molecule types.
+Read 7 observable(s).
+Read 2 species.
+Read 9401 reaction rule(s).
+WARNING: writeFile(): Overwriting existing file ./tasep.xml.
+Wrote model in xml format to ./tasep.xml.
+Finished processing file ./tasep.bngl.
+CPU TIME: total 96.71 s.
+
+NFsim -xml ./tasep.xml -sim 100000 -oSteps 10 -seed 111 -o ./tasep.gdat -rxnlog ./tasep.rxns.tsv -utl 3 -gml 1000000 -maxcputime 6000 -connect
+
+# starting NFsim v1.11...
+# seeding random number generator with: 111
+# reading xml file (./tasep.xml)
+-------]
+# preparing simulation...
+Connectivity inferred for 1000 reactions.
+Connectivity inferred for 2000 reactions.
+Connectivity inferred for 3000 reactions.
+Connectivity inferred for 4000 reactions.
+Connectivity inferred for 5000 reactions.
+Connectivity inferred for 6000 reactions.
+Connectivity inferred for 7000 reactions.
+Connectivity inferred for 8000 reactions.
+# equilibrating for :0s.
+# simulating system for: 1.000000e+05 second(s).
+
+Sim time: 0.000000e+00	CPU time (total): 6.590000e-04s	 events (step): 0
+Sim time: 1.000000e+04	CPU time (total): 1.406101e+02s	 events (step): 976356
+Sim time: 2.000000e+04	CPU time (total): 2.650203e+02s	 events (step): 787224
+Sim time: 3.000000e+04	CPU time (total): 3.262947e+02s	 events (step): 429620
+Sim time: 4.000000e+04	CPU time (total): 4.007395e+02s	 events (step): 446252
+Sim time: 5.000000e+04	CPU time (total): 4.829204e+02s	 events (step): 552178
+Sim time: 6.000000e+04	CPU time (total): 6.370497e+02s	 events (step): 928650
+Sim time: 7.000000e+04	CPU time (total): 7.528471e+02s	 events (step): 763216
+Sim time: 8.000000e+04	CPU time (total): 8.328361e+02s	 events (step): 527655
+Sim time: 9.000000e+04	CPU time (total): 9.455520e+02s	 events (step): 734622
+Sim time: 1.000000e+05	CPU time (total): 1.052860e+03s	 events (step): 682986
+
+# simulated 6828760 reactions in 1.052872e+03s
+# 6.485838e+03 reactions/sec, 1.541821e-04 CPU seconds/event
+# null events: 0 1.541821e-04 CPU seconds/non-null event
+# done.  Total CPU time: 1195.79s
+#+END_SRC
+
+CPU times will be a bit different depending on the machine.
+
+At the end of the run, =tasep.params.tsv.gz=, =tasep.gdat=, and =tasep.rxns.tsv= files should be present in the [[file:modeling/]] folder.
+
+*** Parameter Sweep
+
+Simulations with systematic variation of parameters are run from the 9 sub-directories in [[file:modeling/simulation_runs/]].
+Each of these sub-directories contains a [[https://snakemake.readthedocs.io/en/stable/][Snakemake]] workflow that chooses the parameters, runs the simulations, tabulates the summary data, and generates figures.
+Below, we describe this workflow using a specific example in the [[file:modeling/simulation_runs/csat_model_vary_num_stalls]] sub-directory that generated Fig. 3C in our paper.
+All other sub-directories contain a very similar workflow.
+
+For the set of 130 simulations in [[file:modeling/simulation_runs/csat_model_vary_num_stalls]], the number of consecutive stall-encoding codons in the collision-stimulated abortive termination (CSAT) model is systematically varied.
+The parameters that are varied from their default values are chosen in [[file:modeling/simulation_runs/csat_model_vary_num_stalls/choose_simulation_parameters.py]] and written as a tab-separated file [[file:modeling/simulation_runs/csat_model_vary_num_stalls/sim.params.tsv]] in the same directory.
+The script [[file:modeling/simulation_runs/csat_model_vary_num_stalls/run_simulation.py]] runs the simulation with a single parameter set. 
+This parameter set is decided by the single argument to this script which specifies the row number in [[file:modeling/simulation_runs/csat_model_vary_num_stalls/sim.params.tsv]].
+The script [[file:modeling/simulation_runs/csat_model_vary_num_stalls/run_simulation.py]] invokes [[file:modeling/get_mrna_lifetime_and_psr.R]] to parse the raw reaction firing data and calculates the mean and standard deviation of four observables: protein synthesis rate, mRNA lifetime, ribosome collision frequency, and abortive termination frequency for each mRNA during its lifetime.
+These summary statistics are tabulated for all parameter combinations using the script [[file:modeling/combine_lifetime_and_psr_data.R]] which generates the =tsv= files in [[file:modeling/simulation_runs/csat_model_vary_num_stalls/tables/]].
+The tabulated summary statistics are analyzed and plotted in the [[https://r4ds.had.co.nz/r-markdown.html][RMarkdown]] script [[file:modeling/simulation_runs/csat_model_vary_num_stalls/analyze_results.Rmd]], which when knitted, results in the Github-flavored Markdown file [[file:modeling/simulation_runs/csat_model_vary_num_stalls/analyze_results.md]]  and the figures in [[file:modeling/simulation_runs/csat_model_vary_num_stalls/figures/]].
+
+[[file:modeling/simulation_runs/csat_model_vary_num_stalls/Snakefile]] implements the above described workflow. 
+Simulations are often run on a cluster using the cluster configuration [[file:modeling/simulation_runs/csat_model_vary_num_stalls/cluster.yaml]].
+
+To invoke the above workflow, run:
+#+BEGIN_SRC sh :exports code
+cd modeling/simulation_runs/csat_model_vary_num_stalls
+# check what will be run using a dry run
+snakemake -np
+# use a SLURM cluster for running simulations
+sh submit_cluster.sh > submit.log 2> submit.log &
+# uncomment line below to run everything locally; can take a very long time!!
+# snakemake
+#+END_SRC
+
+All the simulations in this work can be run in a single workflow using [[file:modeling/Snakefile]], but this is not typically recommended unless you are re-running only a few simulations.
+
+- [[file:modeling/simulation_runs/preterm_compare_models/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_all_models_medium_stall_medium_pretermintact.pdf][3B]], [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_tj_model_vary_stall_strength.pdf][S2A]], [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_sat_model_vary_stall_rate.pdf][S2B]], [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_sat_model_vary_abort_rate.pdf][S2C]], [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_csat_model_vary_stall_rate.pdf][S2D]].
+- [[file:modeling/simulation_runs/csat_model_vary_num_stalls/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/csat_model_vary_num_stalls/figures/psr_csat_effect_of_num_stalls.pdf][3C]].
+- [[file:modeling/simulation_runs/mrna_endocleave_compare_models/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/mrna_endocleave_compare_models/figures/mrna_lifetime_vs_initiation_rate.pdf][4B]], [[file:modeling/simulation_runs/mrna_endocleave_compare_models/figures/psr_vs_initiation_rate.pdf][4C]], [[file:modeling/simulation_runs/mrna_endocleave_compare_models/figures/psr_vs_initiation_rate_vary_cleave_rate.pdf][S3A]].
+- [[file:modeling/simulation_runs/csec_model_vary_num_stalls/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/csec_model_vary_num_stalls/figures/psr_vs_initiation_rate_vary_n_stalls.pdf][S3B]].
+ 
+** Data Analysis
+
+*** High-Throughput Sequencing
+[[file:data/htseq/]] contains the annotations for the reporter and Illumina multiplexing barcodes used for measuring mRNA levels:
+
+- [[file:data/htseq/barcode_annotations.tsv]] contains the 8nt barcodes inserted into the 3′UTR along with a unique plate and well number for each barcode.
+- [[file:data/htseq/strain_barcode_annotations.tsv]] contains the plate + well number of the 8nt barcode and the corresponding reporter plasmid listed in Table S1 of the manuscript.
+- [[file:data/htseq/strain_annotations.tsv]] contains the initiation and codon mutations in each reporter plasmid that barcoded, and is similar to Table S1 of the manuscript.
+- [[file:data/htseq/r2_barcode_annotations.tsv]] contains the Illumina multiplexing barcodes and the corresponding the strain background and whether the library is prepared from cDNA or gDNA.
+
+Raw sequencing data in =.fastq= format must be downloaded to the [[file:data/htseq/]] folder.
+
+The number of Illumina sequencing reads aligning to each barcode in each sample is counted using [[file:analysis/htseq/count_barcodes.py]].
+These counts are available as =.tsv= files in [[file:analysis/htseq/tables/]].
+
+The tabulated counts are processed and plotted in [[file:analysis/htseq/analyze_barcode_counts.Rmd]] to generate Fig. [[file:analysis/htseq/figures/mrna_level_wt_pgk1_no_insert.pdf][2B]], [[file:analysis/htseq/figures/mrna_level_wt_4_codons.pdf][2C]], and [[file:analysis/htseq/figures/mrna_level_ko_2_codons.pdf][5C]] in the manuscript.
+The knitted code and figures from this analysis can be browsed at [[file:analysis/htseq/analyze_barcode_counts.md]].
+
+The above steps are implemented as a =Snakemake= workflow in [[file:analysis/htseq/Snakefile]]. 
+The workflow can be run locally or on a SLURM cluster by:
+#+BEGIN_SRC sh :exports code
+cd analysis/htseq
+# local run
+snakemake
+# cluster run
+sh submit_cluster.sh > submit.log 2> submit.log &
+#+END_SRC
+
+This workflow can be visualized by:
+#+BEGIN_SRC sh :exports code
+snakemake --forceall -dag | dot -Tpng -o dag.png
+#+END_SRC
+which produces the following graph:
+[[file:analysis/htseq/dag.png]]
+
+This workflow generates Fig. [[file:analysis/htseq/figures/mrna_level_wt_pgk1_no_insert.pdf][2B]], [[file:analysis/htseq/figures/mrna_level_wt_4_codons.pdf][2C]], [[file:analysis/htseq/figures/mrna_level_ko_2_codons.pdf][5B]], and [[file:analysis/htseq/figures/mrna_level_ko_2_codons.pdf][S4B]].
+
+*** Flow Cytometry
+
+[[file:data/flow/]] contains the annotations for the 9 flow cytometry experiments in our work.
+
+[[file:analysis/flow/]] contains the RMarkdown scripts for generating figures from the raw data and annotations.
+
+The RMarkdown scripts can be knitted to generate the figures by:
+
+#+BEGIN_SRC sh :exports code
+cd analysis/flow
+for file in *.Rmd; do R -e "rmarkdown::render('$file')"; done
+#+END_SRC
+
+- [[file:analysis/flow/no_insert.md]] generates Fig. [[file:analysis/flow/figures/no_insert.pdf][1B]].
+- [[file:analysis/flow/10xaag_wt.md]], [[file:analysis/flow/8xccg_wt.md]], and [[file:analysis/flow/cgg_position_number.md]] generate Fig. [[file:analysis/flow/figures/10xaag_wt.pdf][1C left panel]], [[file:analysis/flow/figures/8xccg_wt.pdf][1C middle panel]], and [[file:analysis/flow/figures/5xcgg_wt.pdf][1C right panel]] respectively.
+- [[file:analysis/flow/cgg_position_number.md]] generates Fig. [[file:analysis/flow/figures/stall_position_pgk1_cgg.pdf][S1B]].
+- [[file:analysis/flow/lowmedhigh_8xcgg_4ko.md]] generates Fig. [[file:analysis/flow/figures/lowmedhigh_ccg_4ko_wt.pdf][5A]].
+- [[file:analysis/flow/hel2_asc1_mutants.md]] generates Fig. [[file:analysis/flow/figures/hel2_rescue.pdf][5C top panels]] and [[file:analysis/flow/figures/asc1_rescue.pdf][5C bottom panels]]. The P-values indicated in Fig. 5C in the manuscript are also calculated and displayed in this page. Note: The mKate2 channel measurement did not work properly in this experiment. Hence the YFP fluorescence is not normalized by mKate2 fluorescence in these figures.
+- [[file:analysis/flow/5xcgg_3ko.md]] and [[file:analysis/flow/5xcgg_asc1ko.md]] generate Fig. [[file:analysis/flow/figures/5xcgg_3ko.pdf][S4A left two panels]] and [[file:analysis/flow/figures/5xcgg_asc1ko.pdf][S4A right panels]]. Note: The measurement in the /ΔASC1/ strain background was very noisy due to poor growth in the first experiment. So this measurement was repeated with longer growth times and inoculation with larger /S. cerevisiae/ colonies.
+- [[file:analysis/flow/endogenous_gene_stall.md]] generates Fig. [[file:analysis/flow/figures/endogenous_stalls.pdf][6B]]. The P-values for this figure  panel are also calculated and displayed in this page. 
+
+*** Western Blots
+
+Un-cropped western blot images corresponding to Fig. 1D, 5B, S4C are provided as =.png= images in [[file:data/western/]]. 
+The region in each image cropped for inclusion in the manuscript is shown as a rectangle.
+
+The lanes are quantified using ImageJ (Rectangle Select → Analyze → Measure) and pasted as tab-delimited rows.
+This quantification for all lanes in the manuscript is in [[file:data/western/quantification.tsv]].
+
+Normalization of the lanes for display in figures is carried out in [[file:analysis/western/western_analysis.md]].
+
+The /LTN1Δ/ western blot gel for Fig. 5B had a splotch near the truncated band region (see [[file:data/western/8xccg_ltn1_knockout_flag.png][here]]), so we repeated this western blot for Fig. S4C (see [[file:data/western/ltn1_truncated_product_flag.png][here]]) for responding to a reviewer's comment. 
+
+*** Identification of putative RQC stalls
+
+To identify putative RQC stalls used in  Fig. 6, the gene-level annotations in GFF3 format were downloaded for the =saccer3= genomic assembly: https://downloads.yeastgenome.org/sequence/S288C_reference/genome_releases/S288C_reference_genome_R64-1-1_20110203.tgz.
+
+These were analyzed using [[file:analysis/public_datasets/rqc_stalls_in_yeast_orfs/scripts/analyze_rqc_stalls_in_genome.md]] and [[file:analysis/public_datasets/rqc_stalls_in_yeast_orfs/scripts/count_rqc_residues.py]] to generate the putative RQC stalls/controls and their locations in yeast ORFs: [[file:analysis/public_datasets/rqc_stalls_in_yeast_orfs/tables/ngrams_annotated.tsv]] and [[file:analysis/public_datasets/rqc_stalls_in_yeast_orfs/tables/ngram_control_annotated.tsv]].
+
+*** Analysis of Dvir et al. 2013 data
+
+Supplementary table S1 was downloaded from http://www.pnas.org/lookup/suppl/doi:10.1073/pnas.1222534110/-/DCSupplemental/sd01.xlsx. 
+
+This data is analyzed in [[file:analysis/public_datasets/dvir_2013_kozak_library/scripts/plot_kozak_strength.md]] to generate Fig. [[file:analysis/public_datasets/dvir_2013_kozak_library/figures/kozak_mutations_compare_dvir.pdf][S1C]].
+
+*** Analysis of Weinberg et al. 2016 data
+
+
+The annotations for the SRA experiment were downloaded using the script: [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/downloadannotations.py]].
+
+The URL in the annotations were used to download the =.sra= files and convert them to =.fastq.gz= files using the script: [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/downloaddata.py]].
+
+The raw reads were trimmed, aligned to the transcriptome, and used for calculating transcriptomic coverage using the workflow: [[file:analysis/public_datasets/weinberg_2016_riboseq/Makefile]].
+
+The transcriptomic coverage was used to calculate the ribosome density profile around RQC stalls and controls in the script: [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/plot_ribo_density_around_rqc_stalls.md]]. This generates Fig. [[file:analysis/public_datasets/weinberg_2016_riboseq/figures/ribosome_density_around_rqc_stalls_and_controls.pdf][6A]] and [[file:analysis/public_datasets/weinberg_2016_riboseq/figures/ribosome_density_around_rqc_stalls_and_controls.pdf][S5A]]. 
+
+------------------------------
+
+To generate Fig. [[file:analysis/public_datasets/weinberg_2016_riboseq/figures/distribution_of_translation_efficiency_for_rqc_stall_containing_saccer_genes.pdf][6C]], the RPKM values for RNA-seq and Ribo-seq were downloaded from GEO:
+#+BEGIN_SRC :sh
+wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE75nnn/GSE75897/suppl/GSE75897_RPF_RPKMs.txt.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE75nnn/GSE75897/suppl/GSE75897_RiboZero_RPKMs.txt.gz
+# this is the original data from which the above samples were renanalyzed.
+wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE53nnn/GSE53313/suppl/GSE53313_Cerevisiae_RNA_RPF.txt.gz
+#+END_SRC
+
+These are analyzed in the script: [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/analyze_te_genes.md]] to generate [[file:analysis/public_datasets/weinberg_2016_riboseq/figures/distribution_of_translation_efficiency_for_rqc_stall_containing_saccer_genes.pdf][6C]]. The P-values for this figure panel are also calculated in this script.
+
+
+-------------------------------
+
+To generate Fig. [[file:analysis/public_datasets/weinberg_2016_riboseq/figures/distribution_of_te_preceding_stalls_for_rqc_stall_containing_saccer_genes.pdf][S5B]],  the transcriptome-aligned reads from above were analyzed in the script: [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/plot_te_for_only_preceding_stall_region.md]].  The P-values for this figure panel are also calculated in this script.
+
+*** Analysis of Sitron et al. 2017 data
+
+The raw =.fastq= files were obtained from Dr. Onn Brandman.
+
+The raw reads were trimmed, aligned to the transcriptome, and used for calculating total read counts for each ORF using the workflow: [[file:analysis/public_datasets/sitron_2017_rqc_riboseq/Snakefile]]. The workflow was run on a cluster using the submission script: [[file:analysis/public_datasets/sitron_2017_rqc_riboseq/submit_cluster.sh]].
+
+The total read counts and their fold change between /HEL2Δ/ + /ASC1Δ/ strains and /WT/ strains were calculated in the script: [[file:analysis/public_datasets/sitron_2017_rqc_riboseq/scripts/analyze_gene_fold_change.md]] to generate Fig. [[file:analysis/public_datasets/sitron_2017_rqc_riboseq/figures/distribution_of_asc1hel2ko_lfc_for_rqc_stall_containing_saccer_genes.pdf][6D]]. The P-values for this figure panel are also calculated in this script.
+

@@ -1,0 +1,86 @@
+---
+title: "Identify putative stalls in S. cerevisiae mRNAs that trigger RQC"
+author: "`r Sys.info()[['user']]`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+
+output: 
+  github_document:
+    toc: 2
+---
+
+This script writes the tables <../tables/ngrams_annotated.tsv> and <../tables/ngram_control_annotated.tsv> that is used by other analysis scripts in the manuscript.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=F, message=F)
+```
+
+
+# Load libraries and define analysis-specific parameters
+```{r}
+library(rasilabRtemplates)
+library(biobroom)
+library(Biostrings)
+library(GenomicFeatures)
+library(glue)
+library(tidyverse)
+
+genome <- BSgenome.Scerevisiae.UCSC.sacCer3::BSgenome.Scerevisiae.UCSC.sacCer3
+annotations <- "/fh/fast/subramaniam_a/db/rasi/genomes/yeast/Saccharomyces_cerevisiae/sgd/S288C_reference_genome_R64-1-1_20110203/saccharomyces_cerevisiae_R64-1-1_20110208.gff" %>% 
+  rtracklayer::readGFF()
+```
+
+# Get CDS annotations and sequence
+```{r}
+cds <- annotations %>% 
+  as_tibble() %>% 
+  filter(type == "CDS" & !orf_classification == "Dubious") %>% 
+  mutate(seqid = if_else(seqid == "chrMito", "chrM", as.character(seqid))) %>% 
+  filter(str_detect(seqid, "^chr")) %>% 
+  mutate(Note = as.character(Note)) %>% 
+  GRanges()
+
+cds %>% 
+  split(.$Name) %>% 
+  extractTranscriptSeqs(genome, .) %>% 
+  writeXStringSet("../annotations/cds.fa")
+```
+
+# Load precomputed ngrams
+
+This is done in <count_rqc_residues.py>.
+
+```{r}
+ngrams <- read_tsv("../tables/ngrams.tsv") %>% 
+  print()
+```
+
+# Extract annotated RQC sequences of all genes and those for experimental verification
+```{r}
+ngrams_annotated <- ngrams %>% 
+  left_join(cds %>% tidy() %>% dplyr::select(Name, gene, Note), by = c("id" = "Name")) %>% 
+  group_by(id) %>% 
+  # pick the severest stall and the one at the 5' most end
+  arrange(desc(ngram_weight), pos) %>% 
+  slice(1) %>% 
+  ungroup() %>% 
+  arrange(desc(ngram_weight)) %>% 
+  select(-Note, everything(), Note) %>% 
+  write_tsv("../tables/ngrams_annotated.tsv") %>% 
+  print()
+```
+
+# Extract the RQC controls for plotting ribosome density
+
+```{r}
+read_tsv("../tables/ngram_controls.tsv") %>% 
+  left_join(cds %>% tidy() %>% dplyr::select(Name, gene, Note), by = c("id" = "Name")) %>% 
+  group_by(id) %>% 
+  # pick the severest stall and the one at the 5' most end
+  arrange(desc(ngram_weight), pos) %>% 
+  slice(1) %>% 
+  ungroup() %>% 
+  arrange(desc(ngram_weight)) %>% 
+  select(-Note, everything(), Note) %>% 
+  write_tsv("../tables/ngram_control_annotated.tsv") %>% 
+  print()
+```

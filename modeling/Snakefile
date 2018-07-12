@@ -1,0 +1,63 @@
+"""Workflow for running all simulations
+
+  :Author: Arvind Rasi Subramaniam
+  :Date: 1 Jan 2019
+"""
+
+subworkflow vary_initiation_canonical_decay:
+  """Vary initiation rate of model with canonical mRNA decay but no quality control"""
+  workdir:
+    "simulation_runs/tasep_with_canonical_decay"
+
+subworkflow vary_network_flag:
+  """Test the effect of -network flag with varying mRNA lengths"""
+  workdir:
+    "simulation_runs/network_flag_effect"
+
+subworkflow compare_abortive_termination_models:
+  """Compare different models of abortive termination"""
+  workdir:
+    "simulation_runs/preterm_compare_models"
+
+subworkflow compare_endocleave_models:
+  """Compare different models of endonucleolytic mRNA cleavage"""
+  workdir:
+    "simulation_runs/mrna_endocleave_compare_models/"
+
+subworkflow vary_abortive_termination_rate:
+  """Vary abortive termination rate in SAT and CSAT models"""
+  workdir:
+    "simulation_runs/preterm_rate_vary"
+
+subworkflow vary_endonucleolytic_cleavage_rate:
+  """Vary endonucleolytic mRNA cleavage rate in SEC and CSEC models"""
+  workdir:
+    "simulation_runs/endocleave_rate_vary"
+
+subworkflow vary_deadenylation_number_steps:
+  """Vary number of kinetic steps in deadenylation"""
+  workdir:
+    "simulation_runs/deadenylation_vary_num_steps"
+
+subworkflow vary_csat_number_stalls:
+  """Vary number of stall codons in the CSAT model"""
+  workdir:
+    "simulation_runs/csat_model_vary_num_stalls"
+
+subworkflow vary_csec_number_stalls:
+  """Vary number of stall codons in the CSEC model"""
+  workdir:
+    "simulation_runs/csec_model_vary_num_stalls"
+
+rule all:
+  """List all parameter sweeps that we want to simulate"""
+  input: 
+    vary_initiation_canonical_decay("all"),
+    vary_network_flag("all"),
+    compare_abortive_termination_models("all"),
+    compare_endocleave_models("all"),
+    vary_abortive_termination_rate("all"),
+    vary_endonucleolytic_cleavage_rate("all"),
+    vary_deadenylation_number_steps("all"),
+    vary_csat_number_stalls("all"),
+    vary_csat_number_stalls("all")

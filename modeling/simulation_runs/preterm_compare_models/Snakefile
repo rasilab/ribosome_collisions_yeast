@@ -1,0 +1,64 @@
+"""Workflow for running simulations in this folder
+
+  :Author: Arvind Rasi Subramaniam
+  :Date: 18 Dec 2018
+"""
+
+# This generates the sim.params.tsv below
+include: "choose_simulation_parameters.py"
+
+import pandas as pd
+input_params = pd.read_table("sim.params.tsv", index_col=0)
+
+
+# These rules are run locally
+localrules: all, combine_mrna_protein_stats, analyze_data
+
+
+rule all:
+  """List of all files we want at the end"""
+  input: 
+    "analyze_results.md"
+
+
+rule run_simulation:
+  """Run simulation for each parameter combination"""
+  input:
+    "choose_simulation_parameters.py",
+    "../../tasep.py"
+  output:
+    "output/tasep_{n}_psr_stats.tsv.gz",
+    "output/tasep_{n}_mrna_lifetime_stats.tsv.gz",
+    "output/tasep_{n}.params.tsv.gz",
+    "output/tasep_{n}_collision_stats.tsv.gz",
+    "output/tasep_{n}_abort_stats.tsv.gz"
+  shell:
+    "python run_simulation.py {wildcards.n}"
+
+
+rule combine_mrna_protein_stats:
+  """Tabulate results from all simulations"""
+  input: 
+    [f"output/tasep_{n}_psr_stats.tsv.gz" for n in range(len(input_params))],
+    [f"output/tasep_{n}_collision_stats.tsv.gz" for n in range(len(input_params))],
+    [f"output/tasep_{n}_abort_stats.tsv.gz" for n in range(len(input_params))],
+    [f"output/tasep_{n}_mrna_lifetime_stats.tsv.gz" for n in range(len(input_params))]
+  output:
+    "tables/psr_stats.tsv",
+    "tables/mrna_lifetime_stats.tsv",
+    "tables/collision_stats.tsv",
+    "tables/abort_stats.tsv"
+  script:
+    "../../combine_lifetime_and_psr_data.R"
+
+
+rule analyze_data:
+  """Analyze tabulated results and make figures"""
+  input:
+    "tables/psr_stats.tsv", 
+    "tables/mrna_lifetime_stats.tsv",
+    "tables/collision_stats.tsv"
+  output:
+    "analyze_results.md"
+  script:
+    "analyze_results.Rmd"

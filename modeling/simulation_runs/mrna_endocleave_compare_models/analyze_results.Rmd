@@ -1,0 +1,184 @@
+---
+title: "Analyze simulation results"
+author: "`r Sys.info()[['user']]`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  github_document:
+    toc: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+```
+
+## Load libraries
+```{r}
+library(tidyverse)
+library(rasilabRtemplates)
+# disable scientific notation
+options(scipen=999)
+
+cleave_model_names <- c(
+  "hit5" = "CSEC",
+  "simple" = "SEC",
+  "trafficjam" = "TJ"
+)
+```
+
+# Read protein count data
+
+```{r}
+psr_data <- read_tsv("tables/psr_stats.tsv") %>% 
+  print()
+```
+
+# Read mRNA lifetime data
+
+```{r}
+lifetime_data <- read_tsv("tables/mrna_lifetime_stats.tsv") %>% 
+  mutate(se_lifetime = sd_lifetime / sqrt(n_mrna)) %>% 
+  print()
+```
+
+# Read mRNA lifetime data
+
+```{r}
+collision_data <- read_tsv("tables/collision_stats.tsv") %>% 
+  print()
+```
+
+# Read simulation parameters
+
+```{r}
+sim_params <- read_tsv("sim.params.tsv") %>% 
+  rename(sim_id = X1) %>% 
+  mutate(k_elong_stall = str_split(k_elong_stall, ",")) %>%
+  mutate(k_elong_stall = map(k_elong_stall, as.numeric)) %>%
+  mutate(k_elong_stall = map(k_elong_stall, function(x) unique(x))) %>%
+  unnest() %>%
+  mutate(x_stall = stringr::str_split(x_stall, ',')) %>%
+  mutate(k_stall = round(k_elong_stall / as.numeric(n_stall), 2)) %>%
+  select(sim_id, cleave_rate, cleave_model, k_stall) %>%
+  print()
+
+annotations <- list.files("output/", pattern = "params.tsv.gz$", full.names = T) %>%
+  enframe("sno", "file") %>%
+  mutate(sim_id = str_extract(file, "(?<=tasep_)[[:digit:]]+")) %>%
+  mutate(data = map(file, read_tsv)) %>%
+  select(-file, -sno) %>%
+  unnest() %>%
+  type_convert() %>%
+  # retain only parameters that are varied, the others are for checking
+  group_by(parameter) %>%
+  mutate(vary = if_else(length(unique(value)) > 1, T, F)) %>%
+  ungroup() %>%
+  filter(vary == T) %>%
+  select(-vary) %>%
+  spread(parameter, value) %>%
+  left_join(sim_params, by = "sim_id") %>%
+  print()
+```
+
+# Combine all data into a single table
+
+```{r}
+data <- annotations %>% 
+  left_join(psr_data, by = "sim_id") %>% 
+  left_join(lifetime_data, by = "sim_id") %>% 
+  left_join(collision_data, by = "sim_id") %>% 
+  print()
+```
+
+# mRNA lifetime as a function of initiation rate 
+
+```{r, fig.width=1.8, fig.height=2.2}
+plot_data <- data %>% 
+  filter(cleave_rate == 0.001 & k_stall == 0.1) %>%
+  mutate(model = cleave_model_names[cleave_model]) %>%
+  print()
+
+plot_data %>%
+  ggplot(aes(x = k_init, y = mean_lifetime, color = model, shape = model)) +
+  geom_point(size = 2) +
+  geom_line() +
+  scale_x_continuous(trans = "log2",
+                     labels = scales::trans_format("log2", scales::math_format(2^.x)),
+                     breaks = 2^(seq(-8,0,2))) +
+  scale_color_manual(values = cbPalette[c(3,2)]) +
+  scale_shape_manual(values = c(19, 17)) +
+  labs(x = "initiation rate (s-1)", y = "mean mRNA lifetime (s)", color = "", shape = "") +
+  theme(legend.position = "top")
+
+ggsave("figures/mrna_lifetime_vs_initiation_rate.pdf", width = 1.7, height = 2)
+```
+
+# Source data for Fig 4B
+
+```{r}
+plot_data %>% 
+  select(model, k_init, mean_lifetime) %>% 
+  knitr::kable()
+```
+
+# PSR as a function of initiation rate
+
+```{r psr_cshl_poster, fig.width=1.8, fig.height=2.2}
+plot_data <- data %>% 
+  filter(cleave_rate == 0.001 & k_stall == 0.1) %>% 
+  mutate(model = cleave_model_names[cleave_model]) 
+
+plot_data %>%
+  ggplot(aes(x = k_init, y = psr, color = model, shape = model)) +
+  geom_point(size = 2) +
+  geom_line() +
+  scale_x_continuous(trans = "log2",
+                     labels = scales::trans_format("log2", scales::math_format(2^.x)),
+                     breaks = 2^(seq(-8,0,2))) +
+  scale_y_continuous(limits = c(0, NA)) +
+  scale_color_manual(values = cbPalette[c(3,2)]) +
+  scale_shape_manual(values = c(19,17)) +
+  labs(x = "initiation rate (s-1)", y = "protein synthesis rate (s-1)", color = "", shape = "") +
+  theme(legend.position = "top")
+
+ggsave("figures/psr_vs_initiation_rate.pdf", width = 1.6, height = 2)
+```
+
+# Source data for Fig 4C
+
+```{r}
+plot_data %>% 
+  select(model, k_init, psr) %>% 
+  knitr::kable()
+```
+
+# PSR as a function of initiation rate for different cleavage rates in SEC model
+
+```{r, fig.width=2.5, fig.height=1.7}
+plot_data <- data %>% 
+  filter(k_stall == 0.1 & cleave_rate <= 0.001) %>% 
+  filter(cleave_model == "simple")
+
+plot_data %>%
+  ggplot(aes(x = k_init, y = psr, color = as.factor(cleave_rate), shape = as.factor(cleave_rate))) +
+  geom_point(size = 2) +
+  geom_line() +
+  scale_x_continuous(trans = "log2",
+                     labels = scales::trans_format("log2", scales::math_format(2^.x)),
+                     breaks = 2^(seq(-8,0,2))) +
+  scale_y_continuous(trans = "log2",
+                     labels = scales::trans_format("log2", scales::math_format(2^.x))) +
+  viridis::scale_color_viridis(discrete = T, end = 0.9) +
+  labs(x = "initiation rate (s-1)", y = "protein synthesis rate (s-1)", 
+       color = "kcleave (s-1)", shape = "kcleave (s-1)") +
+
+ggsave("figures/psr_vs_initiation_rate_vary_cleave_rate.pdf", 
+       width = 2.5, height = 1.7)
+```
+
+# Source data for S3 Fig panel A
+
+```{r}
+plot_data %>% 
+  select(cleave_rate, k_init, psr) %>% 
+  knitr::kable()
+```

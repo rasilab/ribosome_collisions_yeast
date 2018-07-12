@@ -1,0 +1,308 @@
+---
+title: "Fluorescence of PGK1 constructs with 8xCCG / 8xCCA inserts and varying Kozak, complementation by HEL2 and ASC1 mutants"
+author: "`r Sys.info()[['user']]`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  github_document:
+    toc: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Import libraries and analysis specific parameters
+
+```{r}
+# loads lab default ggplot2 theme and provides color-blind friendly palette
+library(rasilabRtemplates)
+# standard analysis and plotting functions, includes dplyr, ggplot2 
+library(tidyverse)
+# standard error
+library(plotrix)
+
+# intiiation sites are arranged in this order
+initiationmutation_order <- seq(1,8)
+names(initiationmutation_order) <- toupper(c( 'ctgc', 'ccgc',
+                              'acgc', 'ccga', 'ccac', 'ccaa', 'caaa', 'aaaa'))
+# 
+# bad wells that had zero or abnormal signals. These are excluded from analysis.
+bad_wells <- list(
+  list('strain' = 'schp771', 'replicate' = 2)
+) %>%
+  bind_rows()
+
+# this folder contains the data and annotations
+fcs_file_folder <- "../../data/flow/hel2_asc1_mutants/"
+ 
+strain_names <- c(
+  'asc1_h16' = '16HNG18AAA',
+  'asc1' = 'WT',
+  'asc1_r38' = '38RDK40AAA',
+  'asc1_w85' = '85WDK87AAA',
+  'hel2_delring' = 'DRING',
+  'hel2_c64a' = 'C64A,C67A',
+  'hel2' = 'WT')
+  
+```
+
+```{r, eval = FALSE, include = FALSE}
+# Combine raw .fcs files into a single dataframe for manuscript
+# This chunk is for preprocessing and is not evaluated (`eval = FALSE`).
+
+raw_data <- fcs_file_folder %>% 
+  # get all fcs files
+  list.files(full.names = T, pattern = '.fcs$') %>% 
+  enframe("sno", "filename") %>% 
+  # get data from each file
+  mutate(data = map(filename, . %>% 
+                      flowCore::read.FCS(transformation = F, alter.names = T) %>% 
+                      flowCore::exprs() %>% 
+                      as_tibble())) %>% 
+  # extract plate and well
+  mutate(plate = as.integer(str_extract(filename, "(?<=Specimen_)[:digit:]{3}"))) %>%
+  mutate(well = str_extract(filename, "(?<=Specimen_[:digit:]{3}_)[:alnum:]+")) %>%
+  # get rid of unwanted columns
+  select(-sno, -filename) %>% 
+  unnest() %>% 
+  # round nicely for storing
+  mutate_at(vars(matches("Time")), funs(round(., 3))) %>% 
+  mutate_at(vars(-matches("Time|well")), funs(as.integer)) %>% 
+  print()
+```
+
+```{r, eval = FALSE, include = FALSE}
+# Clean annotations file for manuscript
+# This chunk is for preprocessing and is not evaluated (`eval = FALSE`).
+
+annotations <- paste0(fcs_file_folder, '/sampleannotations.tsv') %>% 
+                        read_tsv(col_types = list('plate' = col_integer())) %>% 
+  # rename col
+  rename(gene = genes) %>%
+  # replace all 'na' ny NA
+  mutate_all(funs(ifelse(. == 'na', NA, .))) %>%
+  # extract number of stall sites
+  mutate(numberofstallsites =
+         ifelse(is.na(stallsites),
+                0,
+                str_count(stallsites, ',') + 1)) %>%
+  # the default initiation mutation is CAAA
+  mutate(initiationmutation = if_else(is.na(initiationmutation), "CAAA",
+                                      initiationmutation)) %>%
+  mutate(initiationmutation = toupper(initiationmutation)) %>%
+  # arrange initiationmutation in this order
+  mutate(initiationmutation = fct_reorder(
+      initiationmutation,
+      initiationmutation_order[initiationmutation])) %>%
+  mutate(well = str_extract(file, "(?<=Specimen_[:digit:]{3}_)[:alnum:]+")) %>%
+  mutate(strain = str_replace(strain, "schp0", "schp")) %>%
+  # these are genes of interest or the standard control strains
+  filter(numberofcodonrepeats == 8 | strain %in% c("schp19", "schp20", "schp15", "by4741")) %>% 
+  rename(knockout = knockoutgenes, complement = parent_genes) %>%
+  select(plate, well, strain, replicate, initiationmutation, codonmutation, gene, knockout, complement) %>% 
+  write_tsv(paste0(fcs_file_folder, '/annotations.tsv')) %>% 
+  print()
+```
+
+```{r, eval = FALSE, include = FALSE}
+# Keep only the data that we need for manuscript
+# This chunk is for preprocessing and is not evaluated (`eval = FALSE`).
+raw_data %>% 
+  right_join(select(annotations, plate, well)) %>% 
+  filter(!is.na(FITC.A) & !is.na(PE.Texas.Red.A)) %>%
+  write_tsv(paste0(fcs_file_folder, '/data.tsv.xz'))
+```
+
+# Read data
+
+```{r}
+flowdata  <- read_tsv(paste0(fcs_file_folder, '/data.tsv.xz')) %>% 
+  # get only values greater than 0
+  filter(FITC.A > 0 & PE.Texas.Red.A > 0) %>% 
+  print()
+```
+
+# Read annotations
+
+```{r}
+annotations  <- read_tsv(paste0(fcs_file_folder, '/annotations.tsv')) %>% 
+  # skip C64,C67A mutant as requested by reviewer
+  filter(complement != "hel2_c64a" | is.na(complement)) %>%
+  print()
+```
+
+# Rename and calculate average values of fluorescence channels in each well
+
+```{r}
+by_file <- flowdata  %>% 
+  # group by each plate and well
+  group_by(plate, well) %>% 
+  select(FITC.A, PE.Texas.Red.A) %>% 
+  # calculate mean
+  summarise_all(mean) %>% 
+  # rename
+  rename('yfp' = FITC.A, 'rfp' = PE.Texas.Red.A) %>% 
+  # join annotations
+  right_join(annotations, by = c('plate', 'well')) %>% 
+  print()
+```
+
+# Calculate mean and standard error over replicates
+
+```{r}
+avg_data  <- by_file %>% 
+  anti_join(bad_wells) %>% 
+  # strain is used to get replicates
+  group_by(strain) %>% 
+  # calculate mean and std.err
+  mutate(mean_yfp = mean(yfp), 
+         mean_rfp = mean(rfp)) %>% 
+  ungroup() %>% 
+  mutate(yfp = yfp - mean_yfp[strain == "schp15" & replicate == 1], 
+         rfp = rfp - mean_rfp[strain == "by4741" & replicate == 1]) %>% 
+  mutate(yfp_rfp_ratio = yfp / rfp) %>% 
+  # calculate mean and standard error
+  group_by(strain) %>% 
+  mutate(mean_yfp = mean(yfp), 
+         mean_rfp = mean(rfp), 
+         mean_ratio = mean(yfp_rfp_ratio), 
+         se_yfp = std.error(yfp), 
+         se_rfp = std.error(rfp),
+         se_ratio = std.error(yfp_rfp_ratio),
+         n = n()) %>% 
+  ungroup() %>% 
+  # normalize by an arbitrary number for plotting
+  mutate(mean_yfp = mean_yfp / 1000, se_yfp = se_yfp / 1000)
+```
+
+# Rescue of protein expression at high initiation rate by HEL2 mutants
+
+```{r, fig.width=5, fig.height=3}
+plot_data <- avg_data %>% 
+  filter(knockout == "hel2") %>% 
+  # arrange initiationmutation in this order
+  mutate(initiationmutation = fct_reorder(
+      initiationmutation,
+      initiationmutation_order[initiationmutation])) %>%
+  mutate(complement = if_else(!is.na(complement), strain_names[complement], "Empty")) %>% 
+  mutate(complement = fct_relevel(complement, "WT"))
+
+plot_data %>% 
+  filter(replicate == 1) %>% 
+  ggplot(aes(x = initiationmutation, y = mean_yfp, group = codonmutation, 
+             color = codonmutation, shape = codonmutation,
+             ymin = mean_yfp - se_yfp, ymax = mean_yfp + se_yfp)) +
+  facet_wrap(~ codonmutation + complement, ncol = 4, scales = "free") +
+  geom_errorbar(width = 0.5, color = "black") +
+  geom_point(size = 2) +
+  geom_line() +
+  scale_color_manual(values = cbPalette) +
+  labs(y = 'fluorescence (a.u.)',
+       x = '-4 to -1 nt from ATG') +
+  theme(legend.title = element_text(size = 8),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n=3))
+
+ggsave('figures/hel2_rescue.pdf')
+```
+
+# Source data for Fig 5D and S4 Fig Panel B (Hel2 mutants)
+
+```{r}
+plot_data %>% 
+  filter(replicate == 1) %>% 
+  arrange(complement, codonmutation, initiationmutation) %>% 
+  select(complement, codonmutation, initiationmutation, mean_yfp, se_yfp, n) %>% 
+  mutate_if(is.numeric, funs(round(., 3))) %>% 
+  knitr::kable()
+```
+
+# Two-sided `t` test for difference in means between Empty and HEL2 mutants for a given 5'UTR mutant (8xCCG only)
+
+```{r}
+test <- plot_data %>% 
+  filter(codonmutation == "ccg") %>% 
+  group_by(complement, initiationmutation) %>% 
+  select(yfp, replicate) %>% 
+  arrange(initiationmutation, complement)
+
+ctrl <- test %>% 
+  ungroup() %>% 
+  filter(complement == "Empty") %>% 
+  select(-complement)
+  
+test %>% 
+  full_join(ctrl, by = c("initiationmutation", "replicate")) %>% 
+  group_by(complement, initiationmutation) %>% 
+  # nest() %>% 
+  # mutate(t_test = map(data, function(df) broom::tidy(t.test(df[['yfp.x']], df[['yfp.y']])))) %>% 
+  # unnest(t_test) %>% 
+  # select(complement, initiationmutation, p.value) %>% 
+  knitr::kable()
+```
+
+# Rescue of protein expression at high initiation rate by ASC1 mutants
+
+```{r, fig.width=6, fig.height=3}
+plot_data <- avg_data %>% 
+  filter(knockout == "asc1" & !is.na(gene)) %>% 
+  # arrange initiationmutation in this order
+  mutate(initiationmutation = fct_reorder(
+      initiationmutation,
+      initiationmutation_order[initiationmutation])) %>%
+  mutate(complement = if_else(!is.na(complement), strain_names[complement], "Empty")) %>% 
+  mutate(complement = fct_relevel(complement, "WT"))
+
+plot_data %>% 
+  filter(replicate == 1) %>% 
+  ggplot(aes(x = initiationmutation, y = mean_yfp, group = codonmutation, 
+             color = codonmutation, shape = codonmutation,
+             ymin = mean_yfp - se_yfp, ymax = mean_yfp + se_yfp)) +
+  facet_wrap(~ codonmutation + complement, ncol = 5, scales = "free") +
+  geom_errorbar(width = 0.5, color = "black") +
+  geom_point(size = 2) +
+  geom_line() +
+  scale_color_manual(values = cbPalette) +
+  labs(y = 'fluorescence (a.u.)',
+       x = '-4 to -1 nt from ATG') +
+  theme(legend.title = element_text(size = 8),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n=3))
+
+ggsave('figures/asc1_rescue.pdf')
+```
+
+# Source data for Fig 5D and S4 Fig Panel B (Asc1 mutants)
+
+```{r}
+plot_data %>% 
+  filter(replicate == 1) %>% 
+  arrange(complement, codonmutation, initiationmutation) %>% 
+  select(complement, codonmutation, initiationmutation, mean_yfp, se_yfp, n) %>% 
+  mutate_if(is.numeric, funs(round(., 3))) %>% 
+  knitr::kable()
+```
+
+# Two-sided `t` test for difference in means between Empty and ASC1 mutants for a given 5'UTR mutant (8xCCG only)
+
+```{r}
+test <- plot_data %>% 
+  filter(codonmutation == "ccg") %>% 
+  group_by(complement, initiationmutation) %>% 
+  select(yfp, replicate) %>% 
+  arrange(initiationmutation, complement)
+
+ctrl <- test %>% 
+  ungroup() %>% 
+  filter(complement == "Empty") %>% 
+  select(-complement)
+  
+test %>% 
+  full_join(ctrl, by = c("initiationmutation", "replicate")) %>% 
+  group_by(complement, initiationmutation) %>% 
+  nest() %>% 
+  mutate(t_test = map(data, function(df) broom::tidy(t.test(df[['yfp.x']], df[['yfp.y']])))) %>% 
+  unnest(t_test) %>% 
+  select(complement, initiationmutation, p.value) %>% 
+  knitr::kable()
+```

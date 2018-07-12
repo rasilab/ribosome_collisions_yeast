@@ -1,0 +1,10 @@
+"__default__" :
+  "account" : "rasi"
+  "time" : "02:00:00"
+  "name" : "{rule}.{wildcards}"
+  "n" : 1
+"align_genome" :
+  "account" : "rasi"
+  "time" : "08:00:00"
+  "name" : "{rule}.{wildcards}"
+  "n" : 8
