@@ -1,0 +1,17 @@
+#+LATEX_CLASS: article
+#+OPTIONS: num:nil tex:t
+#+LATEX_CLASS_OPTIONS: [10pt,letterpaper]
+#+LATEX_HEADER: \input{latex_template.tex}
+#+TITLE: Ribosome Collisions in Budding Yeast Project
+#+DATE: 
+
+* Notes
+1. Are there endogenous genes that are regulated by ribosome collisions?
+   - /RQC1/ has a stretch of polyK residues that seem to function through a negative feedback loop citep:Brandman2012.
+   - Decrease the initiation rate of ribosomes on /RQC1/ and show that it increases expression of /RQC1/.
+   - Look for other stretches of polyK residues in yeast genome. This was done by Brandman et al. citep:Brandman2012, look at their Table S4.
+   - There are lot of ribosomal proteins in Table S4 of citep:Brandman2012. This suggests an interestig hypothesis that synthesis of translation-initiation components including the ribsomes is regulated through a negative-feedback based on translational quality control.
+
+* 
+bibliography:bibliography.bib
+bibliographystyle:naturemag
