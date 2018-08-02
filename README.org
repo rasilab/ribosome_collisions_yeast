@@ -5,6 +5,10 @@
 #+TITLE: Ribosome Collisions in Budding Yeast Project
 #+DATE: 
 
+* References
+- citep:Valasek2007 has a nice protocol for how to crosslink pre-initiation complexes and do RNA and protein gels subsequently.
+  They use hot-phenol extraction at 70C for 15 min to reverse protein-RNA formaldehyde crosslinks before RNA analysis.
+  They use boiling in SDS-PAGE sample buffer for 10 min to reverse protein-RAN formaldehyde crosslinks before protein analysis.
 * Notes
 1. Are there endogenous genes that are regulated by ribosome collisions?
    - /RQC1/ has a stretch of polyK residues that seem to function through a negative feedback loop citep:Brandman2012.
@@ -14,4 +18,4 @@
 
 * 
 bibliography:bibliography.bib
-bibliographystyle:naturemag
+bibliographystyle:cell
