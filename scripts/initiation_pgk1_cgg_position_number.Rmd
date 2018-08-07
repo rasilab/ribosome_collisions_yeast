@@ -1,0 +1,172 @@
+---
+title: "Flow analysis of PGK1 constructs with varying locations and number of CGG rare codons"
+author: "`r Sys.info()[['user']]`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  github_document:
+    toc: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## Import libraries and analysis specific parameters
+
+```{r}
+# standard analysis and plotting functions, includes dplyr, ggplot2 
+library(tidyverse)
+# loads lab default ggplot2 theme and provides color-blind friendly palette
+library(rasilabRtemplates)
+
+# bad wells that had zero or abnormal signals. These are excluded from analysis.
+bad_wells <- list(
+  list("strain" = "schp281", "replicate" = 3),
+  list("strain" = "schp307", "replicate" = 1)
+) %>% 
+  bind_rows()
+
+# this is the strain used for background subtraction of the yfp channel
+background_strain <- "schp15"
+
+
+# intiiation sites are arranged in this order
+initiationmutation_order <- seq(1,8)
+names(initiationmutation_order) <- toupper(c( 'ctgc', 'ccgc', 
+                              'acgc', 'ccga', 'ccac', 'ccaa', 'aaaa', 'caaa'))
+```
+
+## Read data into a single data frame
+
+```{r}
+flowdata  <- '../data/flow/initiation_pgk1_cgg_position_number/' %>% 
+  # get all fcs files
+  list.files(full.names = T, pattern = '.fcs$') %>% 
+  enframe("sno", "filename") %>% 
+  # get data from each file
+  mutate(data = map(filename, . %>% 
+                      flowCore::read.FCS(transformation = F, alter.names = T) %>% 
+                      flowCore::exprs() %>% 
+                      as_tibble())) %>% 
+  # extract file name without .fcs extension and parent folder name
+  mutate(file = str_extract(filename, '[^/]+(?=.fcs$)')) %>% 
+  # get rid of unwanted columns
+  select(-sno, -filename) %>% 
+  # expand data out
+  unnest() %>% 
+  print()
+```
+
+## Read annotations
+
+```{r}
+annotations <- '../data/flow/initiation_pgk1_cgg_position_number/sampleannotations.tsv' %>% 
+                        read_tsv(col_types = list('plate' = col_integer())) %>% 
+  # rename col
+  rename(gene = genes) %>% 
+  # replace all 'na' ny NA
+  mutate_all(funs(ifelse(. == 'na', NA, .))) %>% 
+  # extract number of stall sites
+  mutate(numberofstallsites = 
+         ifelse(is.na(stallsites),
+                0,
+                str_count(stallsites, ',') + 1)) %>% 
+  # if there are no stall sites, there are no codon repeats
+  mutate(numberofcodonrepeats = ifelse(numberofstallsites == 0,
+                                       "–", numberofcodonrepeats)) %>% 
+  # the default initiation mutation is CAAA
+  mutate(initiationmutation = if_else(is.na(initiationmutation), "CAAA", 
+                                      initiationmutation)) %>% 
+  mutate(initiationmutation = toupper(initiationmutation)) %>% 
+  # arrange initiationmutation in this order 
+  mutate(initiationmutation = fct_reorder(
+      initiationmutation, 
+      initiationmutation_order[initiationmutation])) %>% 
+  print()
+```
+
+## Rename and calculate average values of fluorescence channels
+```{r}
+by_file <- flowdata  %>% 
+  # group by  each file (well)
+  group_by(file) %>% 
+  select(FITC.A, PE.Texas.Red.A) %>% 
+  # calculate mean
+  summarise_all(mean) %>% 
+  # rename
+  rename('yfp' = FITC.A, 'rfp' = PE.Texas.Red.A) %>% 
+  # ratios
+  mutate('yfp_rfp_ratio' = yfp / rfp * 10) %>% 
+  # join annotations
+  left_join(annotations, by = 'file') %>% 
+  print()
+```
+
+## Calculate ratio of YFP to RFP, mean, standard deviation 
+```{r}
+avg_data  <- by_file %>% 
+  anti_join(bad_wells) %>% 
+  # strain is used to get replicates
+  group_by(strain) %>% 
+  # calculate mean and std.err
+  mutate(mean_yfp = mean(yfp), 
+         mean_rfp = mean(rfp), 
+         mean_ratio = mean(yfp_rfp_ratio), 
+         se_yfp = sd(yfp)/sqrt(n()), 
+         se_rfp = sd(rfp)/sqrt(n()),
+         se_ratio = sd(yfp_rfp_ratio)/sqrt(n())) %>% 
+  slice(1) %>% 
+  ungroup() %>% 
+  print()
+```
+
+## Plot the raw values for the 4 control samples used across all experiments
+```{r, fig.width=4, fig.height=2}
+plot_data <- avg_data %>% 
+  filter(strain %in% c("schp15", "schp19", "schp20", "by4741")) %>% 
+  select(strain, mean_yfp, mean_rfp, se_yfp, se_rfp) %>% 
+  gather(qty, value, -strain) %>% 
+  separate(qty, into = c("measure", "channel"), sep = "_") %>% 
+  spread(measure, value) %>% 
+  print()
+
+plot_data %>%
+  ggplot(aes(x = strain, y = mean,
+             ymin = mean - se, ymax = mean + se)) +
+  facet_wrap(~channel, ncol = 2, scales = "free") +
+  geom_point(size = 1, height = 0, width = 0.1, alpha = 0.5) +
+  geom_line() +
+  ggrepel::geom_text_repel(aes(label = as.integer(mean), y = mean), 
+                           size = 3, direction = "y") +
+  geom_errorbar(width = 0.5) +
+  labs(y = 'protein level (a.u.)',
+       x = 'strain',
+       title = "Standard strain controls") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## Plot background subtracted mean YFP and RFP as a function of initiation codon
+
+```{r, fig.width=1.5, fig.height=3}
+plot_data <- avg_data %>% 
+  filter(gene == "pgk1") %>% 
+  filter(codonmutation == "cgg" & stallsites == 5 | 
+           codonmutation == "aga" & is.na(stallsites)) %>% 
+  filter(initiationmutation != "CTG") %>%
+  mutate(codonmutation = paste0("5×", toupper(codonmutation)))
+
+plot_data %>% 
+  ggplot(aes(x = initiationmutation, y = mean_ratio, 
+             ymin = mean_ratio - se_ratio, ymax = mean_ratio + se_ratio,
+             group = codonmutation)) +
+  geom_point(size = 1, height = 0, width = 0.1, alpha = 0.5) +
+  geom_line() +
+  geom_errorbar(width = 0.5) +
+  facet_wrap(~codonmutation, ncol = 1, scales = "free") + 
+  labs(y = 'fluorscence (a.u.)',
+       x = 'Kozak (-4 to -1)') +
+  theme(legend.title = element_text(size = 8),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6))
+
+ggsave('../figures/initiation_pgk1_cgg.pdf')
+```
