@@ -7,9 +7,9 @@ rasi
 -   [Read data into a single data frame](#read-data-into-a-single-data-frame)
 -   [Read annotations](#read-annotations)
 -   [Rename and calculate average values of fluorescence channels](#rename-and-calculate-average-values-of-fluorescence-channels)
--   [Calculate ratio of YFP to RFP, mean, standard deviation](#calculate-ratio-of-yfp-to-rfp-mean-standard-deviation)
+-   [Calculate mean and standard deviation](#calculate-mean-and-standard-deviation)
 -   [Plot the raw values for the 4 control samples used across all experiments](#plot-the-raw-values-for-the-4-control-samples-used-across-all-experiments)
--   [Plot background subtracted mean YFP and RFP as a function of initiation codon](#plot-background-subtracted-mean-yfp-and-rfp-as-a-function-of-initiation-codon)
+-   [Plot mean YFP as a function of initiation codon](#plot-mean-yfp-as-a-function-of-initiation-codon)
 
 Import libraries and analysis specific parameters
 -------------------------------------------------
@@ -22,6 +22,7 @@ library(rasilabRtemplates)
 
 # bad wells that had zero or abnormal signals. These are excluded from analysis.
 bad_wells <- list(
+  # this strain had an abnormally high RFP signal
   list("strain" = "schp281", "replicate" = 3),
   list("strain" = "schp307", "replicate" = 1)
 ) %>% 
@@ -34,7 +35,7 @@ background_strain <- "schp15"
 # intiiation sites are arranged in this order
 initiationmutation_order <- seq(1,8)
 names(initiationmutation_order) <- toupper(c( 'ctgc', 'ccgc', 
-                              'acgc', 'ccga', 'ccac', 'ccaa', 'aaaa', 'caaa'))
+                              'acgc', 'ccga', 'ccac', 'ccaa', 'caaa', 'aaaa'))
 ```
 
 Read data into a single data frame
@@ -157,15 +158,56 @@ by_file <- flowdata  %>%
     ## #   initiationmutation <fct>, gene <chr>, gpdmkate2 <chr>, citrine <chr>,
     ## #   replicate <int>, note <chr>, numberofstallsites <dbl>
 
-Calculate ratio of YFP to RFP, mean, standard deviation
--------------------------------------------------------
+Calculate mean and standard deviation
+-------------------------------------
 
 ``` r
 avg_data  <- by_file %>% 
-  anti_join(bad_wells) %>% 
+  # anti_join(bad_wells) %>% 
   # strain is used to get replicates
   group_by(strain) %>% 
   # calculate mean and std.err
+  mutate(mean_yfp = mean(yfp), 
+         mean_rfp = mean(rfp)) %>% 
+  ungroup() %>% 
+  print()
+```
+
+    ## # A tibble: 272 x 18
+    ##    file     yfp    rfp yfp_rfp_ratio plate strain codonmutation
+    ##    <chr>  <dbl>  <dbl>         <dbl> <int> <chr>  <chr>        
+    ##  1 Spec…  8641. 19610.         4.41      1 schp2… cgg          
+    ##  2 Spec…  7606. 19659.         3.87      1 schp2… cgg          
+    ##  3 Spec…   470. 17841.         0.264     1 schp15 <NA>         
+    ##  4 Spec…  3585. 17445.         2.06      1 schp19 cgg          
+    ##  5 Spec… 31806. 16912.        18.8       1 schp20 aga          
+    ##  6 Spec… 21822. 20724.        10.5       1 schp0… aga          
+    ##  7 Spec…  8060. 19944.         4.04      1 schp2… cgg          
+    ##  8 Spec…  9939. 19714.         5.04      1 schp2… cgg          
+    ##  9 Spec…  8472. 20219.         4.19      1 schp2… cgg          
+    ## 10 Spec…  8967. 20124.         4.46      1 schp2… cgg          
+    ## # ... with 262 more rows, and 11 more variables:
+    ## #   numberofcodonrepeats <chr>, stallsites <chr>,
+    ## #   initiationmutation <fct>, gene <chr>, gpdmkate2 <chr>, citrine <chr>,
+    ## #   replicate <int>, note <chr>, numberofstallsites <dbl>, mean_yfp <dbl>,
+    ## #   mean_rfp <dbl>
+
+``` r
+yfp_background <- avg_data %>% 
+  filter(strain == "schp15") %>% 
+  pull(mean_yfp)
+
+rfp_background <- avg_data %>% 
+  filter(strain == "by4741") %>% 
+  pull(mean_rfp)
+
+avg_data <- avg_data %>% 
+  anti_join(bad_wells) %>% 
+  mutate(yfp = yfp - yfp_background, 
+         rfp = rfp - rfp_background, 
+         yfp_rfp_ratio = yfp / rfp) %>% 
+  # calculate mean and std.err
+  group_by(strain) %>% 
   mutate(mean_yfp = mean(yfp), 
          mean_rfp = mean(rfp), 
          mean_ratio = mean(yfp_rfp_ratio), 
@@ -173,29 +215,11 @@ avg_data  <- by_file %>%
          se_rfp = sd(rfp)/sqrt(n()),
          se_ratio = sd(yfp_rfp_ratio)/sqrt(n())) %>% 
   slice(1) %>% 
-  ungroup() %>% 
-  print()
-```
+  ungroup()
 
-    ## # A tibble: 68 x 22
-    ##    file     yfp    rfp yfp_rfp_ratio plate strain codonmutation
-    ##    <chr>  <dbl>  <dbl>         <dbl> <int> <chr>  <chr>        
-    ##  1 Spec…   169.   152.        11.1       1 by4741 <NA>         
-    ##  2 Spec… 21822. 20724.        10.5       1 schp0… aga          
-    ##  3 Spec… 12828. 20469.         6.27      1 schp0… cgg          
-    ##  4 Spec… 12327. 20717.         5.95      1 schp0… cgg          
-    ##  5 Spec…  6370. 19592.         3.25      1 schp0… cgg          
-    ##  6 Spec…  7531. 19945.         3.78      1 schp0… cgg          
-    ##  7 Spec…  6224. 19767.         3.15      1 schp0… cgg          
-    ##  8 Spec…  8190. 19926.         4.11      1 schp1… cgg          
-    ##  9 Spec…   470. 17841.         0.264     1 schp15 <NA>         
-    ## 10 Spec…  3585. 17445.         2.06      1 schp19 cgg          
-    ## # ... with 58 more rows, and 15 more variables:
-    ## #   numberofcodonrepeats <chr>, stallsites <chr>,
-    ## #   initiationmutation <fct>, gene <chr>, gpdmkate2 <chr>, citrine <chr>,
-    ## #   replicate <int>, note <chr>, numberofstallsites <dbl>, mean_yfp <dbl>,
-    ## #   mean_rfp <dbl>, mean_ratio <dbl>, se_yfp <dbl>, se_rfp <dbl>,
-    ## #   se_ratio <dbl>
+normalization <- avg_data %>% 
+  filter(strain == "schp19")
+```
 
 Plot the raw values for the 4 control samples used across all experiments
 -------------------------------------------------------------------------
@@ -211,16 +235,16 @@ plot_data <- avg_data %>%
 ```
 
     ## # A tibble: 8 x 4
-    ##   strain channel   mean     se
-    ##   <chr>  <chr>    <dbl>  <dbl>
-    ## 1 by4741 rfp       151.  29.8 
-    ## 2 by4741 yfp       155.  16.6 
-    ## 3 schp15 rfp     18719. 569.  
-    ## 4 schp15 yfp       474.   1.78
-    ## 5 schp19 rfp     17647. 550.  
-    ## 6 schp19 yfp      3765.  91.4 
-    ## 7 schp20 rfp     16567. 346.  
-    ## 8 schp20 yfp     30711. 578.
+    ##   strain channel      mean     se
+    ##   <chr>  <chr>       <dbl>  <dbl>
+    ## 1 by4741 rfp     -1.07e-14  29.8 
+    ## 2 by4741 yfp     -3.19e+ 2  16.6 
+    ## 3 schp15 rfp      1.86e+ 4 569.  
+    ## 4 schp15 yfp      1.42e-14   1.78
+    ## 5 schp19 rfp      1.75e+ 4 550.  
+    ## 6 schp19 yfp      3.29e+ 3  91.4 
+    ## 7 schp20 rfp      1.64e+ 4 346.  
+    ## 8 schp20 yfp      3.02e+ 4 578.
 
 ``` r
 plot_data %>%
@@ -238,13 +262,40 @@ plot_data %>%
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-![](initiation_pgk1_cgg_position_number_files/figure-markdown_github/unnamed-chunk-6-1.png)
+![](initiation_pgk1_cgg_position_number_flow_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
-Plot background subtracted mean YFP and RFP as a function of initiation codon
------------------------------------------------------------------------------
+Plot mean YFP as a function of initiation codon
+-----------------------------------------------
 
 ``` r
 plot_data <- avg_data %>% 
+  mutate(mean_ratio = mean_ratio / normalization[[1, "mean_ratio"]]) %>% 
+  filter(gene == "pgk1") %>% 
+  filter(codonmutation == "cgg" & stallsites == 5 | 
+           codonmutation == "aga" & is.na(stallsites)) %>% 
+  filter(initiationmutation != "CTG") %>%
+  mutate(codonmutation = paste0("5×", toupper(codonmutation)))
+
+plot_data %>% 
+  ggplot(aes(x = initiationmutation, y = mean_yfp, 
+             ymin = mean_yfp - se_yfp, ymax = mean_yfp + se_yfp,
+             group = codonmutation)) +
+  geom_point(size = 1, height = 0, width = 0.1, alpha = 0.5) +
+  geom_line() +
+  geom_errorbar(width = 0.5) +
+  facet_wrap(~codonmutation, ncol = 1, scales = "free") + 
+  labs(y = 'fluorscence (a.u.)',
+       x = 'Kozak (-4 to -1)') +
+  theme(legend.title = element_text(size = 8),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6))
+```
+
+![](initiation_pgk1_cgg_position_number_flow_files/figure-markdown_github/unnamed-chunk-7-1.png) \#\# Plot mean YFP / RFP ratio as a function of initiation codon
+
+``` r
+plot_data <- avg_data %>% 
+  mutate(mean_ratio = mean_ratio / normalization[[1, "mean_ratio"]]) %>% 
+  mutate(se_ratio = se_ratio / normalization[[1, "mean_ratio"]]) %>% 
   filter(gene == "pgk1") %>% 
   filter(codonmutation == "cgg" & stallsites == 5 | 
            codonmutation == "aga" & is.na(stallsites)) %>% 
@@ -262,10 +313,11 @@ plot_data %>%
   labs(y = 'fluorscence (a.u.)',
        x = 'Kozak (-4 to -1)') +
   theme(legend.title = element_text(size = 8),
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 6))
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n=4))
 ```
 
-![](initiation_pgk1_cgg_position_number_files/figure-markdown_github/unnamed-chunk-7-1.png)
+![](initiation_pgk1_cgg_position_number_flow_files/figure-markdown_github/unnamed-chunk-8-1.png)
 
 ``` r
 ggsave('../figures/initiation_pgk1_cgg.pdf')

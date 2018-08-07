@@ -21,6 +21,7 @@ library(rasilabRtemplates)
 
 # bad wells that had zero or abnormal signals. These are excluded from analysis.
 bad_wells <- list(
+  # this strain had an abnormally high RFP signal
   list("strain" = "schp281", "replicate" = 3),
   list("strain" = "schp307", "replicate" = 1)
 ) %>% 
@@ -33,7 +34,7 @@ background_strain <- "schp15"
 # intiiation sites are arranged in this order
 initiationmutation_order <- seq(1,8)
 names(initiationmutation_order) <- toupper(c( 'ctgc', 'ccgc', 
-                              'acgc', 'ccga', 'ccac', 'ccaa', 'aaaa', 'caaa'))
+                              'acgc', 'ccga', 'ccac', 'ccaa', 'caaa', 'aaaa'))
 ```
 
 ## Read data into a single data frame
@@ -102,13 +103,33 @@ by_file <- flowdata  %>%
   print()
 ```
 
-## Calculate ratio of YFP to RFP, mean, standard deviation 
+## Calculate mean and standard deviation 
 ```{r}
 avg_data  <- by_file %>% 
-  anti_join(bad_wells) %>% 
+  # anti_join(bad_wells) %>% 
   # strain is used to get replicates
   group_by(strain) %>% 
   # calculate mean and std.err
+  mutate(mean_yfp = mean(yfp), 
+         mean_rfp = mean(rfp)) %>% 
+  ungroup() %>% 
+  print()
+
+yfp_background <- avg_data %>% 
+  filter(strain == "schp15") %>% 
+  pull(mean_yfp)
+
+rfp_background <- avg_data %>% 
+  filter(strain == "by4741") %>% 
+  pull(mean_rfp)
+
+avg_data <- avg_data %>% 
+  anti_join(bad_wells) %>% 
+  mutate(yfp = yfp - yfp_background, 
+         rfp = rfp - rfp_background, 
+         yfp_rfp_ratio = yfp / rfp) %>% 
+  # calculate mean and std.err
+  group_by(strain) %>% 
   mutate(mean_yfp = mean(yfp), 
          mean_rfp = mean(rfp), 
          mean_ratio = mean(yfp_rfp_ratio), 
@@ -116,8 +137,10 @@ avg_data  <- by_file %>%
          se_rfp = sd(rfp)/sqrt(n()),
          se_ratio = sd(yfp_rfp_ratio)/sqrt(n())) %>% 
   slice(1) %>% 
-  ungroup() %>% 
-  print()
+  ungroup()
+
+normalization <- avg_data %>% 
+  filter(strain == "schp19")
 ```
 
 ## Plot the raw values for the 4 control samples used across all experiments
@@ -145,10 +168,36 @@ plot_data %>%
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-## Plot background subtracted mean YFP and RFP as a function of initiation codon
+## Plot mean YFP as a function of initiation codon
 
 ```{r, fig.width=1.5, fig.height=3}
 plot_data <- avg_data %>% 
+  mutate(mean_ratio = mean_ratio / normalization[[1, "mean_ratio"]]) %>% 
+  filter(gene == "pgk1") %>% 
+  filter(codonmutation == "cgg" & stallsites == 5 | 
+           codonmutation == "aga" & is.na(stallsites)) %>% 
+  filter(initiationmutation != "CTG") %>%
+  mutate(codonmutation = paste0("5×", toupper(codonmutation)))
+
+plot_data %>% 
+  ggplot(aes(x = initiationmutation, y = mean_yfp, 
+             ymin = mean_yfp - se_yfp, ymax = mean_yfp + se_yfp,
+             group = codonmutation)) +
+  geom_point(size = 1, height = 0, width = 0.1, alpha = 0.5) +
+  geom_line() +
+  geom_errorbar(width = 0.5) +
+  facet_wrap(~codonmutation, ncol = 1, scales = "free") + 
+  labs(y = 'fluorscence (a.u.)',
+       x = 'Kozak (-4 to -1)') +
+  theme(legend.title = element_text(size = 8),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6))
+```
+## Plot mean YFP / RFP ratio as a function of initiation codon
+
+```{r, fig.width=1.5, fig.height=3}
+plot_data <- avg_data %>% 
+  mutate(mean_ratio = mean_ratio / normalization[[1, "mean_ratio"]]) %>% 
+  mutate(se_ratio = se_ratio / normalization[[1, "mean_ratio"]]) %>% 
   filter(gene == "pgk1") %>% 
   filter(codonmutation == "cgg" & stallsites == 5 | 
            codonmutation == "aga" & is.na(stallsites)) %>% 
@@ -166,7 +215,8 @@ plot_data %>%
   labs(y = 'fluorscence (a.u.)',
        x = 'Kozak (-4 to -1)') +
   theme(legend.title = element_text(size = 8),
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 6))
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n=4))
 
 ggsave('../figures/initiation_pgk1_cgg.pdf')
 ```
