@@ -1,274 +1,222 @@
-Flow analysis of PGK1 constructs with 8xCCG / 8xCCA inserts and varying Kozak
+Fluorescence of PGK1 WT reporters with 8xCCG / 8xCCA inserts and varying 5'UTR mutations
 ================
 rasi
-06 August, 2018
+14 December, 2018
 
 -   [Import libraries and analysis specific parameters](#import-libraries-and-analysis-specific-parameters)
--   [Read data into a single data frame](#read-data-into-a-single-data-frame)
+-   [Read data](#read-data)
 -   [Read annotations](#read-annotations)
--   [Rename and calculate average values of fluorescence channels](#rename-and-calculate-average-values-of-fluorescence-channels)
--   [Calculate mean and standard deviation](#calculate-mean-and-standard-deviation)
--   [Plot the raw values for the 4 control samples used across all experiments](#plot-the-raw-values-for-the-4-control-samples-used-across-all-experiments)
--   [Plot mean YFP / RFP ratio as a function of initiation codon](#plot-mean-yfp-rfp-ratio-as-a-function-of-initiation-codon)
+-   [Rename and calculate average values of fluorescence channels in each well](#rename-and-calculate-average-values-of-fluorescence-channels-in-each-well)
+-   [Calculate mean and standard error over replicates](#calculate-mean-and-standard-error-over-replicates)
+-   [Plot and tabulate background subtracted and normalized YFP/RFP ratio as a function of initiation codon](#plot-and-tabulate-background-subtracted-and-normalized-yfprfp-ratio-as-a-function-of-initiation-codon)
 
 Import libraries and analysis specific parameters
--------------------------------------------------
+=================================================
 
 ``` r
 # standard analysis and plotting functions, includes dplyr, ggplot2 
 library(tidyverse)
 # loads lab default ggplot2 theme and provides color-blind friendly palette
 library(rasilabRtemplates)
+# standard error
+library(plotrix)
 
-# intiiation sites are arranged in this order
+# initiation sites are arranged in this order
 initiationmutation_order <- seq(1,8)
 names(initiationmutation_order) <- toupper(c( 'ctgc', 'ccgc', 
                               'acgc', 'ccga', 'ccac', 'ccaa', 'caaa', 'aaaa'))
+
+# this folder contains the data and annotations
+fcs_file_folder <- "../data/flow/initiation_pgk1_8xccg/"
 ```
 
-Read data into a single data frame
-----------------------------------
+Read data
+=========
 
 ``` r
-flowdata  <- '../data/flow/initiation_pgk1_8xccg/' %>% 
-  # get all fcs files
-  list.files(full.names = T, pattern = '.fcs$') %>% 
-  enframe("sno", "filename") %>% 
-  # get data from each file
-  mutate(data = map(filename, . %>% 
-                      flowCore::read.FCS(transformation = F, alter.names = T) %>% 
-                      flowCore::exprs() %>% 
-                      as_tibble())) %>% 
-  # extract file name without .fcs extension and parent folder name
-  mutate(file = str_extract(filename, '[^/]+(?=.fcs$)')) %>% 
-  # get rid of unwanted columns
-  select(-sno, -filename) %>% 
-  # expand data out
-  unnest() %>% 
+flowdata  <- read_tsv(paste0(fcs_file_folder, '/data.tsv')) %>% 
   print()
 ```
 
-    ## # A tibble: 1,920,000 x 6
-    ##    file                      FSC.A  SSC.A FITC.A PE.Texas.Red.A  Time
-    ##    <chr>                     <dbl>  <dbl>  <dbl>          <dbl> <dbl>
-    ##  1 Specimen_001_B10_B10_009 49345. 53625. 10432.         16650.  3.01
-    ##  2 Specimen_001_B10_B10_009 38518. 24503.  6054.         10228.  3.02
-    ##  3 Specimen_001_B10_B10_009 90689. 82742. 15706.         35931.  3.03
-    ##  4 Specimen_001_B10_B10_009 37548. 26168.  5287.         11544.  3.07
-    ##  5 Specimen_001_B10_B10_009 39889. 27324.  6971.         13016.  3.08
-    ##  6 Specimen_001_B10_B10_009 34592. 35675.  7923.         18660.  3.09
-    ##  7 Specimen_001_B10_B10_009 81660. 92508. 16746.         33584.  3.09
-    ##  8 Specimen_001_B10_B10_009 69554. 46281. 12438.         22019.  3.09
-    ##  9 Specimen_001_B10_B10_009 31835. 38506.  4795.         15942.  3.10
-    ## 10 Specimen_001_B10_B10_009 47060. 40122.  9663.         24745.  3.12
-    ## # ... with 1,919,990 more rows
+    ## # A tibble: 1,760,000 x 7
+    ##    plate well  FSC.A SSC.A FITC.A PE.Texas.Red.A  Time
+    ##    <int> <chr> <int> <int>  <int>          <int> <dbl>
+    ##  1     1 B2    40984 27612    106            -60  3.03
+    ##  2     1 B2    39139 25996     21            -44  3.04
+    ##  3     1 B2    31477 31845     24             25  3.04
+    ##  4     1 B2    50164 28411     54             49  3.04
+    ##  5     1 B2    43336 53994     81             98  3.05
+    ##  6     1 B2    46767 37968     76            145  3.05
+    ##  7     1 B2    82223 38427    150            110  3.06
+    ##  8     1 B2    41407 34166     51            -97  3.06
+    ##  9     1 B2    74408 85217     57            120  3.07
+    ## 10     1 B2    96767 46185    184            121  3.09
+    ## # ... with 1,759,990 more rows
 
 Read annotations
-----------------
+================
 
 ``` r
-annotations <- '../data/flow/initiation_pgk1_8xccg/sampleannotations.tsv' %>% 
-                        read_tsv(col_types = list('plate' = col_integer())) %>% 
-  # the default initiation mutation is CAAA
-  mutate(initiationmutation = if_else(is.na(initiationmutation), "CAAA", 
-                                      initiationmutation)) %>% 
-  mutate(initiationmutation = toupper(initiationmutation)) %>% 
-  # arrange initiationmutation in this order 
-  mutate(initiationmutation = fct_reorder(
-      initiationmutation, 
-      initiationmutation_order[initiationmutation])) %>% 
+annotations  <- read_tsv(paste0(fcs_file_folder, '/annotations.tsv')) %>% 
   print()
 ```
 
-    ## # A tibble: 192 x 16
-    ##    plate file  strain codonmutation numberofcodonre… stallsites
-    ##    <int> <chr> <chr>  <chr>         <chr>            <chr>     
-    ##  1     1 Spec… by4741 na            na               na        
-    ##  2     1 Spec… schp15 na            na               na        
-    ##  3     1 Spec… schp19 cgg           6                1         
-    ##  4     1 Spec… schp20 aga           6                na        
-    ##  5     1 Spec… schp76 aga           5                na        
-    ##  6     1 Spec… schp91 cgg           5                5         
-    ##  7     1 Spec… schp6… cca           8                na        
-    ##  8     1 Spec… schp6… cca           8                na        
-    ##  9     1 Spec… schp6… cca           8                na        
-    ## 10     1 Spec… schp6… cca           8                na        
-    ## # ... with 182 more rows, and 10 more variables: initiationmutation <fct>,
-    ## #   genes <chr>, gpdmkate2 <chr>, citrine <chr>, replicate <int>,
-    ## #   knockoutgenes <chr>, taggene <chr>, tag <chr>, genewithtag <chr>,
-    ## #   note <chr>
+    ## # A tibble: 176 x 7
+    ##    plate well  strain  replicate initiationmutation codonmutation gene   
+    ##    <int> <chr> <chr>       <int> <chr>              <chr>         <chr>  
+    ##  1     1 B2    by4741          1 CAAA               <NA>          <NA>   
+    ##  2     1 B3    schp15          1 CAAA               <NA>          <NA>   
+    ##  3     1 B4    schp19          1 CAAA               cgg           maxhis3
+    ##  4     1 B5    schp20          1 CAAA               aga           maxhis3
+    ##  5     1 B8    schp617         1 CAAA               cca           pgk1   
+    ##  6     1 B9    schp618         1 CCGC               cca           pgk1   
+    ##  7     1 B10   schp619         1 CCAA               cca           pgk1   
+    ##  8     1 B11   schp620         1 CCAC               cca           pgk1   
+    ##  9     1 C2    schp621         1 CCGA               cca           pgk1   
+    ## 10     1 C3    schp622         1 CTGC               cca           pgk1   
+    ## # ... with 166 more rows
 
-Rename and calculate average values of fluorescence channels
-------------------------------------------------------------
+Rename and calculate average values of fluorescence channels in each well
+=========================================================================
 
 ``` r
 by_file <- flowdata  %>% 
-  # group by  each file (well)
-  group_by(file) %>% 
+  # group by each plate and well
+  group_by(plate, well) %>% 
   select(FITC.A, PE.Texas.Red.A) %>% 
   # calculate mean
   summarise_all(mean) %>% 
   # rename
   rename('yfp' = FITC.A, 'rfp' = PE.Texas.Red.A) %>% 
-  # ratios
-  mutate('yfp_rfp_ratio' = yfp / rfp * 10) %>% 
   # join annotations
-  left_join(annotations, by = 'file') %>% 
+  left_join(annotations, by = c('plate', 'well')) %>% 
   print()
 ```
 
-    ## # A tibble: 192 x 19
-    ##    file     yfp    rfp yfp_rfp_ratio plate strain codonmutation
-    ##    <chr>  <dbl>  <dbl>         <dbl> <int> <chr>  <chr>        
-    ##  1 Spec… 1.04e4 2.25e4         4.63      1 schp6… cca          
-    ##  2 Spec… 8.42e3 2.34e4         3.61      1 schp6… cca          
-    ##  3 Spec… 5.71e1 2.26e1        25.3       1 by4741 na           
-    ##  4 Spec… 2.19e2 2.16e4         0.101     1 schp15 na           
-    ##  5 Spec… 2.96e3 2.14e4         1.38      1 schp19 cgg          
-    ##  6 Spec… 2.26e4 1.98e4        11.4       1 schp20 aga          
-    ##  7 Spec… 1.33e4 2.17e4         6.10      1 schp76 aga          
-    ##  8 Spec… 4.86e3 2.37e4         2.05     NA <NA>   <NA>         
-    ##  9 Spec… 1.24e4 2.16e4         5.75      1 schp6… cca          
-    ## 10 Spec… 6.08e3 2.35e4         2.59      1 schp6… cca          
-    ## # ... with 182 more rows, and 12 more variables:
-    ## #   numberofcodonrepeats <chr>, stallsites <chr>,
-    ## #   initiationmutation <fct>, genes <chr>, gpdmkate2 <chr>, citrine <chr>,
-    ## #   replicate <int>, knockoutgenes <chr>, taggene <chr>, tag <chr>,
-    ## #   genewithtag <chr>, note <chr>
+    ## # A tibble: 176 x 9
+    ## # Groups:   plate [?]
+    ##    plate well     yfp    rfp strain replicate initiationmutat…
+    ##    <int> <chr>  <dbl>  <dbl> <chr>      <int> <chr>           
+    ##  1     1 B10   1.04e4 2.25e4 schp6…         1 CCAA            
+    ##  2     1 B11   8.42e3 2.34e4 schp6…         1 CCAC            
+    ##  3     1 B2    5.68e1 2.25e1 by4741         1 CAAA            
+    ##  4     1 B3    2.18e2 2.16e4 schp15         1 CAAA            
+    ##  5     1 B4    2.96e3 2.14e4 schp19         1 CAAA            
+    ##  6     1 B5    2.26e4 1.98e4 schp20         1 CAAA            
+    ##  7     1 B8    1.24e4 2.16e4 schp6…         1 CAAA            
+    ##  8     1 B9    6.08e3 2.35e4 schp6…         1 CCGC            
+    ##  9     1 C10   5.49e3 2.53e4 schp6…         1 CCAC            
+    ## 10     1 C11   5.72e3 2.44e4 schp6…         1 CCGA            
+    ## # ... with 166 more rows, and 2 more variables: codonmutation <chr>,
+    ## #   gene <chr>
 
-Calculate mean and standard deviation
--------------------------------------
+Calculate mean and standard error over replicates
+=================================================
 
 ``` r
 avg_data  <- by_file %>% 
+  # anti_join(bad_wells) %>% 
   # strain is used to get replicates
   group_by(strain) %>% 
   # calculate mean and std.err
   mutate(mean_yfp = mean(yfp), 
          mean_rfp = mean(rfp)) %>% 
   ungroup() %>% 
-  print()
-```
-
-    ## # A tibble: 192 x 21
-    ##    file     yfp    rfp yfp_rfp_ratio plate strain codonmutation
-    ##    <chr>  <dbl>  <dbl>         <dbl> <int> <chr>  <chr>        
-    ##  1 Spec… 1.04e4 2.25e4         4.63      1 schp6… cca          
-    ##  2 Spec… 8.42e3 2.34e4         3.61      1 schp6… cca          
-    ##  3 Spec… 5.71e1 2.26e1        25.3       1 by4741 na           
-    ##  4 Spec… 2.19e2 2.16e4         0.101     1 schp15 na           
-    ##  5 Spec… 2.96e3 2.14e4         1.38      1 schp19 cgg          
-    ##  6 Spec… 2.26e4 1.98e4        11.4       1 schp20 aga          
-    ##  7 Spec… 1.33e4 2.17e4         6.10      1 schp76 aga          
-    ##  8 Spec… 4.86e3 2.37e4         2.05     NA <NA>   <NA>         
-    ##  9 Spec… 1.24e4 2.16e4         5.75      1 schp6… cca          
-    ## 10 Spec… 6.08e3 2.35e4         2.59      1 schp6… cca          
-    ## # ... with 182 more rows, and 14 more variables:
-    ## #   numberofcodonrepeats <chr>, stallsites <chr>,
-    ## #   initiationmutation <fct>, genes <chr>, gpdmkate2 <chr>, citrine <chr>,
-    ## #   replicate <int>, knockoutgenes <chr>, taggene <chr>, tag <chr>,
-    ## #   genewithtag <chr>, note <chr>, mean_yfp <dbl>, mean_rfp <dbl>
-
-``` r
-yfp_background <- avg_data %>% 
-  filter(strain == "schp15") %>% 
-  pull(mean_yfp)
-
-rfp_background <- avg_data %>% 
-  filter(strain == "by4741") %>% 
-  pull(mean_rfp)
-
-avg_data <- avg_data %>% 
-  mutate(yfp = yfp - yfp_background, 
-         rfp = rfp - rfp_background, 
-         yfp_rfp_ratio = yfp / rfp) %>% 
-  # calculate mean and std.err
+  mutate(yfp = yfp - mean_yfp[strain == "schp15" & replicate == 1], 
+         rfp = rfp - mean_rfp[strain == "by4741" & replicate == 1]) %>% 
+  mutate(yfp_rfp_ratio = yfp / rfp) %>% 
+  # calculate mean and standard error
   group_by(strain) %>% 
   mutate(mean_yfp = mean(yfp), 
          mean_rfp = mean(rfp), 
          mean_ratio = mean(yfp_rfp_ratio), 
-         se_yfp = sd(yfp)/sqrt(n()), 
-         se_rfp = sd(rfp)/sqrt(n()),
-         se_ratio = sd(yfp_rfp_ratio)/sqrt(n())) %>% 
+         se_yfp = std.error(yfp), 
+         se_rfp = std.error(rfp),
+         se_ratio = std.error(yfp_rfp_ratio),
+         n = n()) %>% 
   slice(1) %>% 
-  ungroup()
+  ungroup() %>% 
+  print()
+```
 
+    ## # A tibble: 22 x 17
+    ##    plate well      yfp     rfp strain replicate initiationmutat…
+    ##    <int> <chr>   <dbl>   <dbl> <chr>      <int> <chr>           
+    ##  1     1 B2    -1.82e2 -6.81e0 by4741         1 CAAA            
+    ##  2     1 B3    -2.05e1  2.16e4 schp15         1 CAAA            
+    ##  3     1 B4     2.72e3  2.14e4 schp19         1 CAAA            
+    ##  4     1 B5     2.24e4  1.98e4 schp20         1 CAAA            
+    ##  5     1 B8     1.22e4  2.16e4 schp6…         1 CAAA            
+    ##  6     1 B9     5.84e3  2.34e4 schp6…         1 CCGC            
+    ##  7     1 B10    1.02e4  2.25e4 schp6…         1 CCAA            
+    ##  8     1 B11    8.18e3  2.33e4 schp6…         1 CCAC            
+    ##  9     1 C2     8.01e3  2.35e4 schp6…         1 CCGA            
+    ## 10     1 C3     3.45e3  2.21e4 schp6…         1 CTGC            
+    ## # ... with 12 more rows, and 10 more variables: codonmutation <chr>,
+    ## #   gene <chr>, mean_yfp <dbl>, mean_rfp <dbl>, yfp_rfp_ratio <dbl>,
+    ## #   mean_ratio <dbl>, se_yfp <dbl>, se_rfp <dbl>, se_ratio <dbl>, n <int>
+
+``` r
 normalization <- avg_data %>% 
   filter(strain == "schp19")
 ```
 
-Plot the raw values for the 4 control samples used across all experiments
--------------------------------------------------------------------------
-
-``` r
-plot_data <- avg_data %>% 
-  filter(strain %in% c("schp15", "schp19", "schp20", "by4741")) %>% 
-  select(strain, mean_yfp, mean_rfp, se_yfp, se_rfp) %>% 
-  gather(qty, value, -strain) %>% 
-  separate(qty, into = c("measure", "channel"), sep = "_") %>% 
-  spread(measure, value) %>% 
-  print()
-```
-
-    ## # A tibble: 8 x 4
-    ##   strain channel      mean     se
-    ##   <chr>  <chr>       <dbl>  <dbl>
-    ## 1 by4741 rfp     -1.33e-15   1.52
-    ## 2 by4741 yfp     -1.78e+ 2   1.85
-    ## 3 schp15 rfp      2.00e+ 4 362.  
-    ## 4 schp15 yfp     -1.07e-14   4.77
-    ## 5 schp19 rfp      1.92e+ 4 449.  
-    ## 6 schp19 yfp      2.62e+ 3  34.1 
-    ## 7 schp20 rfp      1.92e+ 4 265.  
-    ## 8 schp20 yfp      2.16e+ 4 294.
-
-``` r
-plot_data %>%
-  ggplot(aes(x = strain, y = mean,
-             ymin = mean - se, ymax = mean + se)) +
-  facet_wrap(~channel, ncol = 2, scales = "free") +
-  geom_point(size = 1, height = 0, width = 0.1, alpha = 0.5) +
-  geom_line() +
-  ggrepel::geom_text_repel(aes(label = as.integer(mean), y = mean), 
-                           size = 3, direction = "y") +
-  geom_errorbar(width = 0.5) +
-  labs(y = 'protein level (a.u.)',
-       x = 'strain',
-       title = "Standard strain controls") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-![](initiation_pgk1_8xccg_flow_files/figure-markdown_github/unnamed-chunk-6-1.png)
-
-Plot mean YFP / RFP ratio as a function of initiation codon
------------------------------------------------------------
+Plot and tabulate background subtracted and normalized YFP/RFP ratio as a function of initiation codon
+======================================================================================================
 
 ``` r
 plot_data <- avg_data %>% 
   mutate(mean_ratio = mean_ratio / normalization[[1, "mean_ratio"]]) %>% 
   mutate(se_ratio = se_ratio / normalization[[1, "mean_ratio"]]) %>% 
-  filter(codonmutation == "cca" | codonmutation == "ccg") %>%
   filter(initiationmutation != "CTG") %>%
-  filter(numberofcodonrepeats == 8) %>%   
+  # arrange initiationmutation in this order
+  mutate(initiationmutation = fct_reorder(
+      initiationmutation,
+      initiationmutation_order[initiationmutation])) %>%
+  filter(gene == "pgk1") %>% 
   mutate(codonmutation = paste0("8×", toupper(codonmutation)))
 
 plot_data %>% 
   ggplot(aes(x = initiationmutation, y = mean_ratio, 
              ymin = mean_ratio - se_ratio, ymax = mean_ratio + se_ratio,
              group = codonmutation)) +
-  geom_point(size = 1, height = 0, width = 0.1, alpha = 0.5) +
+  geom_point(size = 1.5) +
   geom_line() +
-  geom_errorbar(width = 0.5) +
-  facet_wrap(~codonmutation, ncol = 1, scales = "free") + 
+  geom_errorbar(width = 0.75) +
+  facet_wrap(~fct_rev(codonmutation), ncol = 1, scales = "free") + 
   labs(y = 'fluorscence (a.u.)',
-       x = 'Kozak (-4 to -1)') +
+       x = '-4 to -1 from ATG') +
   theme(legend.title = element_text(size = 8),
         axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
   scale_y_continuous(breaks = scales::pretty_breaks(n=4))
 ```
 
-![](initiation_pgk1_8xccg_flow_files/figure-markdown_github/unnamed-chunk-7-1.png)
+![](initiation_pgk1_8xccg_flow_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ``` r
 ggsave('../figures/initiation_pgk1_ccg_flow.pdf')
+
+plot_data %>% 
+  arrange(codonmutation, initiationmutation) %>% 
+  select(codonmutation, initiationmutation, mean_ratio, se_ratio, n) %>% 
+  knitr::kable()
 ```
+
+| codonmutation | initiationmutation |  mean\_ratio|  se\_ratio|    n|
+|:--------------|:-------------------|------------:|----------:|----:|
+| 8×CCA         | CTGC               |    1.1394521|  0.0221705|    8|
+| 8×CCA         | CCGC               |    1.8701280|  0.0226876|    8|
+| 8×CCA         | ACGC               |    1.9728935|  0.0304716|    8|
+| 8×CCA         | CCGA               |    2.4700090|  0.0355082|    8|
+| 8×CCA         | CCAC               |    2.6405754|  0.0333001|    8|
+| 8×CCA         | CCAA               |    3.4160907|  0.0410611|    8|
+| 8×CCA         | CAAA               |    4.3049728|  0.0380224|    8|
+| 8×CCA         | AAAA               |    3.2436826|  0.0551267|    8|
+| 8×CCG         | CTGC               |    1.0748197|  0.0166161|    8|
+| 8×CCG         | CCGC               |    1.5480057|  0.0266705|    8|
+| 8×CCG         | ACGC               |    1.5412596|  0.0343491|    8|
+| 8×CCG         | CCGA               |    1.7691801|  0.0337776|    8|
+| 8×CCG         | CCAC               |    1.6671455|  0.0284411|    8|
+| 8×CCG         | CCAA               |    1.1678055|  0.0127702|    8|
+| 8×CCG         | CAAA               |    0.6194959|  0.0149344|    8|
+| 8×CCG         | AAAA               |    0.5486779|  0.0154886|    8|
