@@ -1,4 +1,4 @@
-Flow analysis of PGK1 constructs with 10xAAG / 10xAGA inserts and varying Kozak
+Fluorescence of PGK1 WT reporters with 10xAAG / 10xAGA inserts and varying 5'UTR mutations
 ================
 rasi
 14 December, 2018
@@ -132,13 +132,14 @@ avg_data  <- by_file %>%
          mean_ratio = mean(yfp_rfp_ratio), 
          se_yfp = std.error(yfp), 
          se_rfp = std.error(rfp),
-         se_ratio = std.error(yfp_rfp_ratio)) %>% 
+         se_ratio = std.error(yfp_rfp_ratio),
+         n = n()) %>% 
   slice(1) %>% 
   ungroup() %>% 
   print()
 ```
 
-    ## # A tibble: 22 x 16
+    ## # A tibble: 22 x 17
     ##    plate well      yfp     rfp strain replicate initiationmutat…
     ##    <int> <chr>   <dbl>   <dbl> <chr>      <int> <chr>           
     ##  1     1 B2    -1.98e2 -4.58e0 by4741         1 CAAA            
@@ -151,9 +152,9 @@ avg_data  <- by_file %>%
     ##  8     1 B10    4.12e3  2.07e4 schp6…         1 CCAC            
     ##  9     1 B11    4.54e3  2.15e4 schp6…         1 CCGA            
     ## 10     1 C2     2.60e3  2.09e4 schp6…         1 CTGC            
-    ## # ... with 12 more rows, and 9 more variables: codonmutation <chr>,
+    ## # ... with 12 more rows, and 10 more variables: codonmutation <chr>,
     ## #   gene <chr>, mean_yfp <dbl>, mean_rfp <dbl>, yfp_rfp_ratio <dbl>,
-    ## #   mean_ratio <dbl>, se_yfp <dbl>, se_rfp <dbl>, se_ratio <dbl>
+    ## #   mean_ratio <dbl>, se_yfp <dbl>, se_rfp <dbl>, se_ratio <dbl>, n <int>
 
 ``` r
 normalization <- avg_data %>% 
@@ -179,9 +180,9 @@ plot_data %>%
   ggplot(aes(x = initiationmutation, y = mean_ratio, 
              ymin = mean_ratio - se_ratio, ymax = mean_ratio + se_ratio,
              group = codonmutation)) +
-  geom_point(size = 1, height = 0, width = 0.1, alpha = 0.5) +
+  geom_point(size = 1.5) +
   geom_line() +
-  geom_errorbar(width = 0.5) +
+  geom_errorbar(width = 0.75) +
   facet_wrap(~fct_rev(codonmutation), ncol = 1, scales = "free") + 
   labs(y = 'fluorscence (a.u.)',
        x = '-4 to -1 from ATG') +
@@ -197,25 +198,25 @@ ggsave('../figures/initiation_pgk1_aag_flow.pdf')
 
 plot_data %>% 
   arrange(codonmutation, initiationmutation) %>% 
-  select(codonmutation, initiationmutation, mean_ratio, se_ratio) %>% 
+  select(codonmutation, initiationmutation, mean_ratio, se_ratio, n) %>% 
   knitr::kable()
 ```
 
-| codonmutation | initiationmutation |  mean\_ratio|  se\_ratio|
-|:--------------|:-------------------|------------:|----------:|
-| 10×AAG        | CTGC               |    1.1088094|  0.0321125|
-| 10×AAG        | CCGC               |    1.6162395|  0.0265549|
-| 10×AAG        | ACGC               |    1.6814330|  0.0333337|
-| 10×AAG        | CCGA               |    1.9196658|  0.0060049|
-| 10×AAG        | CCAC               |    1.7708731|  0.0221404|
-| 10×AAG        | CCAA               |    1.2312707|  0.0263910|
-| 10×AAG        | CAAA               |    0.6317991|  0.0366098|
-| 10×AAG        | AAAA               |    0.5185551|  0.0179857|
-| 10×AGA        | CTGC               |    0.7608012|  0.1073595|
-| 10×AGA        | CCGC               |    1.4457960|  0.0282360|
-| 10×AGA        | ACGC               |    1.5724237|  0.0267922|
-| 10×AGA        | CCGA               |    2.0496543|  0.0073044|
-| 10×AGA        | CCAC               |    2.1441320|  0.0224558|
-| 10×AGA        | CCAA               |    2.8808058|  0.0718876|
-| 10×AGA        | CAAA               |    3.5637858|  0.1581838|
-| 10×AGA        | AAAA               |    3.6380288|  0.0287763|
+| codonmutation | initiationmutation |  mean\_ratio|  se\_ratio|    n|
+|:--------------|:-------------------|------------:|----------:|----:|
+| 10×AAG        | CTGC               |    1.1088094|  0.0321125|    3|
+| 10×AAG        | CCGC               |    1.6162395|  0.0265549|    3|
+| 10×AAG        | ACGC               |    1.6814330|  0.0333337|    3|
+| 10×AAG        | CCGA               |    1.9196658|  0.0060049|    3|
+| 10×AAG        | CCAC               |    1.7708731|  0.0221404|    3|
+| 10×AAG        | CCAA               |    1.2312707|  0.0263910|    3|
+| 10×AAG        | CAAA               |    0.6317991|  0.0366098|    3|
+| 10×AAG        | AAAA               |    0.5185551|  0.0179857|    3|
+| 10×AGA        | CTGC               |    0.7608012|  0.1073595|    3|
+| 10×AGA        | CCGC               |    1.4457960|  0.0282360|    3|
+| 10×AGA        | ACGC               |    1.5724237|  0.0267922|    3|
+| 10×AGA        | CCGA               |    2.0496543|  0.0073044|    3|
+| 10×AGA        | CCAC               |    2.1441320|  0.0224558|    3|
+| 10×AGA        | CCAA               |    2.8808058|  0.0718876|    3|
+| 10×AGA        | CAAA               |    3.5637858|  0.1581838|    3|
+| 10×AGA        | AAAA               |    3.6380288|  0.0287763|    3|

@@ -151,7 +151,8 @@ avg_data  <- by_file %>%
          mean_ratio = mean(yfp_rfp_ratio), 
          se_yfp = std.error(yfp), 
          se_rfp = std.error(rfp),
-         se_ratio = std.error(yfp_rfp_ratio)) %>% 
+         se_ratio = std.error(yfp_rfp_ratio),
+         n = n()) %>% 
   slice(1) %>% 
   ungroup()
 
@@ -189,6 +190,6 @@ ggsave("../figures/initiation_pgk1_no_insert_flow.pdf")
 
 plot_data %>% 
   arrange(initiationmutation) %>% 
-  select(initiationmutation, mean_ratio, se_ratio) %>% 
+  select(initiationmutation, mean_ratio, se_ratio, n) %>% 
   knitr::kable()
 ```

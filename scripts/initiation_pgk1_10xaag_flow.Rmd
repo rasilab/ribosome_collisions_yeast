@@ -1,5 +1,5 @@
 ---
-title: "Flow analysis of PGK1 constructs with 10xAAG / 10xAGA inserts and varying Kozak"
+title: "Fluorescence of PGK1 WT reporters with 10xAAG / 10xAGA inserts and varying 5'UTR mutations"
 author: "`r Sys.info()[['user']]`"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
@@ -147,7 +147,8 @@ avg_data  <- by_file %>%
          mean_ratio = mean(yfp_rfp_ratio), 
          se_yfp = std.error(yfp), 
          se_rfp = std.error(rfp),
-         se_ratio = std.error(yfp_rfp_ratio)) %>% 
+         se_ratio = std.error(yfp_rfp_ratio),
+         n = n()) %>% 
   slice(1) %>% 
   ungroup() %>% 
   print()
@@ -175,9 +176,9 @@ plot_data %>%
   ggplot(aes(x = initiationmutation, y = mean_ratio, 
              ymin = mean_ratio - se_ratio, ymax = mean_ratio + se_ratio,
              group = codonmutation)) +
-  geom_point(size = 1, height = 0, width = 0.1, alpha = 0.5) +
+  geom_point(size = 1.5) +
   geom_line() +
-  geom_errorbar(width = 0.5) +
+  geom_errorbar(width = 0.75) +
   facet_wrap(~fct_rev(codonmutation), ncol = 1, scales = "free") + 
   labs(y = 'fluorscence (a.u.)',
        x = '-4 to -1 from ATG') +
@@ -189,6 +190,6 @@ ggsave('../figures/initiation_pgk1_aag_flow.pdf')
 
 plot_data %>% 
   arrange(codonmutation, initiationmutation) %>% 
-  select(codonmutation, initiationmutation, mean_ratio, se_ratio) %>% 
+  select(codonmutation, initiationmutation, mean_ratio, se_ratio, n) %>% 
   knitr::kable()
 ```

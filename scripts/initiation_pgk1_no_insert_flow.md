@@ -131,7 +131,8 @@ avg_data  <- by_file %>%
          mean_ratio = mean(yfp_rfp_ratio), 
          se_yfp = std.error(yfp), 
          se_rfp = std.error(rfp),
-         se_ratio = std.error(yfp_rfp_ratio)) %>% 
+         se_ratio = std.error(yfp_rfp_ratio),
+         n = n()) %>% 
   slice(1) %>% 
   ungroup()
 
@@ -174,17 +175,17 @@ ggsave("../figures/initiation_pgk1_no_insert_flow.pdf")
 
 plot_data %>% 
   arrange(initiationmutation) %>% 
-  select(initiationmutation, mean_ratio, se_ratio) %>% 
+  select(initiationmutation, mean_ratio, se_ratio, n) %>% 
   knitr::kable()
 ```
 
-| initiationmutation |  mean\_ratio|  se\_ratio|
-|:-------------------|------------:|----------:|
-| CTGC               |     3.276861|  0.0352938|
-| CCGC               |     5.470610|  0.1554903|
-| ACGC               |     5.845917|  0.0792391|
-| CCGA               |     7.361878|  0.0673016|
-| CCAC               |     8.073923|  0.0963063|
-| CCAA               |    11.204147|  0.1990254|
-| CAAA               |    15.013378|  0.2239361|
-| AAAA               |    15.522777|  0.2430235|
+| initiationmutation |  mean\_ratio|  se\_ratio|    n|
+|:-------------------|------------:|----------:|----:|
+| CTGC               |     3.276861|  0.0352938|    6|
+| CCGC               |     5.470610|  0.1554903|    6|
+| ACGC               |     5.845917|  0.0792391|    6|
+| CCGA               |     7.361878|  0.0673016|    6|
+| CCAC               |     8.073923|  0.0963063|    6|
+| CCAA               |    11.204147|  0.1990254|    6|
+| CAAA               |    15.013378|  0.2239361|    6|
+| AAAA               |    15.522777|  0.2430235|    6|
