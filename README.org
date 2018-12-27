@@ -2,60 +2,19 @@
 #+OPTIONS: num:nil tex:t
 #+LATEX_CLASS_OPTIONS: [10pt,letterpaper]
 #+LATEX_HEADER: \input{latex_template.tex}
-#+TITLE: Ribosome Collisions in Budding Yeast Project
+#+TITLE: A Unified Kinetic Model of Ribosome Collision Stimulated Quality Control in Eukaryotes
 #+DATE: 
 
-* Data analysis pipeline
+** Contents                                                            :toc:
+  - [[#modeling][Modeling]]
+  - [[#data-analysis][Data Analysis]]
 
-** Count the number of reads aligning to each Kozak sequence -- stall sequence combination
+** Modeling
 
-#+BEGIN_SRC sh :exports code
-  # get rid of the header row and extract the 3rd column containing the barcode
-  barcodes=`sed -n '2,$p' data/htseq/initiation_pgk1_aag_ccg/sampleannotations.tsv | cut -f3`
-  cd scripts/htseq/initiation_pgk1_aag_ccg
-  for barcode in $barcodes
-  do
-      # if you are submitted in a single computer, use this and comment line below
-      # python calculate_unique_insert_counts.py $barcode
-      # if you are using the SLURM cluster, use this and comment line above
-      sbatch submit_cluster.sh $barcode
-  done
-#+END_SRC
+All of relevant files are located in the [[modeling]] subfolder.
 
-This wil create the =*_init_codon_pairs.tsv= files in [[file:tables/htseq/initiation_pgk1_aag_ccg/]].
+** Data Analysis
 
-Process the above tables and make plots using the Rmarkdown file [[file:scripts/htseq/initiation_pgk1_aag_ccg/analyze_counts.Rmd]]
+Raw data is in [[data]] folder.
 
-** Count the number of reads aligning to each Kozak sequence for wild-type /PGK1/ without any insert
-
-#+BEGIN_SRC sh :exports code
-  # get rid of the header row and extract the 2rd column containing the barcode
-  barcodes=`sed -n '2,$p' data/htseq/initiation_pgk1_no_insert/sampleannotations.tsv | cut -f2`
-  cd scripts/htseq/initiation_pgk1_no_insert
-  for barcode in $barcodes
-  do
-      # if you are submitted in a single computer, use this and comment line below
-      # python count_unique_inserts.py $barcode
-      # if you are using the SLURM cluster, use this and comment line above
-      sbatch submit_cluster.sh $barcode
-  done
-#+END_SRC
-
-This wil create the =*_init_codon_pairs.tsv= files in [[file:tables/htseq/initiation_pgk1_no_insert/]].
-
-Process the above tables and make plots using the Rmarkdown file [[file:scripts/htseq/initiation_pgk1_no_insert/analyze_counts.Rmd]]
-
-* References
-- citep:Valasek2007 has a nice protocol for how to crosslink pre-initiation complexes and do RNA and protein gels subsequently.
-  They use hot-phenol extraction at 70C for 15 min to reverse protein-RNA formaldehyde crosslinks before RNA analysis.
-  They use boiling in SDS-PAGE sample buffer for 10 min to reverse protein-RAN formaldehyde crosslinks before protein analysis.
-* Notes
-1. Are there endogenous genes that are regulated by ribosome collisions?
-   - /RQC1/ has a stretch of polyK residues that seem to function through a negative feedback loop citep:Brandman2012.
-   - Decrease the initiation rate of ribosomes on /RQC1/ and show that it increases expression of /RQC1/.
-   - Look for other stretches of polyK residues in yeast genome. This was done by citep:Brandman2012, look at their Table S4.
-   - There are lot of ribosomal proteins in Table S4 of citep:Brandman2012. This suggests an interesting hypothesis that synthesis of translation-initiation components including the ribsomes is regulated through a negative-feedback based on translational quality control.
-
-* 
-bibliography:bibliography.bib
-bibliographystyle:cell
+Analysis scripts  are in [[scripts]] folder.
