@@ -11,7 +11,12 @@
 
 ** Modeling
 
-All of relevant files are located in the [[modeling]] subfolder.
+All relevant files are in the [[modeling]] subfolder.
+
+To run simulations from scratch, install our customized versions of:
+- =NFsim=: https://github.com/rasilab/NFsim
+- =BioNetGen=: https://github.com/rasilab/BioNetGen
+- =PySB=: https://github.com/rasilab/PySB
 
 ** Data Analysis
 
