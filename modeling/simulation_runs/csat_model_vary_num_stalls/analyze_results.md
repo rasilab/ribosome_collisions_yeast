@@ -134,7 +134,10 @@ plot_data %>%
   theme(legend.key.height = unit(0.2, "in"))                     
 ```
 
-![](/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/csat_model_vary_num_stalls/analyze_results_files/figure-markdown_github/psr_no_quality_control-1.png)
+![](analyze_results_files/figure-markdown_github/psr_no_quality_control-1.png)
+![](analyze_results_files/figure-markdown_github/psr_no_quality_control-1.png)
+![](analyze_results_files/figure-markdown_github/psr_no_quality_control-1.png)
+![](analyze_results_files/figure-markdown_github/psr_no_quality_control-1.png)
 
 ``` r
 ggsave('figures/psr_csat_effect_of_num_stalls.pdf') 

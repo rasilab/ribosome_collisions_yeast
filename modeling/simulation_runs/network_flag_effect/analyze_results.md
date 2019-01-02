@@ -151,7 +151,8 @@ plot_data %>%
   geom_line()
 ```
 
-![](/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/network_flag_effect/analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
 ``` r
 ggsave("figures/cputime_per_simulation_time.pdf")
@@ -204,7 +205,8 @@ plot_data %>%
   geom_line()
 ```
 
-![](/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/network_flag_effect/analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
 ``` r
 ggsave("figures/n_proteins_vs_simulation_time.pdf")

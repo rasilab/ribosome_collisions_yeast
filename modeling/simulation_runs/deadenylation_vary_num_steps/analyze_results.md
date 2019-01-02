@@ -107,7 +107,8 @@ plot_data %>%
   theme(legend.position = "top")
 ```
 
-![](/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/deadenylation_vary_num_steps/analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
 ``` r
 ggsave("figures/mrna_lifetime_vs_l_polya.pdf")

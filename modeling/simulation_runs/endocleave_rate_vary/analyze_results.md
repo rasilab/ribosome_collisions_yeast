@@ -195,7 +195,8 @@ plot_data %>%
   theme(legend.position = "top")
 ```
 
-![](/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/endocleave_rate_vary/analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
 ``` r
 ggsave("figures/mrna_lifetime_vs_cleavage_rate.pdf", width = 3, height = 2.2)

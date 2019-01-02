@@ -169,7 +169,8 @@ plot_data %>%
   theme(legend.position = "top")
 ```
 
-![](/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/preterm_rate_vary/analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
 ``` r
 ggsave("figures/psr_vs_abortive_termination_rate.pdf", width = 3, height = 2.2)

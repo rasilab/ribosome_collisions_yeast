@@ -141,7 +141,8 @@ plot_data %>%
       )
 ```
 
-![](/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/csec_model_vary_num_stalls/analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
 ``` r
 ggsave("figures/psr_vs_initiation_rate_vary_n_stalls.pdf")

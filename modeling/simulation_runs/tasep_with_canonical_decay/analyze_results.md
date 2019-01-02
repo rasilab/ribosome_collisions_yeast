@@ -141,7 +141,8 @@ plot_data %>%
   theme(legend.position = "top")
 ```
 
-![](/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/tasep_with_canonical_decay/analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
 ``` r
 ggsave("figures/protein_per_mrna_vs_initiation_rate.pdf")
@@ -167,7 +168,8 @@ plot_data %>%
   theme(legend.position = "top")
 ```
 
-![](/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/tasep_with_canonical_decay/analyze_results_files/figure-markdown_github/unnamed-chunk-8-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-8-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-8-1.png)
 
 ``` r
 ggsave("figures/mrna_lifetime_vs_initiation_rate.pdf")
