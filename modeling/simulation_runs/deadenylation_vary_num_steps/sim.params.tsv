@@ -1,0 +1,8 @@
+	k_init	k_elong_stall_1	k_preterm_no_hit_intact	k_preterm_5_hit_intact	k_preterm_3_hit_intact	k_preterm_both_hit_intact	k_preterm_no_hit_endocleaved	k_preterm_5_hit_endocleaved	k_preterm_3_hit_endocleaved	k_preterm_both_hit_endocleaved	k_cleave_no_hit	k_cleave_5_hit	k_cleave_3_hit	k_cleave_both_hit	l_polya	k_deadenylation
+0	0.1	10	0	0	0	0	0	0	0	0	0	0	0	0	1	0.0005
+1	0.1	10	0	0	0	0	0	0	0	0	0	0	0	0	2	0.001
+2	0.1	10	0	0	0	0	0	0	0	0	0	0	0	0	4	0.002
+3	0.1	10	0	0	0	0	0	0	0	0	0	0	0	0	8	0.004
+4	0.1	10	0	0	0	0	0	0	0	0	0	0	0	0	16	0.008
+5	0.1	10	0	0	0	0	0	0	0	0	0	0	0	0	32	0.016
+6	0.1	10	0	0	0	0	0	0	0	0	0	0	0	0	64	0.032
