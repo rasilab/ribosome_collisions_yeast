@@ -1,0 +1,127 @@
+---
+title: "Analyze simulation results"
+author: "`r Sys.info()[['user']]`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  github_document:
+    toc: 2
+---
+
+# Goal
+See how simulation time changes depending on whether we consider polymeric
+nature of mRNA and whether we infer the dependency graph before simulation.
+
+# Strategy
+I am going to parse the simulation times straight from the `rxn.tsv.gz` files
+that record the simulations.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+```
+
+# Load libraries
+```{r}
+library(tidyverse)
+library(rasilabRtemplates)
+```
+
+# Read `rxns.tsv.gz` log files
+```{r}
+data <- list.files("output/", pattern = "rxns.tsv$", full.names = T) %>% 
+  enframe("sno", "file") %>% 
+  mutate(sim.id = str_extract(file, "(?<=tasep_)[[:digit:]]+"),
+         network = str_detect(file, "connect")) %>% 
+  mutate(data = map(file, read_tsv)) %>% 
+  select(-file, -sno) %>% 
+  unnest() %>% 
+  type_convert() %>% 
+  print()
+```
+
+# Read the simulation parameters
+
+Subset to `l_mrna` which is the only parameter that was varied.
+```{r}
+annotations <- list.files("output/", pattern = "params.tsv.gz$", full.names = T) %>% 
+  enframe("sno", "file") %>% 
+  mutate(sim.id = str_extract(file, "(?<=tasep_)[[:digit:]]+"),
+         network = str_detect(file, "connect")) %>% 
+  mutate(data = map(file, read_tsv)) %>% 
+  select(-file, -sno) %>% 
+  unnest() %>% 
+  type_convert() %>% 
+  filter(parameter == "l_mrna") %>% 
+  spread(parameter, value) %>% 
+  print()
+```
+
+# Get the CPU time / simulation time for each simulation
+
+```{r}
+plot_data <- data %>% 
+  group_by(sim.id, network) %>% 
+  filter(cputime == max(cputime)) %>% 
+  ungroup() %>% 
+  left_join(annotations, by = c("sim.id", "network")) %>% 
+  mutate_if(is.logical, funs(if_else(., "Yes", "No"))) %>% 
+  mutate(strategy = paste0("network: ", network)) %>% 
+  group_by(strategy) %>% 
+  mutate(plot_order = max(cputime / time)) %>% 
+  ungroup() %>% 
+  mutate(strategy = fct_reorder(strategy, desc(plot_order))) %>% 
+  select(-network, -plot_order) %>% 
+  print()
+```
+
+# Plot CPU time / simulation time as a function of mRNA length for different simulation strategies
+
+```{r, fig.width=2, fig.height=2.4}
+plot_data %>% 
+  ggplot(aes(x = l_mrna, y = cputime / time, color = strategy, group = strategy)) +
+  geom_point() +
+  scale_color_manual(values = cbPalette) +
+  labs(x = "mRNA length (codons)", y = "CPU time / simulation time",
+       color = "") +
+  scale_x_continuous(breaks = scales::pretty_breaks(n=3)) +
+  scale_y_continuous(trans = "log10",
+                     labels = scales::trans_format("log10", scales::math_format(10^.x)),
+                     breaks = scales::trans_breaks("log2", function(x) 10^x, n = 8)) +
+  annotation_logticks(sides = "l", alpha = 0.5) +
+  theme(legend.position = "bottom", 
+        panel.grid.major.y = element_line(color = "grey", linetype = "dashed")) +
+  guides(color = guide_legend(title = "")) +
+  geom_line()
+
+ggsave("figures/cputime_per_simulation_time.pdf")
+```
+
+# Plot number of proteins vs. time with and without network
+
+```{r, fig.width=2, fig.height=2.4}
+plot_data <- data %>% 
+  left_join(annotations, by = c("sim.id", "network")) %>% 
+  filter(l_mrna == 300) %>% 
+  filter(str_detect(rxn, "^term")) %>% 
+  select(network, time) %>% 
+  group_by(network) %>% 
+  mutate(n_protein = 1:n()) %>% 
+  ungroup() %>% 
+  mutate(n_protein = if_else(network == T, n_protein + 30, as.numeric(n_protein))) %>% 
+  mutate_if(is.logical, funs(if_else(., "Yes", "No"))) %>% 
+  mutate(strategy = paste0("network: ", network)) %>% 
+  print()
+
+plot_data %>% 
+  ggplot(aes(x = time, y = n_protein, color = strategy)) +
+  geom_line(size = 1) +
+  scale_color_manual(values = cbPalette) +
+  labs(x = "simulation time (s)", y = "Number of proteins produced",
+       color = "") +
+  scale_x_continuous(breaks = scales::pretty_breaks(n=3)) +
+  theme(legend.position = "bottom",
+        panel.grid.major.y = element_line(color = "grey", linetype = "dashed")) +
+  guides(color = guide_legend(title = "")) +
+  geom_line()
+
+ggsave("figures/n_proteins_vs_simulation_time.pdf")
+```

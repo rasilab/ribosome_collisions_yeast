@@ -1,0 +1,562 @@
+/fh/fast/subramaniam_a/user/rasi/virtualenv/py362/lib/python3.6/site-packages/matplotlib/__init__.py:846: MatplotlibDeprecationWarning: 
+The text.latex.unicode rcparam was deprecated in Matplotlib 2.2 and will be removed in 3.1.
+  "2.2", name=key, obj_type="rcparam", addendum=addendum)
+/fh/fast/subramaniam_a/user/rasi/virtualenv/py362/lib/python3.6/site-packages/matplotlib/__init__.py:855: MatplotlibDeprecationWarning: 
+examples.directory is deprecated; in the future, examples will be found relative to the 'datapath' directory.
+  "found relative to the 'datapath' directory.".format(key))
+/fh/fast/subramaniam_a/user/rasi/virtualenv/py362/lib/python3.6/site-packages/matplotlib/__init__.py:886: MatplotlibDeprecationWarning: 
+examples.directory is deprecated; in the future, examples will be found relative to the 'datapath' directory.
+  "found relative to the 'datapath' directory.".format(key))
+/fh/fast/subramaniam_a/user/rasi/virtualenv/py362/lib/python3.6/site-packages/matplotlib/__init__.py:855: MatplotlibDeprecationWarning: 
+examples.directory is deprecated; in the future, examples will be found relative to the 'datapath' directory.
+  "found relative to the 'datapath' directory.".format(key))
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cluster nodes: 999
+Job counts:
+	count	jobs
+	1	all
+	1	analyze_data
+	1	combine_mrna_protein_stats
+	60	run_simulation
+	63
+
+[Tue Jan  1 18:42:24 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_7_psr_stats.tsv.gz, output/tasep_7_mrna_lifetime_stats.tsv.gz, output/tasep_7.params.tsv.gz, output/tasep_7_collision_stats.tsv.gz, output/tasep_7_abort_stats.tsv.gz
+    jobid: 10
+    wildcards: n=7
+
+Submitted job 10 with external jobid 'Submitted batch job 31256151'.
+
+[Tue Jan  1 18:42:24 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_9_psr_stats.tsv.gz, output/tasep_9_mrna_lifetime_stats.tsv.gz, output/tasep_9.params.tsv.gz, output/tasep_9_collision_stats.tsv.gz, output/tasep_9_abort_stats.tsv.gz
+    jobid: 12
+    wildcards: n=9
+
+Submitted job 12 with external jobid 'Submitted batch job 31256152'.
+
+[Tue Jan  1 18:42:25 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_24_psr_stats.tsv.gz, output/tasep_24_mrna_lifetime_stats.tsv.gz, output/tasep_24.params.tsv.gz, output/tasep_24_collision_stats.tsv.gz, output/tasep_24_abort_stats.tsv.gz
+    jobid: 27
+    wildcards: n=24
+
+Submitted job 27 with external jobid 'Submitted batch job 31256153'.
+
+[Tue Jan  1 18:42:25 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_5_psr_stats.tsv.gz, output/tasep_5_mrna_lifetime_stats.tsv.gz, output/tasep_5.params.tsv.gz, output/tasep_5_collision_stats.tsv.gz, output/tasep_5_abort_stats.tsv.gz
+    jobid: 8
+    wildcards: n=5
+
+Submitted job 8 with external jobid 'Submitted batch job 31256154'.
+
+[Tue Jan  1 18:42:25 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_36_psr_stats.tsv.gz, output/tasep_36_mrna_lifetime_stats.tsv.gz, output/tasep_36.params.tsv.gz, output/tasep_36_collision_stats.tsv.gz, output/tasep_36_abort_stats.tsv.gz
+    jobid: 39
+    wildcards: n=36
+
+Submitted job 39 with external jobid 'Submitted batch job 31256155'.
+
+[Tue Jan  1 18:42:25 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_49_psr_stats.tsv.gz, output/tasep_49_mrna_lifetime_stats.tsv.gz, output/tasep_49.params.tsv.gz, output/tasep_49_collision_stats.tsv.gz, output/tasep_49_abort_stats.tsv.gz
+    jobid: 52
+    wildcards: n=49
+
+Submitted job 52 with external jobid 'Submitted batch job 31256156'.
+
+[Tue Jan  1 18:42:25 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_44_psr_stats.tsv.gz, output/tasep_44_mrna_lifetime_stats.tsv.gz, output/tasep_44.params.tsv.gz, output/tasep_44_collision_stats.tsv.gz, output/tasep_44_abort_stats.tsv.gz
+    jobid: 47
+    wildcards: n=44
+
+Submitted job 47 with external jobid 'Submitted batch job 31256157'.
+
+[Tue Jan  1 18:42:25 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_38_psr_stats.tsv.gz, output/tasep_38_mrna_lifetime_stats.tsv.gz, output/tasep_38.params.tsv.gz, output/tasep_38_collision_stats.tsv.gz, output/tasep_38_abort_stats.tsv.gz
+    jobid: 41
+    wildcards: n=38
+
+Submitted job 41 with external jobid 'Submitted batch job 31256158'.
+
+[Tue Jan  1 18:42:25 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_53_psr_stats.tsv.gz, output/tasep_53_mrna_lifetime_stats.tsv.gz, output/tasep_53.params.tsv.gz, output/tasep_53_collision_stats.tsv.gz, output/tasep_53_abort_stats.tsv.gz
+    jobid: 56
+    wildcards: n=53
+
+Submitted job 56 with external jobid 'Submitted batch job 31256159'.
+
+[Tue Jan  1 18:42:25 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_4_psr_stats.tsv.gz, output/tasep_4_mrna_lifetime_stats.tsv.gz, output/tasep_4.params.tsv.gz, output/tasep_4_collision_stats.tsv.gz, output/tasep_4_abort_stats.tsv.gz
+    jobid: 7
+    wildcards: n=4
+
+Submitted job 7 with external jobid 'Submitted batch job 31256160'.
+
+[Tue Jan  1 18:42:25 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_31_psr_stats.tsv.gz, output/tasep_31_mrna_lifetime_stats.tsv.gz, output/tasep_31.params.tsv.gz, output/tasep_31_collision_stats.tsv.gz, output/tasep_31_abort_stats.tsv.gz
+    jobid: 34
+    wildcards: n=31
+
+Submitted job 34 with external jobid 'Submitted batch job 31256161'.
+
+[Tue Jan  1 18:42:26 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_46_psr_stats.tsv.gz, output/tasep_46_mrna_lifetime_stats.tsv.gz, output/tasep_46.params.tsv.gz, output/tasep_46_collision_stats.tsv.gz, output/tasep_46_abort_stats.tsv.gz
+    jobid: 49
+    wildcards: n=46
+
+Submitted job 49 with external jobid 'Submitted batch job 31256162'.
+
+[Tue Jan  1 18:42:26 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_35_psr_stats.tsv.gz, output/tasep_35_mrna_lifetime_stats.tsv.gz, output/tasep_35.params.tsv.gz, output/tasep_35_collision_stats.tsv.gz, output/tasep_35_abort_stats.tsv.gz
+    jobid: 38
+    wildcards: n=35
+
+Submitted job 38 with external jobid 'Submitted batch job 31256163'.
+
+[Tue Jan  1 18:42:26 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_28_psr_stats.tsv.gz, output/tasep_28_mrna_lifetime_stats.tsv.gz, output/tasep_28.params.tsv.gz, output/tasep_28_collision_stats.tsv.gz, output/tasep_28_abort_stats.tsv.gz
+    jobid: 31
+    wildcards: n=28
+
+Submitted job 31 with external jobid 'Submitted batch job 31256164'.
+
+[Tue Jan  1 18:42:26 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_14_psr_stats.tsv.gz, output/tasep_14_mrna_lifetime_stats.tsv.gz, output/tasep_14.params.tsv.gz, output/tasep_14_collision_stats.tsv.gz, output/tasep_14_abort_stats.tsv.gz
+    jobid: 17
+    wildcards: n=14
+
+Submitted job 17 with external jobid 'Submitted batch job 31256165'.
+
+[Tue Jan  1 18:42:26 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_3_psr_stats.tsv.gz, output/tasep_3_mrna_lifetime_stats.tsv.gz, output/tasep_3.params.tsv.gz, output/tasep_3_collision_stats.tsv.gz, output/tasep_3_abort_stats.tsv.gz
+    jobid: 6
+    wildcards: n=3
+
+Submitted job 6 with external jobid 'Submitted batch job 31256166'.
+
+[Tue Jan  1 18:42:26 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_48_psr_stats.tsv.gz, output/tasep_48_mrna_lifetime_stats.tsv.gz, output/tasep_48.params.tsv.gz, output/tasep_48_collision_stats.tsv.gz, output/tasep_48_abort_stats.tsv.gz
+    jobid: 51
+    wildcards: n=48
+
+Submitted job 51 with external jobid 'Submitted batch job 31256167'.
+
+[Tue Jan  1 18:42:26 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_11_psr_stats.tsv.gz, output/tasep_11_mrna_lifetime_stats.tsv.gz, output/tasep_11.params.tsv.gz, output/tasep_11_collision_stats.tsv.gz, output/tasep_11_abort_stats.tsv.gz
+    jobid: 14
+    wildcards: n=11
+
+Submitted job 14 with external jobid 'Submitted batch job 31256168'.
+
+[Tue Jan  1 18:42:26 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_29_psr_stats.tsv.gz, output/tasep_29_mrna_lifetime_stats.tsv.gz, output/tasep_29.params.tsv.gz, output/tasep_29_collision_stats.tsv.gz, output/tasep_29_abort_stats.tsv.gz
+    jobid: 32
+    wildcards: n=29
+
+Submitted job 32 with external jobid 'Submitted batch job 31256169'.
+
+[Tue Jan  1 18:42:26 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_13_psr_stats.tsv.gz, output/tasep_13_mrna_lifetime_stats.tsv.gz, output/tasep_13.params.tsv.gz, output/tasep_13_collision_stats.tsv.gz, output/tasep_13_abort_stats.tsv.gz
+    jobid: 16
+    wildcards: n=13
+
+Submitted job 16 with external jobid 'Submitted batch job 31256170'.
+
+[Tue Jan  1 18:42:27 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_43_psr_stats.tsv.gz, output/tasep_43_mrna_lifetime_stats.tsv.gz, output/tasep_43.params.tsv.gz, output/tasep_43_collision_stats.tsv.gz, output/tasep_43_abort_stats.tsv.gz
+    jobid: 46
+    wildcards: n=43
+
+Submitted job 46 with external jobid 'Submitted batch job 31256171'.
+
+[Tue Jan  1 18:42:27 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_0_psr_stats.tsv.gz, output/tasep_0_mrna_lifetime_stats.tsv.gz, output/tasep_0.params.tsv.gz, output/tasep_0_collision_stats.tsv.gz, output/tasep_0_abort_stats.tsv.gz
+    jobid: 3
+    wildcards: n=0
+
+Submitted job 3 with external jobid 'Submitted batch job 31256172'.
+
+[Tue Jan  1 18:42:27 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_54_psr_stats.tsv.gz, output/tasep_54_mrna_lifetime_stats.tsv.gz, output/tasep_54.params.tsv.gz, output/tasep_54_collision_stats.tsv.gz, output/tasep_54_abort_stats.tsv.gz
+    jobid: 57
+    wildcards: n=54
+
+Submitted job 57 with external jobid 'Submitted batch job 31256173'.
+
+[Tue Jan  1 18:42:27 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_52_psr_stats.tsv.gz, output/tasep_52_mrna_lifetime_stats.tsv.gz, output/tasep_52.params.tsv.gz, output/tasep_52_collision_stats.tsv.gz, output/tasep_52_abort_stats.tsv.gz
+    jobid: 55
+    wildcards: n=52
+
+Submitted job 55 with external jobid 'Submitted batch job 31256174'.
+
+[Tue Jan  1 18:42:27 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_23_psr_stats.tsv.gz, output/tasep_23_mrna_lifetime_stats.tsv.gz, output/tasep_23.params.tsv.gz, output/tasep_23_collision_stats.tsv.gz, output/tasep_23_abort_stats.tsv.gz
+    jobid: 26
+    wildcards: n=23
+
+Submitted job 26 with external jobid 'Submitted batch job 31256175'.
+
+[Tue Jan  1 18:42:27 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_41_psr_stats.tsv.gz, output/tasep_41_mrna_lifetime_stats.tsv.gz, output/tasep_41.params.tsv.gz, output/tasep_41_collision_stats.tsv.gz, output/tasep_41_abort_stats.tsv.gz
+    jobid: 44
+    wildcards: n=41
+
+Submitted job 44 with external jobid 'Submitted batch job 31256176'.
+
+[Tue Jan  1 18:42:27 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_50_psr_stats.tsv.gz, output/tasep_50_mrna_lifetime_stats.tsv.gz, output/tasep_50.params.tsv.gz, output/tasep_50_collision_stats.tsv.gz, output/tasep_50_abort_stats.tsv.gz
+    jobid: 53
+    wildcards: n=50
+
+Submitted job 53 with external jobid 'Submitted batch job 31256177'.
+
+[Tue Jan  1 18:42:27 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_8_psr_stats.tsv.gz, output/tasep_8_mrna_lifetime_stats.tsv.gz, output/tasep_8.params.tsv.gz, output/tasep_8_collision_stats.tsv.gz, output/tasep_8_abort_stats.tsv.gz
+    jobid: 11
+    wildcards: n=8
+
+Submitted job 11 with external jobid 'Submitted batch job 31256178'.
+
+[Tue Jan  1 18:42:27 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_30_psr_stats.tsv.gz, output/tasep_30_mrna_lifetime_stats.tsv.gz, output/tasep_30.params.tsv.gz, output/tasep_30_collision_stats.tsv.gz, output/tasep_30_abort_stats.tsv.gz
+    jobid: 33
+    wildcards: n=30
+
+Submitted job 33 with external jobid 'Submitted batch job 31256179'.
+
+[Tue Jan  1 18:42:28 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_56_psr_stats.tsv.gz, output/tasep_56_mrna_lifetime_stats.tsv.gz, output/tasep_56.params.tsv.gz, output/tasep_56_collision_stats.tsv.gz, output/tasep_56_abort_stats.tsv.gz
+    jobid: 59
+    wildcards: n=56
+
+Submitted job 59 with external jobid 'Submitted batch job 31256180'.
+
+[Tue Jan  1 18:42:28 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_26_psr_stats.tsv.gz, output/tasep_26_mrna_lifetime_stats.tsv.gz, output/tasep_26.params.tsv.gz, output/tasep_26_collision_stats.tsv.gz, output/tasep_26_abort_stats.tsv.gz
+    jobid: 29
+    wildcards: n=26
+
+Submitted job 29 with external jobid 'Submitted batch job 31256181'.
+
+[Tue Jan  1 18:42:28 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_21_psr_stats.tsv.gz, output/tasep_21_mrna_lifetime_stats.tsv.gz, output/tasep_21.params.tsv.gz, output/tasep_21_collision_stats.tsv.gz, output/tasep_21_abort_stats.tsv.gz
+    jobid: 24
+    wildcards: n=21
+
+Submitted job 24 with external jobid 'Submitted batch job 31256182'.
+
+[Tue Jan  1 18:42:28 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_2_psr_stats.tsv.gz, output/tasep_2_mrna_lifetime_stats.tsv.gz, output/tasep_2.params.tsv.gz, output/tasep_2_collision_stats.tsv.gz, output/tasep_2_abort_stats.tsv.gz
+    jobid: 5
+    wildcards: n=2
+
+Submitted job 5 with external jobid 'Submitted batch job 31256183'.
+
+[Tue Jan  1 18:42:28 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_19_psr_stats.tsv.gz, output/tasep_19_mrna_lifetime_stats.tsv.gz, output/tasep_19.params.tsv.gz, output/tasep_19_collision_stats.tsv.gz, output/tasep_19_abort_stats.tsv.gz
+    jobid: 22
+    wildcards: n=19
+
+Submitted job 22 with external jobid 'Submitted batch job 31256184'.
+
+[Tue Jan  1 18:42:28 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_34_psr_stats.tsv.gz, output/tasep_34_mrna_lifetime_stats.tsv.gz, output/tasep_34.params.tsv.gz, output/tasep_34_collision_stats.tsv.gz, output/tasep_34_abort_stats.tsv.gz
+    jobid: 37
+    wildcards: n=34
+
+Submitted job 37 with external jobid 'Submitted batch job 31256185'.
+
+[Tue Jan  1 18:42:28 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_10_psr_stats.tsv.gz, output/tasep_10_mrna_lifetime_stats.tsv.gz, output/tasep_10.params.tsv.gz, output/tasep_10_collision_stats.tsv.gz, output/tasep_10_abort_stats.tsv.gz
+    jobid: 13
+    wildcards: n=10
+
+Submitted job 13 with external jobid 'Submitted batch job 31256186'.
+
+[Tue Jan  1 18:42:28 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_1_psr_stats.tsv.gz, output/tasep_1_mrna_lifetime_stats.tsv.gz, output/tasep_1.params.tsv.gz, output/tasep_1_collision_stats.tsv.gz, output/tasep_1_abort_stats.tsv.gz
+    jobid: 4
+    wildcards: n=1
+
+Submitted job 4 with external jobid 'Submitted batch job 31256187'.
+
+[Tue Jan  1 18:42:28 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_22_psr_stats.tsv.gz, output/tasep_22_mrna_lifetime_stats.tsv.gz, output/tasep_22.params.tsv.gz, output/tasep_22_collision_stats.tsv.gz, output/tasep_22_abort_stats.tsv.gz
+    jobid: 25
+    wildcards: n=22
+
+Submitted job 25 with external jobid 'Submitted batch job 31256188'.
+
+[Tue Jan  1 18:42:29 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_51_psr_stats.tsv.gz, output/tasep_51_mrna_lifetime_stats.tsv.gz, output/tasep_51.params.tsv.gz, output/tasep_51_collision_stats.tsv.gz, output/tasep_51_abort_stats.tsv.gz
+    jobid: 54
+    wildcards: n=51
+
+Submitted job 54 with external jobid 'Submitted batch job 31256189'.
+
+[Tue Jan  1 18:42:29 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_58_psr_stats.tsv.gz, output/tasep_58_mrna_lifetime_stats.tsv.gz, output/tasep_58.params.tsv.gz, output/tasep_58_collision_stats.tsv.gz, output/tasep_58_abort_stats.tsv.gz
+    jobid: 61
+    wildcards: n=58
+
+Submitted job 61 with external jobid 'Submitted batch job 31256190'.
+
+[Tue Jan  1 18:42:29 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_17_psr_stats.tsv.gz, output/tasep_17_mrna_lifetime_stats.tsv.gz, output/tasep_17.params.tsv.gz, output/tasep_17_collision_stats.tsv.gz, output/tasep_17_abort_stats.tsv.gz
+    jobid: 20
+    wildcards: n=17
+
+Submitted job 20 with external jobid 'Submitted batch job 31256191'.
+
+[Tue Jan  1 18:42:29 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_6_psr_stats.tsv.gz, output/tasep_6_mrna_lifetime_stats.tsv.gz, output/tasep_6.params.tsv.gz, output/tasep_6_collision_stats.tsv.gz, output/tasep_6_abort_stats.tsv.gz
+    jobid: 9
+    wildcards: n=6
+
+Submitted job 9 with external jobid 'Submitted batch job 31256192'.
+
+[Tue Jan  1 18:42:29 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_27_psr_stats.tsv.gz, output/tasep_27_mrna_lifetime_stats.tsv.gz, output/tasep_27.params.tsv.gz, output/tasep_27_collision_stats.tsv.gz, output/tasep_27_abort_stats.tsv.gz
+    jobid: 30
+    wildcards: n=27
+
+Submitted job 30 with external jobid 'Submitted batch job 31256193'.
+
+[Tue Jan  1 18:42:29 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_57_psr_stats.tsv.gz, output/tasep_57_mrna_lifetime_stats.tsv.gz, output/tasep_57.params.tsv.gz, output/tasep_57_collision_stats.tsv.gz, output/tasep_57_abort_stats.tsv.gz
+    jobid: 60
+    wildcards: n=57
+
+Submitted job 60 with external jobid 'Submitted batch job 31256194'.
+
+[Tue Jan  1 18:42:29 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_15_psr_stats.tsv.gz, output/tasep_15_mrna_lifetime_stats.tsv.gz, output/tasep_15.params.tsv.gz, output/tasep_15_collision_stats.tsv.gz, output/tasep_15_abort_stats.tsv.gz
+    jobid: 18
+    wildcards: n=15
+
+Submitted job 18 with external jobid 'Submitted batch job 31256195'.
+
+[Tue Jan  1 18:42:29 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_55_psr_stats.tsv.gz, output/tasep_55_mrna_lifetime_stats.tsv.gz, output/tasep_55.params.tsv.gz, output/tasep_55_collision_stats.tsv.gz, output/tasep_55_abort_stats.tsv.gz
+    jobid: 58
+    wildcards: n=55
+
+Submitted job 58 with external jobid 'Submitted batch job 31256196'.
+
+[Tue Jan  1 18:42:29 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_25_psr_stats.tsv.gz, output/tasep_25_mrna_lifetime_stats.tsv.gz, output/tasep_25.params.tsv.gz, output/tasep_25_collision_stats.tsv.gz, output/tasep_25_abort_stats.tsv.gz
+    jobid: 28
+    wildcards: n=25
+
+Submitted job 28 with external jobid 'Submitted batch job 31256197'.
+
+[Tue Jan  1 18:42:30 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_40_psr_stats.tsv.gz, output/tasep_40_mrna_lifetime_stats.tsv.gz, output/tasep_40.params.tsv.gz, output/tasep_40_collision_stats.tsv.gz, output/tasep_40_abort_stats.tsv.gz
+    jobid: 43
+    wildcards: n=40
+
+Submitted job 43 with external jobid 'Submitted batch job 31256198'.
+
+[Tue Jan  1 18:42:30 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_16_psr_stats.tsv.gz, output/tasep_16_mrna_lifetime_stats.tsv.gz, output/tasep_16.params.tsv.gz, output/tasep_16_collision_stats.tsv.gz, output/tasep_16_abort_stats.tsv.gz
+    jobid: 19
+    wildcards: n=16
+
+Submitted job 19 with external jobid 'Submitted batch job 31256199'.
+
+[Tue Jan  1 18:42:30 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_33_psr_stats.tsv.gz, output/tasep_33_mrna_lifetime_stats.tsv.gz, output/tasep_33.params.tsv.gz, output/tasep_33_collision_stats.tsv.gz, output/tasep_33_abort_stats.tsv.gz
+    jobid: 36
+    wildcards: n=33
+
+Submitted job 36 with external jobid 'Submitted batch job 31256200'.
+
+[Tue Jan  1 18:42:30 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_12_psr_stats.tsv.gz, output/tasep_12_mrna_lifetime_stats.tsv.gz, output/tasep_12.params.tsv.gz, output/tasep_12_collision_stats.tsv.gz, output/tasep_12_abort_stats.tsv.gz
+    jobid: 15
+    wildcards: n=12
+
+Submitted job 15 with external jobid 'Submitted batch job 31256201'.
+
+[Tue Jan  1 18:42:30 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_20_psr_stats.tsv.gz, output/tasep_20_mrna_lifetime_stats.tsv.gz, output/tasep_20.params.tsv.gz, output/tasep_20_collision_stats.tsv.gz, output/tasep_20_abort_stats.tsv.gz
+    jobid: 23
+    wildcards: n=20
+
+Submitted job 23 with external jobid 'Submitted batch job 31256202'.
+
+[Tue Jan  1 18:42:30 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_39_psr_stats.tsv.gz, output/tasep_39_mrna_lifetime_stats.tsv.gz, output/tasep_39.params.tsv.gz, output/tasep_39_collision_stats.tsv.gz, output/tasep_39_abort_stats.tsv.gz
+    jobid: 42
+    wildcards: n=39
+
+Submitted job 42 with external jobid 'Submitted batch job 31256203'.
+
+[Tue Jan  1 18:42:30 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_37_psr_stats.tsv.gz, output/tasep_37_mrna_lifetime_stats.tsv.gz, output/tasep_37.params.tsv.gz, output/tasep_37_collision_stats.tsv.gz, output/tasep_37_abort_stats.tsv.gz
+    jobid: 40
+    wildcards: n=37
+
+Submitted job 40 with external jobid 'Submitted batch job 31256204'.
+
+[Tue Jan  1 18:42:30 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_47_psr_stats.tsv.gz, output/tasep_47_mrna_lifetime_stats.tsv.gz, output/tasep_47.params.tsv.gz, output/tasep_47_collision_stats.tsv.gz, output/tasep_47_abort_stats.tsv.gz
+    jobid: 50
+    wildcards: n=47
+
+Submitted job 50 with external jobid 'Submitted batch job 31256205'.
+
+[Tue Jan  1 18:42:30 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_32_psr_stats.tsv.gz, output/tasep_32_mrna_lifetime_stats.tsv.gz, output/tasep_32.params.tsv.gz, output/tasep_32_collision_stats.tsv.gz, output/tasep_32_abort_stats.tsv.gz
+    jobid: 35
+    wildcards: n=32
+
+Submitted job 35 with external jobid 'Submitted batch job 31256206'.
+
+[Tue Jan  1 18:42:31 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_59_psr_stats.tsv.gz, output/tasep_59_mrna_lifetime_stats.tsv.gz, output/tasep_59.params.tsv.gz, output/tasep_59_collision_stats.tsv.gz, output/tasep_59_abort_stats.tsv.gz
+    jobid: 62
+    wildcards: n=59
+
+Submitted job 62 with external jobid 'Submitted batch job 31256207'.
+
+[Tue Jan  1 18:42:31 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_18_psr_stats.tsv.gz, output/tasep_18_mrna_lifetime_stats.tsv.gz, output/tasep_18.params.tsv.gz, output/tasep_18_collision_stats.tsv.gz, output/tasep_18_abort_stats.tsv.gz
+    jobid: 21
+    wildcards: n=18
+
+Submitted job 21 with external jobid 'Submitted batch job 31256208'.
+
+[Tue Jan  1 18:42:31 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_42_psr_stats.tsv.gz, output/tasep_42_mrna_lifetime_stats.tsv.gz, output/tasep_42.params.tsv.gz, output/tasep_42_collision_stats.tsv.gz, output/tasep_42_abort_stats.tsv.gz
+    jobid: 45
+    wildcards: n=42
+
+Submitted job 45 with external jobid 'Submitted batch job 31256209'.
+
+[Tue Jan  1 18:42:31 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_45_psr_stats.tsv.gz, output/tasep_45_mrna_lifetime_stats.tsv.gz, output/tasep_45.params.tsv.gz, output/tasep_45_collision_stats.tsv.gz, output/tasep_45_abort_stats.tsv.gz
+    jobid: 48
+    wildcards: n=45
+
+Submitted job 48 with external jobid 'Submitted batch job 31256210'.

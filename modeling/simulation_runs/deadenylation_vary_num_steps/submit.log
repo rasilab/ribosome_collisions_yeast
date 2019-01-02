@@ -1,0 +1,85 @@
+/fh/fast/subramaniam_a/user/rasi/virtualenv/py362/lib/python3.6/site-packages/matplotlib/__init__.py:846: MatplotlibDeprecationWarning: 
+The text.latex.unicode rcparam was deprecated in Matplotlib 2.2 and will be removed in 3.1.
+  "2.2", name=key, obj_type="rcparam", addendum=addendum)
+/fh/fast/subramaniam_a/user/rasi/virtualenv/py362/lib/python3.6/site-packages/matplotlib/__init__.py:855: MatplotlibDeprecationWarning: 
+examples.directory is deprecated; in the future, examples will be found relative to the 'datapath' directory.
+  "found relative to the 'datapath' directory.".format(key))
+/fh/fast/subramaniam_a/user/rasi/virtualenv/py362/lib/python3.6/site-packages/matplotlib/__init__.py:886: MatplotlibDeprecationWarning: 
+examples.directory is deprecated; in the future, examples will be found relative to the 'datapath' directory.
+  "found relative to the 'datapath' directory.".format(key))
+/fh/fast/subramaniam_a/user/rasi/virtualenv/py362/lib/python3.6/site-packages/matplotlib/__init__.py:855: MatplotlibDeprecationWarning: 
+examples.directory is deprecated; in the future, examples will be found relative to the 'datapath' directory.
+  "found relative to the 'datapath' directory.".format(key))
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cluster nodes: 999
+Job counts:
+	count	jobs
+	1	all
+	1	analyze_data
+	1	combine_mrna_protein_stats
+	7	run_simulation
+	10
+
+[Tue Jan  1 18:42:07 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_4_psr_stats.tsv.gz, output/tasep_4_mrna_lifetime_stats.tsv.gz, output/tasep_4.params.tsv.gz, output/tasep_4_collision_stats.tsv.gz, output/tasep_4_abort_stats.tsv.gz
+    jobid: 7
+    wildcards: n=4
+
+Submitted job 7 with external jobid 'Submitted batch job 31256008'.
+
+[Tue Jan  1 18:42:07 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_0_psr_stats.tsv.gz, output/tasep_0_mrna_lifetime_stats.tsv.gz, output/tasep_0.params.tsv.gz, output/tasep_0_collision_stats.tsv.gz, output/tasep_0_abort_stats.tsv.gz
+    jobid: 3
+    wildcards: n=0
+
+Submitted job 3 with external jobid 'Submitted batch job 31256011'.
+
+[Tue Jan  1 18:42:07 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_1_psr_stats.tsv.gz, output/tasep_1_mrna_lifetime_stats.tsv.gz, output/tasep_1.params.tsv.gz, output/tasep_1_collision_stats.tsv.gz, output/tasep_1_abort_stats.tsv.gz
+    jobid: 4
+    wildcards: n=1
+
+Submitted job 4 with external jobid 'Submitted batch job 31256014'.
+
+[Tue Jan  1 18:42:07 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_2_psr_stats.tsv.gz, output/tasep_2_mrna_lifetime_stats.tsv.gz, output/tasep_2.params.tsv.gz, output/tasep_2_collision_stats.tsv.gz, output/tasep_2_abort_stats.tsv.gz
+    jobid: 5
+    wildcards: n=2
+
+Submitted job 5 with external jobid 'Submitted batch job 31256017'.
+
+[Tue Jan  1 18:42:07 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_6_psr_stats.tsv.gz, output/tasep_6_mrna_lifetime_stats.tsv.gz, output/tasep_6.params.tsv.gz, output/tasep_6_collision_stats.tsv.gz, output/tasep_6_abort_stats.tsv.gz
+    jobid: 9
+    wildcards: n=6
+
+Submitted job 9 with external jobid 'Submitted batch job 31256020'.
+
+[Tue Jan  1 18:42:07 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_3_psr_stats.tsv.gz, output/tasep_3_mrna_lifetime_stats.tsv.gz, output/tasep_3.params.tsv.gz, output/tasep_3_collision_stats.tsv.gz, output/tasep_3_abort_stats.tsv.gz
+    jobid: 6
+    wildcards: n=3
+
+Submitted job 6 with external jobid 'Submitted batch job 31256023'.
+
+[Tue Jan  1 18:42:08 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_5_psr_stats.tsv.gz, output/tasep_5_mrna_lifetime_stats.tsv.gz, output/tasep_5.params.tsv.gz, output/tasep_5_collision_stats.tsv.gz, output/tasep_5_abort_stats.tsv.gz
+    jobid: 8
+    wildcards: n=5
+
+Submitted job 8 with external jobid 'Submitted batch job 31256026'.

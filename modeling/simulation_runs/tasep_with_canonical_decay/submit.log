@@ -1,0 +1,113 @@
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 9 entries, 0 to 8
+Data columns (total 14 columns):
+k_init                            9 non-null float64
+k_elong_stall_1                   9 non-null int64
+k_preterm_no_hit_intact           9 non-null int64
+k_preterm_5_hit_intact            9 non-null int64
+k_preterm_3_hit_intact            9 non-null int64
+k_preterm_both_hit_intact         9 non-null int64
+k_preterm_no_hit_endocleaved      9 non-null int64
+k_preterm_5_hit_endocleaved       9 non-null int64
+k_preterm_3_hit_endocleaved       9 non-null int64
+k_preterm_both_hit_endocleaved    9 non-null int64
+k_cleave_no_hit                   9 non-null int64
+k_cleave_5_hit                    9 non-null int64
+k_cleave_3_hit                    9 non-null int64
+k_cleave_both_hit                 9 non-null int64
+dtypes: float64(1), int64(13)
+memory usage: 1.1 KB
+datapath' directory.".format(key))
+/fh/fast/subramaniam_a/user/rasi/virtualenv/py362/lib/python3.6/site-packages/matplotlib/__init__.py:855: MatplotlibDeprecationWarning: 
+examples.directory is deprecated; in the future, examples will be found relative to the 'datapath' directory.
+  "found relative to the 'datapath' directory.".format(key))
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cluster nodes: 999
+Job counts:
+	count	jobs
+	1	analyze_data
+	1	combine_mrna_protein_stats
+	1	figures
+	2	run_simulation
+	5
+
+[Tue Jan  1 16:19:49 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_7_psr_stats.tsv.gz, output/tasep_7_mrna_lifetime_stats.tsv.gz, output/tasep_7.params.tsv.gz, output/tasep_7_collision_stats.tsv.gz, output/tasep_7_abort_stats.tsv.gz
+    jobid: 10
+    wildcards: n=7
+
+Submitted job 10 with external jobid 'Submitted batch job 31255239'.
+
+[Tue Jan  1 16:19:49 2019]
+rule run_simulation:
+    input: choose_simulation_parameters.py, ../../tasep.py
+    output: output/tasep_8_psr_stats.tsv.gz, output/tasep_8_mrna_lifetime_stats.tsv.gz, output/tasep_8.params.tsv.gz, output/tasep_8_collision_stats.tsv.gz, output/tasep_8_abort_stats.tsv.gz
+    jobid: 11
+    wildcards: n=8
+
+Submitted job 11 with external jobid 'Submitted batch job 31255240'.
+[Tue Jan  1 17:56:56 2019]
+Finished job 10.
+1 of 5 steps (20%) done
+[Tue Jan  1 18:04:36 2019]
+Finished job 11.
+2 of 5 steps (40%) done
+
+[Tue Jan  1 18:04:36 2019]
+localrule combine_mrna_protein_stats:
+    input: output/tasep_0_psr_stats.tsv.gz, output/tasep_1_psr_stats.tsv.gz, output/tasep_2_psr_stats.tsv.gz, output/tasep_3_psr_stats.tsv.gz, output/tasep_4_psr_stats.tsv.gz, output/tasep_5_psr_stats.tsv.gz, output/tasep_6_psr_stats.tsv.gz, output/tasep_7_psr_stats.tsv.gz, output/tasep_8_psr_stats.tsv.gz, output/tasep_0_collision_stats.tsv.gz, output/tasep_1_collision_stats.tsv.gz, output/tasep_2_collision_stats.tsv.gz, output/tasep_3_collision_stats.tsv.gz, output/tasep_4_collision_stats.tsv.gz, output/tasep_5_collision_stats.tsv.gz, output/tasep_6_collision_stats.tsv.gz, output/tasep_7_collision_stats.tsv.gz, output/tasep_8_collision_stats.tsv.gz, output/tasep_0_abort_stats.tsv.gz, output/tasep_1_abort_stats.tsv.gz, output/tasep_2_abort_stats.tsv.gz, output/tasep_3_abort_stats.tsv.gz, output/tasep_4_abort_stats.tsv.gz, output/tasep_5_abort_stats.tsv.gz, output/tasep_6_abort_stats.tsv.gz, output/tasep_7_abort_stats.tsv.gz, output/tasep_8_abort_stats.tsv.gz, output/tasep_0_mrna_lifetime_stats.tsv.gz, output/tasep_1_mrna_lifetime_stats.tsv.gz, output/tasep_2_mrna_lifetime_stats.tsv.gz, output/tasep_3_mrna_lifetime_stats.tsv.gz, output/tasep_4_mrna_lifetime_stats.tsv.gz, output/tasep_5_mrna_lifetime_stats.tsv.gz, output/tasep_6_mrna_lifetime_stats.tsv.gz, output/tasep_7_mrna_lifetime_stats.tsv.gz, output/tasep_8_mrna_lifetime_stats.tsv.gz
+    output: tables/psr_stats.tsv, tables/mrna_lifetime_stats.tsv, tables/collision_stats.tsv, tables/abort_stats.tsv
+    jobid: 2
+
+[Tue Jan  1 18:04:36 2019]
+Error in rule combine_mrna_protein_stats:
+    jobid: 2
+    output: tables/psr_stats.tsv, tables/mrna_lifetime_stats.tsv, tables/collision_stats.tsv, tables/abort_stats.tsv
+
+RuleException:
+WorkflowError in line 52 of /fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/tasep_with_canonical_decay/Snakefile:
+URLError: <urlopen error [Errno 2] No such file or directory: '/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/tasep_with_canonical_decay/combine_lifetime_and_psr_data.R'>
+  File "/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/tasep_with_canonical_decay/Snakefile", line 52, in __rule_combine_mrna_protein_stats
+  File "/fh/fast/subramaniam_a/user/rasi/lib/python3.6.2/lib/python3.6/concurrent/futures/thread.py", line 55, in run
+Trying to restart job 2.
+
+[Tue Jan  1 18:04:36 2019]
+localrule combine_mrna_protein_stats:
+    input: output/tasep_0_psr_stats.tsv.gz, output/tasep_1_psr_stats.tsv.gz, output/tasep_2_psr_stats.tsv.gz, output/tasep_3_psr_stats.tsv.gz, output/tasep_4_psr_stats.tsv.gz, output/tasep_5_psr_stats.tsv.gz, output/tasep_6_psr_stats.tsv.gz, output/tasep_7_psr_stats.tsv.gz, output/tasep_8_psr_stats.tsv.gz, output/tasep_0_collision_stats.tsv.gz, output/tasep_1_collision_stats.tsv.gz, output/tasep_2_collision_stats.tsv.gz, output/tasep_3_collision_stats.tsv.gz, output/tasep_4_collision_stats.tsv.gz, output/tasep_5_collision_stats.tsv.gz, output/tasep_6_collision_stats.tsv.gz, output/tasep_7_collision_stats.tsv.gz, output/tasep_8_collision_stats.tsv.gz, output/tasep_0_abort_stats.tsv.gz, output/tasep_1_abort_stats.tsv.gz, output/tasep_2_abort_stats.tsv.gz, output/tasep_3_abort_stats.tsv.gz, output/tasep_4_abort_stats.tsv.gz, output/tasep_5_abort_stats.tsv.gz, output/tasep_6_abort_stats.tsv.gz, output/tasep_7_abort_stats.tsv.gz, output/tasep_8_abort_stats.tsv.gz, output/tasep_0_mrna_lifetime_stats.tsv.gz, output/tasep_1_mrna_lifetime_stats.tsv.gz, output/tasep_2_mrna_lifetime_stats.tsv.gz, output/tasep_3_mrna_lifetime_stats.tsv.gz, output/tasep_4_mrna_lifetime_stats.tsv.gz, output/tasep_5_mrna_lifetime_stats.tsv.gz, output/tasep_6_mrna_lifetime_stats.tsv.gz, output/tasep_7_mrna_lifetime_stats.tsv.gz, output/tasep_8_mrna_lifetime_stats.tsv.gz
+    output: tables/psr_stats.tsv, tables/mrna_lifetime_stats.tsv, tables/collision_stats.tsv, tables/abort_stats.tsv
+    jobid: 2
+
+[Tue Jan  1 18:04:36 2019]
+Error in rule combine_mrna_protein_stats:
+    jobid: 2
+    output: tables/psr_stats.tsv, tables/mrna_lifetime_stats.tsv, tables/collision_stats.tsv, tables/abort_stats.tsv
+
+RuleException:
+WorkflowError in line 52 of /fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/tasep_with_canonical_decay/Snakefile:
+URLError: <urlopen error [Errno 2] No such file or directory: '/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/tasep_with_canonical_decay/combine_lifetime_and_psr_data.R'>
+  File "/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/tasep_with_canonical_decay/Snakefile", line 52, in __rule_combine_mrna_protein_stats
+  File "/fh/fast/subramaniam_a/user/rasi/lib/python3.6.2/lib/python3.6/concurrent/futures/thread.py", line 55, in run
+Trying to restart job 2.
+
+[Tue Jan  1 18:04:36 2019]
+localrule combine_mrna_protein_stats:
+    input: output/tasep_0_psr_stats.tsv.gz, output/tasep_1_psr_stats.tsv.gz, output/tasep_2_psr_stats.tsv.gz, output/tasep_3_psr_stats.tsv.gz, output/tasep_4_psr_stats.tsv.gz, output/tasep_5_psr_stats.tsv.gz, output/tasep_6_psr_stats.tsv.gz, output/tasep_7_psr_stats.tsv.gz, output/tasep_8_psr_stats.tsv.gz, output/tasep_0_collision_stats.tsv.gz, output/tasep_1_collision_stats.tsv.gz, output/tasep_2_collision_stats.tsv.gz, output/tasep_3_collision_stats.tsv.gz, output/tasep_4_collision_stats.tsv.gz, output/tasep_5_collision_stats.tsv.gz, output/tasep_6_collision_stats.tsv.gz, output/tasep_7_collision_stats.tsv.gz, output/tasep_8_collision_stats.tsv.gz, output/tasep_0_abort_stats.tsv.gz, output/tasep_1_abort_stats.tsv.gz, output/tasep_2_abort_stats.tsv.gz, output/tasep_3_abort_stats.tsv.gz, output/tasep_4_abort_stats.tsv.gz, output/tasep_5_abort_stats.tsv.gz, output/tasep_6_abort_stats.tsv.gz, output/tasep_7_abort_stats.tsv.gz, output/tasep_8_abort_stats.tsv.gz, output/tasep_0_mrna_lifetime_stats.tsv.gz, output/tasep_1_mrna_lifetime_stats.tsv.gz, output/tasep_2_mrna_lifetime_stats.tsv.gz, output/tasep_3_mrna_lifetime_stats.tsv.gz, output/tasep_4_mrna_lifetime_stats.tsv.gz, output/tasep_5_mrna_lifetime_stats.tsv.gz, output/tasep_6_mrna_lifetime_stats.tsv.gz, output/tasep_7_mrna_lifetime_stats.tsv.gz, output/tasep_8_mrna_lifetime_stats.tsv.gz
+    output: tables/psr_stats.tsv, tables/mrna_lifetime_stats.tsv, tables/collision_stats.tsv, tables/abort_stats.tsv
+    jobid: 2
+
+[Tue Jan  1 18:04:36 2019]
+Error in rule combine_mrna_protein_stats:
+    jobid: 2
+    output: tables/psr_stats.tsv, tables/mrna_lifetime_stats.tsv, tables/collision_stats.tsv, tables/abort_stats.tsv
+
+RuleException:
+WorkflowError in line 52 of /fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/tasep_with_canonical_decay/Snakefile:
+URLError: <urlopen error [Errno 2] No such file or directory: '/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/tasep_with_canonical_decay/combine_lifetime_and_psr_data.R'>
+  File "/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/tasep_with_canonical_decay/Snakefile", line 52, in __rule_combine_mrna_protein_stats
+  File "/fh/fast/subramaniam_a/user/rasi/lib/python3.6.2/lib/python3.6/concurrent/futures/thread.py", line 55, in run
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/modeling/simulation_runs/tasep_with_canonical_decay/.snakemake/log/2019-01-01T161948.593254.snakemake.log

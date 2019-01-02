@@ -1,0 +1,105 @@
+---
+title: "Analyze simulation results"
+author: "`r Sys.info()[['user']]`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  github_document:
+    toc: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+```
+
+# Load libraries
+
+```{r}
+library(tidyverse)
+library(rasilabRtemplates)
+# disable scientific notation
+options(scipen=999)
+```
+
+# Read protein count data
+
+```{r}
+psr_data <- read_tsv("tables/psr_stats.tsv") %>% 
+  print()
+```
+
+# Read mRNA lifetime data
+
+```{r}
+lifetime_data <- read_tsv("tables/mrna_lifetime_stats.tsv") %>% 
+  mutate(se_lifetime = sd_lifetime / sqrt(n_mrna)) %>% 
+  print()
+```
+
+# Read simulation parameters
+
+```{r}
+annotations <- list.files("output/", pattern = "params.tsv.gz$", full.names = T) %>% 
+  enframe("sno", "file") %>% 
+  mutate(sim_id = str_extract(file, "(?<=tasep_)[[:digit:]]+")) %>% 
+  mutate(data = map(file, read_tsv)) %>% 
+  select(-file, -sno) %>% 
+  unnest() %>% 
+  type_convert() %>% 
+  filter(parameter == 'k_init') %>% 
+  spread(parameter, value) %>% 
+  print()
+```
+
+# Combine all data into a single table
+
+```{r}
+data <- annotations %>% 
+  left_join(psr_data, by = "sim_id") %>% 
+  left_join(lifetime_data, by = "sim_id") %>% 
+  print()
+```
+
+# Proteins per mRNA as a function of initiation rate
+
+```{r, fig.width=1.8, fig.height=1.8}
+plot_data <- data
+
+plot_data %>%
+  ggplot(aes(x = k_init, y = mean_p_per_m)) +
+  geom_point(size = 2) +
+  geom_line() +
+  geom_errorbar(aes(ymin = mean_p_per_m - sd_p_per_m, 
+                    ymax = mean_p_per_m + sd_p_per_m, width = 0.5)) +
+  scale_x_continuous(trans = "log2",
+                     labels = scales::trans_format("log2", scales::math_format(2^.x)),
+                     breaks = 2^(seq(-8,0,2))) +
+  scale_y_continuous(trans = "log10",
+                     labels = scales::trans_format("log10", scales::math_format(10^.x)),
+                     breaks = 10^(seq(1,3))) +
+  # scale_y_continuous(limits = c(0, NA)) +
+  labs(x = "initiation rate (s-1)", y = "proteins per mRNA") +
+  theme(legend.position = "top")
+
+ggsave("figures/protein_per_mrna_vs_initiation_rate.pdf")
+```
+
+# mRNA lifetime as a function of initiation rate
+
+```{r, fig.width=1.8, fig.height=1.8}
+plot_data <- data
+
+plot_data %>%
+  ggplot(aes(x = k_init, y = mean_lifetime)) +
+  geom_point(size = 2, shape = 17) +
+  geom_line() +
+  geom_errorbar(aes(ymin = mean_lifetime - sd_lifetime, 
+                    ymax = mean_lifetime + sd_lifetime, width = 0.5)) +
+  scale_x_continuous(trans = "log2",
+                     labels = scales::trans_format("log2", scales::math_format(2^.x)),
+                     breaks = 2^(seq(-8,0,2))) +
+  scale_y_continuous(limits = c(0, NA)) +
+  labs(x = "initiation rate (s-1)", y = "mean mRNA lifetime (s)") +
+  theme(legend.position = "top")
+
+ggsave("figures/mrna_lifetime_vs_initiation_rate.pdf")
+```

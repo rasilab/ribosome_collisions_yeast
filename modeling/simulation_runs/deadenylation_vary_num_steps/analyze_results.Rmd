@@ -1,0 +1,72 @@
+---
+title: "Analyze simulation results"
+author: "`r Sys.info()[['user']]`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  github_document:
+    toc: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+```
+
+# Load libraries
+```{r}
+library(tidyverse)
+library(rasilabRtemplates)
+# disable scientific notation
+options(scipen=999)
+```
+
+# Read mRNA lifetime data
+
+```{r}
+lifetime_data <- read_tsv("tables/mrna_lifetime_stats.tsv") %>% 
+  mutate(se_lifetime = sd_lifetime / sqrt(n_mrna)) %>% 
+  print()
+```
+
+# Read simulation parameters
+
+```{r}
+annotations <- list.files("output/", pattern = "params.tsv.gz$", full.names = T) %>% 
+  enframe("sno", "file") %>% 
+  mutate(sim_id = str_extract(file, "(?<=tasep_)[[:digit:]]+")) %>% 
+  mutate(data = map(file, read_tsv)) %>% 
+  select(-file, -sno) %>% 
+  unnest() %>% 
+  type_convert() %>% 
+  filter(parameter %in% c('l_polya', 'k_deadenylation')) %>% 
+  spread(parameter, value) %>% 
+  print()
+```
+
+# Combine all data into a single table
+
+```{r}
+data <- annotations %>% 
+  left_join(lifetime_data, by = "sim_id") %>% 
+  print()
+```
+
+# mRNA lifetime as a function of number of deadenylation steps
+
+```{r, fig.width=1.8, fig.height=1.85}
+plot_data <- data
+
+plot_data %>%
+  ggplot(aes(x = l_polya, y = mean_lifetime)) +
+  geom_point(size = 2, shape = 17) +
+  geom_line() +
+  geom_errorbar(aes(ymin = mean_lifetime - sd_lifetime, 
+                    ymax = mean_lifetime + sd_lifetime, width = 0.5)) +
+  scale_x_continuous(trans = "log2",
+                     labels = scales::trans_format("log2", scales::math_format(2^.x)),
+                     breaks = 2^(seq(0,6,2))) +
+  scale_y_continuous(limits = c(0, NA)) +
+  labs(x = "number of\ndeadenylation steps", y = "mRNA lifetime (s)") +
+  theme(legend.position = "top")
+
+ggsave("figures/mrna_lifetime_vs_l_polya.pdf")
+```
