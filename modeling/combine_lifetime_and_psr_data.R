@@ -30,7 +30,8 @@ list.files("output/", pattern = "_collision_stats.tsv.gz", full.names = T) %>%
 
 list.files("output/", pattern = "_abort_stats.tsv.gz", full.names = T) %>% 
   enframe("sno", "file") %>% 
-  mutate(data = map(file, read_tsv)) %>% 
+  mutate(data = map(file, . %>% read_tsv %>% 
+                      mutate(sd_abort_per_m = as.integer(sd_abort_per_m)))) %>% 
   # get rid of empty dataframes
   mutate(nrows = map_int(data, nrow)) %>% 
   filter(nrows > 0) %>% 
