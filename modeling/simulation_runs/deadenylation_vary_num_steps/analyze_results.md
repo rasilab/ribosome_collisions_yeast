@@ -108,7 +108,6 @@ plot_data %>%
 ```
 
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
 ``` r
 ggsave("figures/mrna_lifetime_vs_l_polya.pdf")

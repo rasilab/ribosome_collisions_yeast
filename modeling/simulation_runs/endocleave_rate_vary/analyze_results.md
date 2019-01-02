@@ -196,7 +196,6 @@ plot_data %>%
 ```
 
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
 ``` r
 ggsave("figures/mrna_lifetime_vs_cleavage_rate.pdf", width = 3, height = 2.2)

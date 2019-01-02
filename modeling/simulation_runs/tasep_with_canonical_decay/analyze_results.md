@@ -142,7 +142,6 @@ plot_data %>%
 ```
 
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
 ``` r
 ggsave("figures/protein_per_mrna_vs_initiation_rate.pdf")
@@ -168,7 +167,6 @@ plot_data %>%
   theme(legend.position = "top")
 ```
 
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-8-1.png)
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-8-1.png)
 
 ``` r

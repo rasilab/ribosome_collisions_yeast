@@ -135,9 +135,6 @@ plot_data %>%
 ```
 
 ![](analyze_results_files/figure-markdown_github/psr_no_quality_control-1.png)
-![](analyze_results_files/figure-markdown_github/psr_no_quality_control-1.png)
-![](analyze_results_files/figure-markdown_github/psr_no_quality_control-1.png)
-![](analyze_results_files/figure-markdown_github/psr_no_quality_control-1.png)
 
 ``` r
 ggsave('figures/psr_csat_effect_of_num_stalls.pdf') 

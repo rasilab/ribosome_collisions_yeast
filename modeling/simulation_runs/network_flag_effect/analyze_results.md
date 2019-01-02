@@ -152,7 +152,6 @@ plot_data %>%
 ```
 
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
 ``` r
 ggsave("figures/cputime_per_simulation_time.pdf")
@@ -205,7 +204,6 @@ plot_data %>%
   geom_line()
 ```
 
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
 ``` r

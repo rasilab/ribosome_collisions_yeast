@@ -176,7 +176,6 @@ plot_data %>%
 ```
 
 ![](analyze_results_files/figure-markdown_github/psr_no_quality_control-1.png)
-![](analyze_results_files/figure-markdown_github/psr_no_quality_control-1.png)
 
 ``` r
 ggsave('figures/psr_all_models_medium_stall_medium_pretermintact.pdf') 
@@ -209,7 +208,6 @@ plot_data %>%
              show.legend = F, linetype = "dotted")
 ```
 
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
 ``` r
@@ -251,7 +249,6 @@ ggsave('figures/psr_sat_model_vary_abort_rate.pdf', width = 2.25, height = 1.45)
 ```
 
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-8-1.png)
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-8-1.png)
 
 Change in protein synthesis as a function of stall elongation rate in SAT model
 ===============================================================================
@@ -283,7 +280,6 @@ plot_data %>%
              show.legend = F, linetype = "dotted")
 ```
 
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-9-1.png)
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ``` r
@@ -321,7 +317,6 @@ plot_data %>%
 ```
 
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-10-1.png)
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
 ``` r
 ggsave('figures/psr_csat_model_vary_stall_rate.pdf', width = 2.25, height = 1.45) 
@@ -353,7 +348,6 @@ plot_data %>%
   theme(legend.position = "top")
 ```
 
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-11-1.png)
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-11-1.png)
 
 ``` r
@@ -388,5 +382,4 @@ plot_data %>%
 ggsave("figures/collision_rate_vs_initiation_rate_log_scale.pdf", width=0.8, height=0.8)
 ```
 
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-12-1.png)
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-12-1.png)

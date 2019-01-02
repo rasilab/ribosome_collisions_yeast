@@ -142,7 +142,6 @@ plot_data %>%
 ```
 
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
 ``` r
 ggsave("figures/psr_vs_initiation_rate_vary_n_stalls.pdf")

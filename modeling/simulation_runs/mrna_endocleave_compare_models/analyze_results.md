@@ -258,7 +258,6 @@ plot_data %>%
 ```
 
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-8-1.png)
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-8-1.png)
 
 ``` r
 ggsave("figures/mrna_lifetime_vs_initiation_rate.pdf", width = 1.7, height = 2)
@@ -286,7 +285,6 @@ plot_data %>%
   theme(legend.position = "top")
 ```
 
-![](analyze_results_files/figure-markdown_github/psr_cshl_poster-1.png)
 ![](analyze_results_files/figure-markdown_github/psr_cshl_poster-1.png)
 
 ``` r
@@ -316,7 +314,6 @@ plot_data %>%
   theme(legend.position = "top")
 ```
 
-![](analyze_results_files/figure-markdown_github/collision_cshl_poster-1.png)
 ![](analyze_results_files/figure-markdown_github/collision_cshl_poster-1.png)
 
 ``` r
@@ -349,7 +346,6 @@ ggsave("figures/collision_rate_vs_initiation_rate_log_scale.pdf", width=0.8, hei
 ```
 
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-9-1.png)
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 PSR as a function of initiation rate for different cleavage rates in SEC model
 ==============================================================================
@@ -376,5 +372,4 @@ ggsave("figures/psr_vs_initiation_rate_vary_cleave_rate.pdf",
        width = 2.5, height = 1.7)
 ```
 
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-10-1.png)
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-10-1.png)
