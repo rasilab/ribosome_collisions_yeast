@@ -94,12 +94,9 @@ for network in ['-connect', '']:
     # simlate with NFSim
     sp.run(nfsim_command)
 
-    # calculate statistics of various reaction firings
-    # sp.run(['Rscript', 'get_mrna_lifetime_and_psr.R', str(simindex)])
-
     # remove the files that are too big or are not needed for analysis
     # comment these lines out for troubleshooting
-    # os.remove(rxnfile + '.gz')
+    # os.remove(rxnfile)
     os.remove(gdatfile)
     os.remove(bnglfile)
     os.remove(xmlfile)
