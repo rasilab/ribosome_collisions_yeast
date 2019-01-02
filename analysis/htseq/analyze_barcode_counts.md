@@ -183,7 +183,7 @@ plot_data %>%
   labs(title = "read preprocessing statistics", y = "read count (millions)")
 ```
 
-![](/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/analysis/htseq/analyze_barcode_counts_files/figure-markdown_github/unnamed-chunk-5-1.png)
+![](analyze_barcode_counts_files/figure-markdown_github/unnamed-chunk-4-1.png)
 
 ``` r
 ggsave("figures/read_preprocessing_stats.pdf")
@@ -300,7 +300,7 @@ plot_data %>%
   labs(x = "-4 to -1 nt from ATG", y = "mRNA level (log2, a.u.)")
 ```
 
-![](/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/analysis/htseq/analyze_barcode_counts_files/figure-markdown_github/unnamed-chunk-8-1.png)
+![](analyze_barcode_counts_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
 ``` r
 ggsave("figures/mrna_level_wt_4_codons.pdf")
@@ -325,7 +325,7 @@ plot_data %>%
   labs(x = "-4 to -1 nt from ATG", y = "mRNA level (log2, a.u.)")
 ```
 
-![](/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/analysis/htseq/analyze_barcode_counts_files/figure-markdown_github/unnamed-chunk-9-1.png)
+![](analyze_barcode_counts_files/figure-markdown_github/unnamed-chunk-8-1.png)
 
 ``` r
 ggsave("figures/mrna_level_wt_pgk1_no_insert.pdf")
@@ -359,7 +359,7 @@ plot_data %>%
   labs(x = "-4 to -1 nt from ATG", y = "mRNA level (log2, a.u.)")
 ```
 
-![](/fh/fast/subramaniam_a/user/rasi/git/ribosome_collisions_yeast/analysis/htseq/analyze_barcode_counts_files/figure-markdown_github/unnamed-chunk-10-1.png)
+![](analyze_barcode_counts_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ``` r
 ggsave("figures/mrna_level_ko_2_codons.pdf")
