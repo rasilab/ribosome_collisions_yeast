@@ -4,6 +4,8 @@ Heungwon Park  & Arvind R. Subramaniam
 
 [[http://rasilab.fredhutch.org/]]
 
+This repository contains code and instructions for running simulations, analyzing data, and generating the figures in the manuscript.
+
 ** Contents                                                          :toc_3:
   - [[#modeling][Modeling]]
     - [[#default-run][Default Run]]
@@ -28,7 +30,7 @@ This model is defined using the [[http://pysb.org/][PySB]] syntax.
 To simulate this model with its default parameters, run:
 #+BEGIN_SRC sh :exports code
 cd modeling
-./tasep.py
+python tasep.py
 #+END_SRC
 
 The above run displays the following output:
@@ -86,8 +88,45 @@ At the end of the run, =tasep.params.tsv.gz=, =tasep.gdat=, and =tasep.rxns.tsv=
 
 *** Parameter Sweep
 
+Simulations with systematic variation of parameters are run from the 9 sub-directories in [[file:modeling/simulation_runs/]].
+Each of these sub-directories contains a [[https://snakemake.readthedocs.io/en/stable/][Snakemake]] workflow that chooses the parameters, runs the simulations, tabulates the summary data, and generates figures.
+We describe this workflow using a specific example in the [[file:modeling/simulation_runs/endocleave_rate_vary/]] sub-directory.
+All other sub-directories contain a very similar workflow.
 
+For the set of 60 simulations in file:modeling/simulation_runs/endocleave_rate_vary/, the endonucleolytic mRNA cleavage rate in the collision-stimulated endonucleolytic cleavage model is systematically varied.
+The parameters that are varied from their default values are chosen in [[file:modeling/simulation_runs/endocleave_rate_vary/choose_simulation_parameters.py]] and written as a tab-separated file [[file:modeling/simulation_runs/endocleave_rate_vary/sim.params.tsv]] in the same directory.
+The script [[file:modeling/simulation_runs/endocleave_rate_vary/run_simulation.py]] runs the simulation with a single parameter set. 
+This parameter set is decided by the single argument to this script which specifies the row number in file:modeling/simulation_runs/endocleave_rate_vary/sim.params.tsv.
+The script file:modeling/simulation_runs/endocleave_rate_vary/run_simulation.py invokes [[file:modeling/get_mrna_lifetime_and_psr.R]] to parse the raw reaction firing data and calculates the mean and standard deviation of four observables: protein synthesis rate, mRNA lifetime, ribosome collision frequency, and abortive termination frequency for each mRNA during its lifetime.
+These summary statistics are tabulated for all parameter combinations in file:modeling/simulation_runs/endocleave_rate_vary/sim.params.tsv  using the script [[file:modeling/combine_lifetime_and_psr_data.R]] which generates the =tsv= files in [[file:modeling/simulation_runs/endocleave_rate_vary/tables/]].
+The tabulated summary statistics are analyzed and plotted in the [[https://r4ds.had.co.nz/r-markdown.html][RMarkdown]] script [[file:modeling/simulation_runs/endocleave_rate_vary/analyze_results.Rmd]], which when knitted, results in the Github-flavored Markdown file: file:modeling/simulation_runs/endocleave_rate_vary/analyze_results.md and the figures in [[file:modeling/simulation_runs/endocleave_rate_vary/figures/]].
 
+[[file:modeling/simulation_runs/endocleave_rate_vary/Snakefile]] implements the above described workflow. 
+Simulations are often run on a cluster using the cluster configuration file:modeling/simulation_runs/endocleave_rate_vary/cluster.yaml.
+
+To invoke the above workflow, run:
+#+BEGIN_SRC sh :exports code
+cd modeling/simulation_runs/endocleave_rate_vary
+# check what will be run using a dry run
+snakemake -np
+# run everything locally; can take a very long time!!
+snakemake
+# use a SLURM cluster for running simulations
+sh submit_cluster.sh > submit.log 2> submit.log &
+#+END_SRC
+
+All the simulations in this work (997 distinct parameter combinations) can be run in a single workflow using [[file:modeling/Snakefile]], but this is not typically recommended unless you are re-running only a few simulations.
+
+- [[file:modeling/simulation_runs/network_flag_effect/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/network_flag_effect/figures/cputime_per_simulation_time.pdf][S1A]], [[file:modeling/simulation_runs/network_flag_effect/figures/n_proteins_vs_simulation_time.pdf][S1B]].
+- [[file:modeling/simulation_runs/tasep_with_canonical_decay/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/tasep_with_canonical_decay/figures/protein_per_mrna_vs_initiation_rate.pdf][S1C]].
+- [[file:modeling/simulation_runs/deadenylation_vary_num_steps/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/deadenylation_vary_num_steps/figures/mrna_lifetime_vs_l_polya.pdf][S1D]].
+- [[file:modeling/simulation_runs/preterm_compare_models/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_all_models_medium_stall_medium_pretermintact.pdf][2C]], [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_tj_model_vary_stall_strength.pdf][S2A]], [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_sat_model_vary_stall_rate.pdf][S2B]], [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_sat_model_vary_abort_rate.pdf][S2C]], [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_csat_model_vary_stall_rate.pdf][S2D]], [[file:modeling/simulation_runs/preterm_compare_models/figures/collision_rate_vs_initiation_rate.pdf][4A top panel]], [[file:modeling/simulation_runs/preterm_compare_models/figures/collision_rate_vs_initiation_rate_log_scale.pdf][4A top panel inset]].
+- [[file:modeling/simulation_runs/csat_model_vary_num_stalls/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/csat_model_vary_num_stalls/figures/psr_csat_effect_of_num_stalls.pdf][2D]].
+- [[file:modeling/simulation_runs/mrna_endocleave_compare_models/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/mrna_endocleave_compare_models/figures/mrna_lifetime_vs_initiation_rate.pdf][3C]], [[file:modeling/simulation_runs/mrna_endocleave_compare_models/figures/psr_vs_initiation_rate.pdf][3D]], [[file:modeling/simulation_runs/mrna_endocleave_compare_models/figures/psr_vs_initiation_rate_vary_cleave_rate.pdf][S3A]], [[file:modeling/simulation_runs/mrna_endocleave_compare_models/figures/collision_rate_vs_initiation_rate.pdf][4A bottom panel]], [[file:modeling/simulation_runs/mrna_endocleave_compare_models/figures/collision_rate_vs_initiation_rate_log_scale.pdf][4A bottom panel inset]].
+- [[file:modeling/simulation_runs/csec_model_vary_num_stalls/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/csec_model_vary_num_stalls/figures/psr_vs_initiation_rate_vary_n_stalls.pdf][S3B]].
+- [[file:modeling/simulation_runs/preterm_rate_vary/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/preterm_rate_vary/figures/psr_vs_abortive_termination_rate.pdf][4B]].
+- [[file:modeling/simulation_runs/endocleave_rate_vary/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/endocleave_rate_vary/figures/mrna_lifetime_vs_cleavage_rate.pdf][4C]].
+ 
 ** Data Analysis
 
 *** High-Throughput Sequencing
