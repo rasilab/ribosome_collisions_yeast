@@ -5,27 +5,93 @@
 #+TITLE: A Unified Kinetic Model of Ribosome Collision Stimulated Quality Control in Eukaryotes
 #+DATE: 
 
-Analysis and simulation runs are formated as [[https://snakemake.readthedocs.io/en/stable/][Snakemake]] workflows.
-
-**                                                                     :toc:
+**                                                                     :toc_3:
   - [[#modeling][Modeling]]
+    - [[#default-run][Default Run]]
+    - [[#parameter-sweep][Parameter Sweep]]
   - [[#data-analysis][Data Analysis]]
+    - [[#high-throughput-sequencing][High-Throughput Sequencing]]
+    - [[#flow-cytometry][Flow Cytometry]]
 
 ** Modeling
 
-Our kinetic model for quality control during eukaryotic translation is defined in [[file:modeling/tasep.py]]. 
-This model is defined using the [[http://pysb.org/][PySB]] syntax.
-To simulate this model with its default parameters, run =./tasep.py= from the [[file:modeling]] folder.
+*** Default Run
 
 To run the simulations, install our lab's customized versions of:
 - =PySB=: https://github.com/rasilab/PySB
 - =BioNetGen=: https://github.com/rasilab/BioNetGen
 - =NFsim=: https://github.com/rasilab/NFsim
 
+The instructions for installing the above software are provided in the respective links.
+
+Our kinetic model for quality control during eukaryotic translation is defined in [[file:modeling/tasep.py]]. 
+This model is defined using the [[http://pysb.org/][PySB]] syntax.
+To simulate this model with its default parameters, run:
+#+BEGIN_SRC sh :exports code
+cd modeling
+./tasep.py
+#+END_SRC
+
+The above run displays the following output:
+#+BEGIN_SRC 
+BioNetGen version 2.4.0
+Reading from file ./tasep.bngl (level 0)
+Read 31 parameters.
+Read 5 molecule types.
+Read 7 observable(s).
+Read 2 species.
+Read 8402 reaction rule(s).
+WARNING: writeFile(): Overwriting existing file ./tasep.xml.
+Wrote model in xml format to ./tasep.xml.
+Finished processing file ./tasep.bngl.
+CPU TIME: total 74.72 s.
+NFsim -xml ./tasep.xml -sim 100000 -oSteps 10 -seed 111 -o ./tasep.gdat -rxnlog ./tasep.rxns.tsv -utl 3 -gml 1000000 -maxcputime 6000 -connect
+# starting NFsim v1.11...
+# seeding random number generator with: 111
+# reading xml file (./tasep.xml)
+-------]
+# preparing simulation...
+Connectivity inferred for 1000 reactions.
+Connectivity inferred for 2000 reactions.
+Connectivity inferred for 3000 reactions.
+Connectivity inferred for 4000 reactions.
+Connectivity inferred for 5000 reactions.
+Connectivity inferred for 6000 reactions.
+Connectivity inferred for 7000 reactions.
+Connectivity inferred for 8000 reactions.
+# equilibrating for :0s.
+# simulating system for: 1.000000e+05 second(s).
+
+Sim time: 0.000000e+00	CPU time (total): 3.330000e-04s	 events (step): 0
+Sim time: 1.000000e+04	CPU time (total): 1.194367e+02s	 events (step): 976356
+Sim time: 2.000000e+04	CPU time (total): 2.274126e+02s	 events (step): 787224
+Sim time: 3.000000e+04	CPU time (total): 2.795730e+02s	 events (step): 429620
+Sim time: 4.000000e+04	CPU time (total): 3.434378e+02s	 events (step): 446252
+Sim time: 5.000000e+04	CPU time (total): 4.125380e+02s	 events (step): 552178
+Sim time: 6.000000e+04	CPU time (total): 5.400679e+02s	 events (step): 928650
+Sim time: 7.000000e+04	CPU time (total): 6.394025e+02s	 events (step): 763216
+Sim time: 8.000000e+04	CPU time (total): 7.081266e+02s	 events (step): 527655
+Sim time: 9.000000e+04	CPU time (total): 8.037636e+02s	 events (step): 734622
+Sim time: 1.000000e+05	CPU time (total): 8.943492e+02s	 events (step): 682986
+
+# simulated 6828760 reactions in 8.943500e+02s
+# 7.635445e+03 reactions/sec, 1.309681e-04 CPU seconds/event
+# null events: 0 1.309681e-04 CPU seconds/non-null event
+# done.  Total CPU time: 1012.13s
+
+#+END_SRC
+
+CPU times will be a bit different depending on the machine.
+
+At the end of the run, =tasep.gdat= and =tasep.rxns.tsv= files should be present in the [[file:modeling/]] folder.
+
+*** Parameter Sweep
+
 
 
 ** Data Analysis
-*** High-throughput sequencing
+
+*** High-Throughput Sequencing
 [[file:data/htseq/]] contains the annotations for the reporter and Illumina multiplexing barcodes used for measuring mRNA levels.
 
 Raw sequencing data in =.fastq= format can be downloaded to the [[file:data/htseq/]] folder, and will be made accessible from GEO.
@@ -52,4 +118,6 @@ snakemake --forceall -dag | dot -Tpng -o dag.png
 #+END_SRC
 which produces the following graph:
 [[file:analysis/htseq/dag.png]]
+
+*** Flow Cytometry
 
