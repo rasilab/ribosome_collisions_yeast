@@ -130,11 +130,16 @@ All the simulations in this work (997 distinct parameter combinations) can be ru
 ** Data Analysis
 
 *** High-Throughput Sequencing
-[[file:data/htseq/]] contains the annotations for the reporter and Illumina multiplexing barcodes used for measuring mRNA levels.
+[[file:data/htseq/]] contains the annotations for the reporter and Illumina multiplexing barcodes used for measuring mRNA levels:
 
-Raw sequencing data in =.fastq= format can be downloaded to the [[file:data/htseq/]] folder, and will be made accessible from GEO.
+- [[file:data/htseq/barcode_annotations.tsv]] contains the 8nt barcodes inserted into the 3′UTR along with a unique plate and well number for each barcode.
+- [[file:data/htseq/strain_barcode_annotations.tsv]] contains the plate + well number of the 8nt barcode and the corresponding reporter plasmid listed in Table S1 of the manuscript.
+- [[file:data/htseq/strain_annotations.tsv]] contains the initiation and codon mutations in each reporter plasmid that barcoded, and is similar to Table S1 of the manuscript.
+- [[file:data/htseq/r2_barcode_annotations.tsv]] contains the Illumina multiplexing barcodes and the corresponding the strain background and whether the library is prepared from cDNA or gDNA.
 
-The number of Illumina sequencing reads aligning to each barcode in each sample is counted using the [[file:analysis/htseq/count_barcodes.py]] =Python= script.
+Raw sequencing data in =.fastq= format must be downloaded to the [[file:data/htseq/]] folder, and will be made accessible from GEO.
+
+The number of Illumina sequencing reads aligning to each barcode in each sample is counted using [[file:analysis/htseq/count_barcodes.py]].
 These counts are available as =.tsv= files in [[file:analysis/htseq/tables/]].
 
 The tabulated counts are processed and plotted in [[file:analysis/htseq/analyze_barcode_counts.Rmd]] to generate Fig. [[file:analysis/htseq/figures/mrna_level_wt_pgk1_no_insert.pdf][6B]], [[file:analysis/htseq/figures/mrna_level_wt_4_codons.pdf][6C]], and [[file:analysis/htseq/figures/mrna_level_ko_2_codons.pdf][7C]] in the manuscript.
