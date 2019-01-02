@@ -1,0 +1,225 @@
+---
+title: "Analyze initiation codon pair mRNA levels"
+author: "`r Sys.info()[['user']]`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  github_document:
+    toc: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=F, message=F)
+```
+
+# Load libraries and define analysis-specific parameters
+```{r}
+library(glue)
+library(tidyverse)
+library(rasilabRtemplates)
+
+codonnames <- c(
+  "AAG" = "10xAAG",
+  "AGA" = "10xAGA",
+  "CCG" = "8xCCG",
+  "CCA" = "8xCCA",
+  "AGT" = "PGK1_wt",
+  "TCC" = "PGK1_5xAGA5")
+
+initiationmutation_order <- seq(1,9)
+names(initiationmutation_order) <- c('CTG', 'CTGC', 'CCGC', 
+                              'ACGC', 'CCGA', 'CCAC', 'CCAA', 'CAAA', 'AAAA')
+```
+
+# Read barcode and strain annotations
+
+```{r}
+r2_annotations <- read_tsv("../../data/htseq/r2_barcode_annotations.tsv") %>% 
+  print()
+strain_annotations <- read_tsv("../../data/htseq/strain_annotations.tsv") %>% 
+  print()
+barcode_annotations <- read_tsv("../../data/htseq/barcode_annotations.tsv") %>% 
+  print()
+```
+
+```{r}
+strain_barcode_annotations <- read_tsv("../../data/htseq/strain_barcode_annotations.tsv") %>% 
+  # get rid of plasmid well and Description, we don't need it
+  select(-Description, -well) %>% 
+  # combine plate and well location into 1
+  mutate(oligo1 = paste0(plate1, "_", well1), 
+         oligo2 = paste0(plate2, "_", well2),
+         oligo3 = paste0(plate3, "_", well3), 
+         oligo4 = paste0(plate4, "_", well4)) %>% 
+  # get ride of plate and well columns
+  select(-matches("^plate|^well")) %>% 
+  # gather all oligos into single well
+  gather(oligo, location, -plasmid) %>% 
+  # separate again into plate and well
+  separate(location, c("plate", "well")) %>% 
+  select(-oligo) %>% 
+  # clean up A01 to A1, B02 to B2 etc.
+  mutate(well = str_replace(well, "([A-Z])0(\\d)", "\\1\\2")) %>% 
+  # remove empty wells  
+  filter(well != "NA") %>% 
+  print()
+```
+
+# Plot read count statistics
+
+```{r, fig.width=8, fig.height=4}
+plot_data <- list.files("tables/", full.names = T, 
+                         pattern = "read_counts.tsv") %>% 
+  enframe("sno", "file") %>% 
+  mutate(data = map(file, data.table::fread)) %>% 
+  mutate(barcode = str_extract(file, "[ACTG]{6}")) %>% 
+  unnest() %>% 
+  rename(read_type = type) %>% 
+  select(-sno, -file) %>% 
+  left_join(r2_annotations, by = "barcode") %>% 
+  mutate(count = count / 1e6) %>% 
+  group_by(strain, type) %>% 
+  mutate(read_type = fct_reorder(read_type, count, .desc = T)) %>% 
+  print()
+
+plot_data %>%
+  ggplot(aes(x = read_type, y = count)) +
+  facet_wrap(~ type + strain, ncol = 6, scales = "free", 
+             labeller = label_both) +
+  geom_point() +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.ticks.y = element_blank()) +
+  scale_y_continuous(limits = c(0, NA)) +
+  labs(title = "read preprocessing statistics", y = "read count (millions)")
+
+ggsave("figures/read_preprocessing_stats.pdf")
+```
+
+# Read count data and join with barcode and strain annotations
+
+```{r}
+count_data <- list.files("tables/", pattern = "barcode_counts.tsv",
+                         full.names = T) %>% 
+  enframe("sno", "file") %>% 
+  # extract R2 barcode
+  mutate(barcode = str_extract(file, "(?<=/)[ACTG]{6}")) %>% 
+  # read data
+  mutate(data = map(file, read_tsv)) %>% 
+  # expand to a single dataframe
+  unnest() %>% 
+  # join by R2 barcode
+  left_join(r2_annotations, by = "barcode") %>% 
+  # keep only columns of interest
+  select(-sno, -file, -index, -barcode, -strain_num, -primer) %>%
+  rename(barcode = r1_barcode) %>% 
+  left_join(barcode_annotations, by = "barcode") %>% 
+  # keep only columns of interest
+  select(-primer_name) %>% 
+  left_join(strain_barcode_annotations, by = c("plate", "well")) %>% 
+  # keep only columns of interest
+  select(-plate, -well) %>% 
+  left_join(strain_annotations, by = "plasmid") %>% 
+  # keep only columns of interest
+  select(-row) %>% 
+  arrange(count) %>%
+  print()
+```
+
+# Calculate log2 fold mRNA levels median normalized within each initiation set
+```{r}
+lfc_data <- count_data %>% 
+  # get rid of low counts
+  filter(count >= 100) %>% 
+  # spread cdna and gdna counts for each barcode to adjacent columns
+  spread(type, count) %>%
+  # calculate log2 fold change cdna / gdna
+  mutate(lfc = log2(cdna)-log2(gdna)) %>%
+  # get rid of NA
+  filter(!is.na(lfc)) %>%
+  # median normalize each group
+  group_by(label, strain, init) %>%
+  summarize(mean_lfc = mean(lfc), se_lfc = var(lfc) / sqrt(n() - 1)) %>%
+  ungroup() %>%
+  group_by(label, strain) %>%
+  mutate(mean_lfc = mean_lfc - median(mean_lfc)) %>%
+  ungroup() %>%
+  # arrange init_mutation in correct_order
+  mutate(init = fct_reorder(init, initiationmutation_order[init])) %>%
+  print()
+```
+
+
+# Plot mRNA level of PGK1-YFP with different codons, wild-type cells
+
+```{r, fig.width=4, fig.height=1.6}
+plot_data <- lfc_data %>% 
+  filter(strain == "scHP15" & !str_detect(label, "pgk1")) %>% 
+  mutate(codon_group = substr(label, 1, nchar(label)-3)) %>% 
+  mutate(stall = if_else(str_detect(label, "aag|ccg"), "yes", "no")) 
+
+plot_data %>% 
+  # exclude the mutated start codon since this will be shown in previous panel
+  filter(init != "CTG") %>% 
+  ggplot(aes(x = init, y = mean_lfc, group = label, shape = stall, color = stall)) +
+  facet_wrap(~ codon_group, ncol = 2, scales = "free_y") +
+  geom_errorbar(aes(ymin = mean_lfc - se_lfc, ymax = mean_lfc + se_lfc),
+                width = 0.5, color = "black") +
+  geom_line() +
+  geom_point(size = 2) +
+  scale_color_manual(values = cbPalette) +
+  # scale_shape_manual(values = c(21, 24, 22, 25)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
+  scale_y_continuous(limits = c(-1.1, +0.5)) +
+  labs(x = "-4 to -1 nt from ATG", y = "mRNA level (log2, a.u.)")
+
+ggsave("figures/mrna_level_wt_4_codons.pdf")
+```
+
+# Plot mRNA level of PGK1-YFP, no insert
+
+```{r, fig.width=1.6, fig.height=1.6}
+plot_data <- lfc_data %>% 
+  filter(strain == "scHP15" & str_detect(label, "pgk1, no insert"))
+
+plot_data %>% 
+  ggplot(aes(x = init, y = mean_lfc, group = label)) +
+  geom_errorbar(aes(ymin = mean_lfc - se_lfc, ymax = mean_lfc + se_lfc),
+                width = 0.5, color = "black") +
+  geom_line() +
+  geom_point(size = 2) +
+  scale_color_manual(values = cbPalette) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
+  # scale_y_continuous(limits = c(-1.1, +0.5)) +
+  labs(x = "-4 to -1 nt from ATG", y = "mRNA level (log2, a.u.)")
+
+ggsave("figures/mrna_level_wt_pgk1_no_insert.pdf")
+```
+
+# Plot mRNA levels of  KO codon mutants for paper
+
+```{r, fig.width=5.5, fig.height=1.6}
+plot_data <- lfc_data %>% 
+  filter(str_detect(strain, "Δ") & !str_detect(label, "pgk1")) %>% 
+  mutate(codon_group = substr(label, 1, 1)) %>% 
+  filter(codon_group == "8") %>% 
+  mutate(stall = if_else(str_detect(label, "aag|ccg"), "yes", "no")) %>% 
+  mutate(strain = str_replace(strain, "(.+)(.)", "\\2\\1")) %>% 
+  mutate(strain = fct_relevel(strain, "ΔLTN1", "ΔDOM34", "ΔHEL2", "ΔASC1"))
+
+plot_data %>% 
+  # exclude the mutated start codon since this will be shown in previous panel
+  filter(init != "CTG") %>% 
+  ggplot(aes(x = init, y = mean_lfc, group = label, shape = stall, color = stall)) +
+  facet_wrap(~ strain, ncol = 4, scales = "fixed") +
+  geom_errorbar(aes(ymin = mean_lfc - se_lfc, ymax = mean_lfc + se_lfc),
+                width = 0.5, color = "black") +
+  geom_line() +
+  geom_point(size = 2) +
+  scale_color_manual(values = cbPalette) +
+  # scale_shape_manual(values = c(21, 24, 22, 25)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
+  scale_y_continuous(limits = c(-1.1, +0.5)) +
+  labs(x = "-4 to -1 nt from ATG", y = "mRNA level (log2, a.u.)")
+
+ggsave("figures/mrna_level_ko_2_codons.pdf")
+```

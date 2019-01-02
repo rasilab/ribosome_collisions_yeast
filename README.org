@@ -5,21 +5,50 @@
 #+TITLE: A Unified Kinetic Model of Ribosome Collision Stimulated Quality Control in Eukaryotes
 #+DATE: 
 
-** Contents                                                            :toc:
+Analysis and simulation runs are formated as [[https://snakemake.readthedocs.io/en/stable/][Snakemake]] workflows.
+
+**                                                                     :toc:
   - [[#modeling][Modeling]]
   - [[#data-analysis][Data Analysis]]
 
 ** Modeling
 
-All relevant files are in the [[modeling]] subfolder.
+Our kinetic model for quality control during eukaryotic translation is defined in [[file:modeling/tasep.py]]. 
+This model is defined using the [[http://pysb.org/][PySB]] syntax.
+To simulate this model with its default parameters, run =./tasep.py= from the [[file:modeling]] folder.
 
-To run simulations from scratch, install our customized versions of:
-- =NFsim=: https://github.com/rasilab/NFsim
-- =BioNetGen=: https://github.com/rasilab/BioNetGen
+To run the simulations, install our lab's customized versions of:
 - =PySB=: https://github.com/rasilab/PySB
+- =BioNetGen=: https://github.com/rasilab/BioNetGen
+- =NFsim=: https://github.com/rasilab/NFsim
+
+
 
 ** Data Analysis
+*** High-throughput sequencing
+file:data/htseq/ contains the annotations for the reporter and Illumina multiplexing barcodes used for measuring mRNA levels.
 
-Raw data is in [[data]] folder.
+Raw sequencing data in =.fastq= format can be downloaded to the [[file:data/htseq/]] folder, and will be made accessible from GEO.
 
-Analysis scripts  are in [[scripts]] folder.
+The number of Illumina sequencing reads aligning to each barcode in each sample is counted using the [[file:analysis/htseq/count_barcodes.py]] =Python= script.
+These counts are available as =.tsv= files in [[file:analysis/htseq/tables/]].
+
+The tabulated counts are processed and plotted in [[file:analysis/htseq/analyze_barcode_counts.Rmd]] to generate Fig. [[file:analysis/htseq/figures/mrna_level_wt_pgk1_no_insert.pdf][6B]], [[file:analysis/htseq/figures/mrna_level_wt_4_codons.pdf][6C]], and [[file:analysis/htseq/figures/mrna_level_ko_2_codons.pdf][7C]] in the manuscript.
+
+The above steps are implemented as a =Snakemake= workflow in [[file:analysis/htseq/Snakefile]]. 
+The workflow can be run locally or on a SLURM cluster by:
+#+BEGIN_SRC sh :exports code
+cd analysis/htseq
+# local run
+snakemake
+# cluster run
+sh submit_cluster.sh > submit.log 2> submit.log &
+#+END_SRC
+
+This workflow can be visualized by:
+#+BEGIN_SRC sh :exports code
+snakemake --forceall -dag | dot -Tpng -o dag.png
+#+END_SRC
+which produces the following graph:
+[[file:analysis/htseq/dag.png]]
+

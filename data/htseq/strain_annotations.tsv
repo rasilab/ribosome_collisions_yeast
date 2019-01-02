@@ -1,0 +1,55 @@
+row	plasmid	init	codon	gene	label
+1	phpsc354-1	CAAA	aagaag	pgk1	10×aag
+2	phpsc355-1	CCGC	aagaag	pgk1	10×aag
+3	phpsc356-1	CCAA	aagaag	pgk1	10×aag
+4	phpsc357-1	CCAC	aagaag	pgk1	10×aag
+5	phpsc358-1	CCGA	aagaag	pgk1	10×aag
+6	phpsc359-1	CTGC	aagaag	pgk1	10×aag
+7	phpsc360-1	AAAA	aagaag	pgk1	10×aag
+8	phpsc361-1	ACGC	aagaag	pgk1	10×aag
+9	phpsc362-1	CTG	aagaag	pgk1	10×aag
+10	phpsc363-1	CAAA	agaaga	pgk1	10×aga
+11	phpsc364-1	CCGC	agaaga	pgk1	10×aga
+12	phpsc365-1	CCAA	agaaga	pgk1	10×aga
+13	phpsc366-1	CCAC	agaaga	pgk1	10×aga
+14	phpsc367-1	CCGA	agaaga	pgk1	10×aga
+15	phpsc368-1	CTGC	agaaga	pgk1	10×aga
+16	phpsc369-1	AAAA	agaaga	pgk1	10×aga
+17	phpsc370-1	ACGC	agaaga	pgk1	10×aga
+18	phpsc371-1	CTG	agaaga	pgk1	10×aga
+19	phpsc314-1	CAAA	ccacca	pgk1	8×cca
+20	phpsc315-1	CCGC	ccacca	pgk1	8×cca
+21	phpsc316-2	CCAA	ccacca	pgk1	8×cca
+22	phpsc317-1	CCAC	ccacca	pgk1	8×cca
+23	phpsc318-1	CCGA	ccacca	pgk1	8×cca
+24	phpsc319-1	CTGC	ccacca	pgk1	8×cca
+25	phpsc320-1	AAAA	ccacca	pgk1	8×cca
+26	phpsc321-1	ACGC	ccacca	pgk1	8×cca
+27	phpsc322-1	CTG	ccacca	pgk1	8×cca
+28	phpsc323-2	CAAA	ccgccg	pgk1	8×ccg
+29	phpsc324-1	CCGC	ccgccg	pgk1	8×ccg
+30	phpsc325-1	CCAA	ccgccg	pgk1	8×ccg
+31	phpsc326-2	CCAC	ccgccg	pgk1	8×ccg
+32	phpsc327-1	CCGA	ccgccg	pgk1	8×ccg
+33	phpsc328-1	CTGC	ccgccg	pgk1	8×ccg
+34	phpsc329-1	AAAA	ccgccg	pgk1	8×ccg
+35	phpsc330-1	ACGC	ccgccg	pgk1	8×ccg
+36	phpsc331-1	CTG	ccgccg	pgk1	8×ccg
+37	phpsc57-2	CAAA	tccgaa	pgk1	pgk1*, no insert
+38	phpsc126-2	CCGC	tccgaa	pgk1	pgk1*, no insert
+39	phpsc158-1	CCAA	tccgaa	pgk1	pgk1*, no insert
+40	phpsc159-2	CCAC	tccgaa	pgk1	pgk1*, no insert
+41	phpsc160-2	CCGA	tccgaa	pgk1	pgk1*, no insert
+42	phpsc161-1	CTGC	tccgaa	pgk1	pgk1*, no insert
+43	phpsc162-1	AAAA	tccgaa	pgk1	pgk1*, no insert
+44	phpsc163-1	ACGC	tccgaa	pgk1	pgk1*, no insert
+45	phpsc214-2	CTG	tccgaa	pgk1	pgk1*, no insert
+46	phpsc429-2	CAAA	agtgaa	pgk1	pgk1, no insert
+47	phpsc430-4	CCGC	agtgaa	pgk1	pgk1, no insert
+48	phpsc431-1	CCAA	agtgaa	pgk1	pgk1, no insert
+49	phpsc432-2	CCAC	agtgaa	pgk1	pgk1, no insert
+50	phpsc433-1	CCGA	agtgaa	pgk1	pgk1, no insert
+51	phpsc434-4	CTGC	agtgaa	pgk1	pgk1, no insert
+52	phpsc435-2	AAAA	agtgaa	pgk1	pgk1, no insert
+53	phpsc436-2	ACGC	agtgaa	pgk1	pgk1, no insert
+54	phpsc437-1	CTG	agtgaa	pgk1	pgk1, no insert
