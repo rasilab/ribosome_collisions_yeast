@@ -18,9 +18,9 @@
 *** Default Run
 
 To run the simulations, install our lab's customized versions of:
-- =PySB=: https://github.com/rasilab/PySB
-- =BioNetGen=: https://github.com/rasilab/BioNetGen
-- =NFsim=: https://github.com/rasilab/NFsim
+- [[https://www.ncbi.nlm.nih.gov/pubmed/23423320][PySB]]: https://github.com/rasilab/PySB
+- [[https://www.ncbi.nlm.nih.gov/pubmed/27402907][BioNetGen]]: https://github.com/rasilab/BioNetGen
+- [[https://www.ncbi.nlm.nih.gov/pubmed/21186362][NFsim]]: https://github.com/rasilab/NFsim
 
 The instructions for installing the above software are provided in the respective links.
 
