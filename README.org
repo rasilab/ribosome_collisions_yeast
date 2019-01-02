@@ -34,6 +34,7 @@ The number of Illumina sequencing reads aligning to each barcode in each sample 
 These counts are available as =.tsv= files in [[file:analysis/htseq/tables/]].
 
 The tabulated counts are processed and plotted in [[file:analysis/htseq/analyze_barcode_counts.Rmd]] to generate Fig. [[file:analysis/htseq/figures/mrna_level_wt_pgk1_no_insert.pdf][6B]], [[file:analysis/htseq/figures/mrna_level_wt_4_codons.pdf][6C]], and [[file:analysis/htseq/figures/mrna_level_ko_2_codons.pdf][7C]] in the manuscript.
+The knitted code and figures from this analysis can be browsed at [[file:analysis/htseq/analyze_barcode_counts.md]].
 
 The above steps are implemented as a =Snakemake= workflow in [[file:analysis/htseq/Snakefile]]. 
 The workflow can be run locally or on a SLURM cluster by:
