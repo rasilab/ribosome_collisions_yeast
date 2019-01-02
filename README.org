@@ -5,6 +5,10 @@
 #+TITLE: A Unified Kinetic Model of Ribosome Collision Stimulated Quality Control in Eukaryotes
 #+DATE: 
 
+Heungwon Park  & Arvind R. Subramaniam
+
+[[http://rasilab.fredhutch.org/]]
+
 **                                                                     :toc_3:
   - [[#modeling][Modeling]]
     - [[#default-run][Default Run]]
