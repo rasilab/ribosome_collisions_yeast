@@ -1,15 +1,10 @@
-#+LATEX_CLASS: article
-#+OPTIONS: num:nil tex:t
-#+LATEX_CLASS_OPTIONS: [10pt,letterpaper]
-#+LATEX_HEADER: \input{latex_template.tex}
 #+TITLE: A Unified Kinetic Model of Ribosome Collision Stimulated Quality Control in Eukaryotes
-#+DATE: 
 
 Heungwon Park  & Arvind R. Subramaniam
 
 [[http://rasilab.fredhutch.org/]]
 
-**                                                                     :toc_3:
+** Contents                                                          :toc_3:
   - [[#modeling][Modeling]]
     - [[#default-run][Default Run]]
     - [[#parameter-sweep][Parameter Sweep]]
@@ -87,7 +82,7 @@ Sim time: 1.000000e+05	CPU time (total): 8.943492e+02s	 events (step): 682986
 
 CPU times will be a bit different depending on the machine.
 
-At the end of the run, =tasep.gdat= and =tasep.rxns.tsv= files should be present in the [[file:modeling/]] folder.
+At the end of the run, =tasep.params.tsv.gz=, =tasep.gdat=, and =tasep.rxns.tsv= files should be present in the [[file:modeling/]] folder.
 
 *** Parameter Sweep
 
