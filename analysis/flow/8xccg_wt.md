@@ -194,7 +194,7 @@ plot_data %>%
 ![](8xccg_wt_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ``` r
-ggsave('figures/initiation_pgk1_ccg_flow.pdf')
+ggsave('figures/8xccg_wt.pdf')
 
 plot_data %>% 
   arrange(codonmutation, initiationmutation) %>% 

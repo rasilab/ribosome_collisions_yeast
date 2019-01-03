@@ -41,7 +41,7 @@ bad_wells <- list(
 fcs_file_folder <- "../../data/flow/5xcgg_asc1ko/"
 ```
 
-```{r, eval = T, include = FALSE}
+```{r, eval = FALSE, include = FALSE}
 # Combine raw .fcs files into a single dataframe for manuscript
 # This chunk is for preprocessing and is not evaluated (`eval = FALSE`).
 
@@ -66,7 +66,7 @@ raw_data <- fcs_file_folder %>%
   print()
 ```
 
-```{r, eval = T, include = FALSE}
+```{r, eval = FALSE, include = FALSE}
 # Clean annotations file for manuscript
 # This chunk is for preprocessing and is not evaluated (`eval = FALSE`).
 
@@ -100,7 +100,7 @@ annotations <- paste0(fcs_file_folder, '/sampleannotations.tsv') %>%
   print()
 ```
 
-```{r, eval = T, include = FALSE}
+```{r, eval = FALSE, include = FALSE}
 # Keep only the data that we need for manuscript
 # This chunk is for preprocessing and is not evaluated (`eval = FALSE`).
 raw_data %>% 

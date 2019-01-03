@@ -209,7 +209,7 @@ plot_data %>%
 ![](cgg_position_number_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ``` r
-ggsave('figures/initiation_pgk1_cgg.pdf')
+ggsave('figures/5xcgg_wt.pdf')
 
 plot_data %>% 
   arrange(codonmutation, initiationmutation) %>% 

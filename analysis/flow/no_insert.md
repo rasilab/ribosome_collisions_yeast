@@ -171,7 +171,7 @@ plot_data %>%
 ![](no_insert_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ``` r
-ggsave("figures/initiation_pgk1_no_insert_flow.pdf")
+ggsave("figures/no_insert.pdf")
 
 plot_data %>% 
   arrange(initiationmutation) %>% 

@@ -194,7 +194,7 @@ plot_data %>%
 ![](10xaag_wt_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ``` r
-ggsave('figures/initiation_pgk1_aag_flow.pdf')
+ggsave('figures/10xaag_wt.pdf')
 
 plot_data %>% 
   arrange(codonmutation, initiationmutation) %>% 

@@ -198,7 +198,7 @@ plot_data %>%
         axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
   scale_y_continuous(breaks = scales::pretty_breaks(n=4))
 
-ggsave('figures/low_med_high_ccg_4ko_wt.pdf')
+ggsave('figures/lowmedhigh_ccg_4ko_wt.pdf')
 
 plot_data %>% 
   arrange(knockout, codonmutation, initiationmutation) %>% 

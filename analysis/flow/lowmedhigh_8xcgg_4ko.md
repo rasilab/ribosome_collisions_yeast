@@ -206,7 +206,7 @@ plot_data %>%
 ![](lowmedhigh_8xcgg_4ko_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ``` r
-ggsave('figures/low_med_high_ccg_4ko_wt.pdf')
+ggsave('figures/lowmedhigh_ccg_4ko_wt.pdf')
 
 plot_data %>% 
   arrange(knockout, codonmutation, initiationmutation) %>% 
