@@ -38,7 +38,7 @@ flowdata  <- read_tsv(paste0(fcs_file_folder, '/data.tsv')) %>%
   print()
 ```
 
-    ## # A tibble: 150,000 x 7
+    ## # A tibble: 660,000 x 7
     ##    plate well   FSC.A  SSC.A FITC.A PE.Texas.Red.A  Time
     ##    <int> <chr>  <int>  <int>  <int>          <int> <dbl>
     ##  1     1 B2     41718  37703     57             41  3.04
@@ -51,7 +51,7 @@ flowdata  <- read_tsv(paste0(fcs_file_folder, '/data.tsv')) %>%
     ##  8     1 B2     41055  45669     79            -10  3.14
     ##  9     1 B2     40873  35228     82            -31  3.16
     ## 10     1 B2     36060  27464    131             87  3.16
-    ## # ... with 149,990 more rows
+    ## # ... with 659,990 more rows
 
 Read annotations
 ================
@@ -61,20 +61,20 @@ annotations  <- read_tsv(paste0(fcs_file_folder, '/annotations.tsv')) %>%
   print()
 ```
 
-    ## # A tibble: 30 x 8
-    ##    plate well  strain replicate initiationmutation codonmutation gene   
-    ##    <int> <chr> <chr>      <int> <chr>              <chr>         <chr>  
-    ##  1     1 B2    by4741         1 CAAA               <NA>          <NA>   
-    ##  2     1 B3    schp15         1 CAAA               <NA>          <NA>   
-    ##  3     1 B4    schp19         1 CAAA               cgg           maxhis3
-    ##  4     1 B5    schp20         1 CAAA               aga           maxhis3
-    ##  5     1 B6    schp76         1 CAAA               aga           pgk1   
-    ##  6     1 E2    by4741         2 CAAA               <NA>          <NA>   
-    ##  7     1 E3    schp15         2 CAAA               <NA>          <NA>   
-    ##  8     1 E4    schp19         2 CAAA               cgg           maxhis3
-    ##  9     1 E5    schp20         2 CAAA               aga           maxhis3
-    ## 10     1 E6    schp76         2 CAAA               aga           pgk1   
-    ## # ... with 20 more rows, and 1 more variable: knockout <chr>
+    ## # A tibble: 132 x 7
+    ##    plate well  strain  replicate initiationmutation codonmutation gene   
+    ##    <int> <chr> <chr>       <int> <chr>              <chr>         <chr>  
+    ##  1     1 B2    by4741          1 CAAA               <NA>          <NA>   
+    ##  2     1 B3    schp15          1 CAAA               <NA>          <NA>   
+    ##  3     1 B4    schp19          1 CAAA               cgg           maxhis3
+    ##  4     1 B5    schp20          1 CAAA               aga           maxhis3
+    ##  5     1 B7    schp674         1 CAAA               aag           pgk1   
+    ##  6     1 B8    schp675         1 CCGC               aag           pgk1   
+    ##  7     1 B9    schp676         1 CCAA               aag           pgk1   
+    ##  8     1 B10   schp677         1 CCAC               aag           pgk1   
+    ##  9     1 B11   schp678         1 CCGA               aag           pgk1   
+    ## 10     1 C2    schp679         1 CTGC               aag           pgk1   
+    ## # ... with 122 more rows
 
 Rename and calculate average values of fluorescence channels in each well
 =========================================================================
@@ -93,27 +93,22 @@ by_file <- flowdata  %>%
   print()
 ```
 
-    ## # A tibble: 15 x 10
+    ## # A tibble: 66 x 9
     ## # Groups:   plate [?]
-    ##    plate well      yfp     rfp strain replicate initiationmutation
-    ##    <int> <chr>   <dbl>   <dbl> <chr>      <int> <chr>             
-    ##  1     1 B2       66.4    28.5 by4741         1 CAAA              
-    ##  2     1 B3      267.  21366.  schp15         1 CAAA              
-    ##  3     1 B4     2327.  18761.  schp19         1 CAAA              
-    ##  4     1 B5    20649.  18753.  schp20         1 CAAA              
-    ##  5     1 B6    13230.  23298.  schp76         1 CAAA              
-    ##  6     2 E2       64.3    36.9 by4741         4 CAAA              
-    ##  7     2 E3      275.  21173.  schp15         4 CAAA              
-    ##  8     2 E4     2250.  18882.  schp19         4 CAAA              
-    ##  9     2 E5    19844.  19462.  schp20         4 CAAA              
-    ## 10     2 E6    12196.  22131.  schp76         4 CAAA              
-    ## 11     3 B2       64.4    33.9 by4741         5 CAAA              
-    ## 12     3 B3      250.  18786.  schp15         5 CAAA              
-    ## 13     3 B4     2224.  17281.  schp19         5 CAAA              
-    ## 14     3 B5    18249.  17130.  schp20         5 CAAA              
-    ## 15     3 B6    12354.  21320.  schp76         5 CAAA              
-    ## # ... with 3 more variables: codonmutation <chr>, gene <chr>,
-    ## #   knockout <chr>
+    ##    plate well      yfp     rfp strain  replicate initiationmutation
+    ##    <int> <chr>   <dbl>   <dbl> <chr>       <int> <chr>             
+    ##  1     1 B10    4379.  20725.  schp677         1 CCAC              
+    ##  2     1 B11    4806.  21500.  schp678         1 CCGA              
+    ##  3     1 B2       66.4    28.5 by4741          1 CAAA              
+    ##  4     1 B3      267.  21366.  schp15          1 CAAA              
+    ##  5     1 B4     2327.  18761.  schp19          1 CAAA              
+    ##  6     1 B5    20649.  18753.  schp20          1 CAAA              
+    ##  7     1 B7     1657.  20194.  schp674         1 CAAA              
+    ##  8     1 B8     4136.  21386.  schp675         1 CCGC              
+    ##  9     1 B9     3119.  20731.  schp676         1 CCAA              
+    ## 10     1 C10    5023.  21059.  schp687         1 CCGA              
+    ## # ... with 56 more rows, and 2 more variables: codonmutation <chr>,
+    ## #   gene <chr>
 
 Calculate mean and standard error over replicates
 =================================================
@@ -144,16 +139,21 @@ avg_data  <- by_file %>%
   print()
 ```
 
-    ## # A tibble: 5 x 18
-    ##   plate well        yfp       rfp strain replicate initiationmutation
-    ##   <int> <chr>     <dbl>     <dbl> <chr>      <int> <chr>             
-    ## 1     1 B2      -198.       -4.58 by4741         1 CAAA              
-    ## 2     1 B3         2.93  21333.   schp15         1 CAAA              
-    ## 3     1 B4      2063.    18728.   schp19         1 CAAA              
-    ## 4     1 B5     20385.    18720.   schp20         1 CAAA              
-    ## 5     1 B6     12966.    23265.   schp76         1 CAAA              
-    ## # ... with 11 more variables: codonmutation <chr>, gene <chr>,
-    ## #   knockout <chr>, mean_yfp <dbl>, mean_rfp <dbl>, yfp_rfp_ratio <dbl>,
+    ## # A tibble: 22 x 17
+    ##    plate well        yfp       rfp strain  replicate initiationmutation
+    ##    <int> <chr>     <dbl>     <dbl> <chr>       <int> <chr>             
+    ##  1     1 B2      -198.       -4.58 by4741          1 CAAA              
+    ##  2     1 B3         2.93  21333.   schp15          1 CAAA              
+    ##  3     1 B4      2063.    18728.   schp19          1 CAAA              
+    ##  4     1 B5     20385.    18720.   schp20          1 CAAA              
+    ##  5     1 B7      1393.    20161.   schp674         1 CAAA              
+    ##  6     1 B8      3872.    21353.   schp675         1 CCGC              
+    ##  7     1 B9      2855.    20698.   schp676         1 CCAA              
+    ##  8     1 B10     4115.    20691.   schp677         1 CCAC              
+    ##  9     1 B11     4542.    21467.   schp678         1 CCGA              
+    ## 10     1 C2      2597.    20870.   schp679         1 CTGC              
+    ## # ... with 12 more rows, and 10 more variables: codonmutation <chr>,
+    ## #   gene <chr>, mean_yfp <dbl>, mean_rfp <dbl>, yfp_rfp_ratio <dbl>,
     ## #   mean_ratio <dbl>, se_yfp <dbl>, se_rfp <dbl>, se_ratio <dbl>, n <int>
 
 ``` r
@@ -205,4 +205,19 @@ plot_data %>%
 
 | codonmutation | initiationmutation |  mean\_ratio|  se\_ratio|    n|
 |:--------------|:-------------------|------------:|----------:|----:|
-| 10×AGA        | CAAA               |         5.06|      0.074|    3|
+| 10×AAG        | CTGC               |        1.109|      0.032|    3|
+| 10×AAG        | CCGC               |        1.616|      0.027|    3|
+| 10×AAG        | ACGC               |        1.681|      0.033|    3|
+| 10×AAG        | CCGA               |        1.920|      0.006|    3|
+| 10×AAG        | CCAC               |        1.771|      0.022|    3|
+| 10×AAG        | CCAA               |        1.231|      0.026|    3|
+| 10×AAG        | CAAA               |        0.632|      0.037|    3|
+| 10×AAG        | AAAA               |        0.519|      0.018|    3|
+| 10×AGA        | CTGC               |        0.761|      0.107|    3|
+| 10×AGA        | CCGC               |        1.446|      0.028|    3|
+| 10×AGA        | ACGC               |        1.572|      0.027|    3|
+| 10×AGA        | CCGA               |        2.050|      0.007|    3|
+| 10×AGA        | CCAC               |        2.144|      0.022|    3|
+| 10×AGA        | CCAA               |        2.881|      0.072|    3|
+| 10×AGA        | CAAA               |        3.564|      0.158|    3|
+| 10×AGA        | AAAA               |        3.638|      0.029|    3|
