@@ -4,7 +4,7 @@ Heungwon Park  & Arvind R. Subramaniam
 
 [[http://rasilab.fredhutch.org/]]
 
-This repository contains code and instructions for running simulations, analyzing data, and generating the figures in the manuscript.
+This repository contains code and instructions for running simulations, analyzing high-throughput sequencing and flow cytometry data, and generating the corresponding figures in the manuscript.
 
 ** Contents                                                          :toc_3:
   - [[#modeling][Modeling]]
