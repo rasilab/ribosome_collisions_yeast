@@ -90,7 +90,7 @@ At the end of the run, =tasep.params.tsv.gz=, =tasep.gdat=, and =tasep.rxns.tsv=
 
 Simulations with systematic variation of parameters are run from the 9 sub-directories in [[file:modeling/simulation_runs/]].
 Each of these sub-directories contains a [[https://snakemake.readthedocs.io/en/stable/][Snakemake]] workflow that chooses the parameters, runs the simulations, tabulates the summary data, and generates figures.
-We describe this workflow using a specific example in the [[file:modeling/simulation_runs/endocleave_rate_vary/]] sub-directory.
+Below, we describe this workflow using a specific example in the [[file:modeling/simulation_runs/endocleave_rate_vary/]] sub-directory.
 All other sub-directories contain a very similar workflow.
 
 For the set of 60 simulations in [[file:modeling/simulation_runs/endocleave_rate_vary/]], the endonucleolytic mRNA cleavage rate in the collision-stimulated endonucleolytic cleavage model is systematically varied.
@@ -98,7 +98,7 @@ The parameters that are varied from their default values are chosen in [[file:mo
 The script [[file:modeling/simulation_runs/endocleave_rate_vary/run_simulation.py]] runs the simulation with a single parameter set. 
 This parameter set is decided by the single argument to this script which specifies the row number in [[file:modeling/simulation_runs/endocleave_rate_vary/sim.params.tsv]].
 The script [[file:modeling/simulation_runs/endocleave_rate_vary/run_simulation.py]] invokes [[file:modeling/get_mrna_lifetime_and_psr.R]] to parse the raw reaction firing data and calculates the mean and standard deviation of four observables: protein synthesis rate, mRNA lifetime, ribosome collision frequency, and abortive termination frequency for each mRNA during its lifetime.
-These summary statistics are tabulated for all parameter combinations in using the script [[file:modeling/combine_lifetime_and_psr_data.R]] which generates the =tsv= files in [[file:modeling/simulation_runs/endocleave_rate_vary/tables/]].
+These summary statistics are tabulated for all parameter combinations using the script [[file:modeling/combine_lifetime_and_psr_data.R]] which generates the =tsv= files in [[file:modeling/simulation_runs/endocleave_rate_vary/tables/]].
 The tabulated summary statistics are analyzed and plotted in the [[https://r4ds.had.co.nz/r-markdown.html][RMarkdown]] script [[file:modeling/simulation_runs/endocleave_rate_vary/analyze_results.Rmd]], which when knitted, results in the Github-flavored Markdown file [[file:modeling/simulation_runs/endocleave_rate_vary/analyze_results.md]]  and the figures in [[file:modeling/simulation_runs/endocleave_rate_vary/figures/]].
 
 [[file:modeling/simulation_runs/endocleave_rate_vary/Snakefile]] implements the above described workflow. 
