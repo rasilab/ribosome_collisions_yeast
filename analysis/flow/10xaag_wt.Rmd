@@ -1,0 +1,196 @@
+---
+title: "Fluorescence of PGK1 WT reporters with 10xAAG / 10xAGA inserts and varying 5'UTR mutations"
+author: "`r Sys.info()[['user']]`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  github_document:
+    toc: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Import libraries and analysis specific parameters
+
+```{r}
+# standard analysis and plotting functions, includes dplyr, ggplot2 
+library(tidyverse)
+# loads lab default ggplot2 theme and provides color-blind friendly palette
+library(rasilabRtemplates)
+# standard error
+library(plotrix)
+
+# initiation sites are arranged in this order
+initiationmutation_order <- seq(1,8)
+names(initiationmutation_order) <- toupper(c( 'ctgc', 'ccgc', 
+                              'acgc', 'ccga', 'ccac', 'ccaa', 'caaa', 'aaaa'))
+
+# this folder contains the data and annotations
+fcs_file_folder <- "../../data/flow/10xaag_wt/"
+```
+
+```{r, eval = FALSE, include = FALSE}
+# Combine raw .fcs files into a single dataframe for manuscript
+# This chunk is for preprocessing and is not evaluated (`eval = FALSE`).
+
+raw_data <- fcs_file_folder %>% 
+  # get all fcs files
+  list.files(full.names = T, pattern = '.fcs$') %>% 
+  enframe("sno", "filename") %>% 
+  # get data from each file
+  mutate(data = map(filename, . %>% 
+                      flowCore::read.FCS(transformation = F, alter.names = T) %>% 
+                      flowCore::exprs() %>% 
+                      as_tibble())) %>% 
+  # extract plate and well
+  mutate(plate = as.integer(str_extract(filename, "(?<=Specimen_)[:digit:]{3}"))) %>%
+  mutate(well = str_extract(filename, "(?<=Specimen_[:digit:]{3}_)[:alnum:]+")) %>%
+  # get rid of unwanted columns
+  select(-sno, -filename) %>% 
+  unnest() %>% 
+  # round nicely for storing
+  mutate_at(vars(matches("Time")), funs(round(., 3))) %>% 
+  mutate_at(vars(-matches("Time|well")), funs(as.integer)) %>% 
+  print()
+```
+
+```{r, eval = FALSE, include = FALSE}
+# Clean annotations file for manuscript
+# This chunk is for preprocessing and is not evaluated (`eval = FALSE`).
+
+annotations <- paste0(fcs_file_folder, '/sampleannotations.tsv') %>% 
+                        read_tsv(col_types = list('plate' = col_integer())) %>% 
+  # rename col
+  rename(gene = genes) %>%
+  # replace all 'na' ny NA
+  mutate_all(funs(ifelse(. == 'na', NA, .))) %>%
+  # extract number of stall sites
+  mutate(numberofstallsites =
+         ifelse(is.na(stallsites),
+                0,
+                str_count(stallsites, ',') + 1)) %>%
+  # the default initiation mutation is CAAA
+  mutate(initiationmutation = if_else(is.na(initiationmutation), "CAAA",
+                                      initiationmutation)) %>%
+  mutate(initiationmutation = toupper(initiationmutation)) %>%
+  # arrange initiationmutation in this order
+  mutate(initiationmutation = fct_reorder(
+      initiationmutation,
+      initiationmutation_order[initiationmutation])) %>%
+  mutate(well = str_extract(file, "(?<=Specimen_[:digit:]{3}_)[:alnum:]+")) %>%
+  mutate(strain = str_replace(strain, "schp0", "schp")) %>%
+  # these are genes of interest or the standard control strains
+  filter(gene == "pgk1" & numberofcodonrepeats == 10 | strain %in% c("schp19", "schp20", "schp15", "by4741")) %>% 
+  select(plate, well, strain, replicate, initiationmutation, codonmutation, gene) %>% 
+  write_tsv(paste0(fcs_file_folder, '/annotations.tsv')) %>% 
+  print()
+```
+
+```{r, eval = FALSE, include = FALSE}
+# Keep only the data that we need for manuscript
+# This chunk is for preprocessing and is not evaluated (`eval = FALSE`).
+raw_data %>% 
+  right_join(select(annotations, plate, well)) %>% 
+  filter(!is.na(FITC.A) & !is.na(PE.Texas.Red.A)) %>%
+  write_tsv(paste0(fcs_file_folder, '/data.tsv'))
+```
+
+# Read data
+
+```{r}
+flowdata  <- read_tsv(paste0(fcs_file_folder, '/data.tsv')) %>% 
+  print()
+```
+
+# Read annotations
+
+```{r}
+annotations  <- read_tsv(paste0(fcs_file_folder, '/annotations.tsv')) %>% 
+  print()
+```
+
+# Rename and calculate average values of fluorescence channels in each well
+
+```{r}
+by_file <- flowdata  %>% 
+  # group by each plate and well
+  group_by(plate, well) %>% 
+  select(FITC.A, PE.Texas.Red.A) %>% 
+  # calculate mean
+  summarise_all(mean) %>% 
+  # rename
+  rename('yfp' = FITC.A, 'rfp' = PE.Texas.Red.A) %>% 
+  # join annotations
+  left_join(annotations, by = c('plate', 'well')) %>% 
+  print()
+```
+
+# Calculate mean and standard error over replicates
+
+```{r}
+avg_data  <- by_file %>% 
+  # anti_join(bad_wells) %>% 
+  # strain is used to get replicates
+  group_by(strain) %>% 
+  # calculate mean and std.err
+  mutate(mean_yfp = mean(yfp), 
+         mean_rfp = mean(rfp)) %>% 
+  ungroup() %>% 
+  mutate(yfp = yfp - mean_yfp[strain == "schp15" & replicate == 1], 
+         rfp = rfp - mean_rfp[strain == "by4741" & replicate == 1]) %>% 
+  mutate(yfp_rfp_ratio = yfp / rfp) %>% 
+  # calculate mean and standard error
+  group_by(strain) %>% 
+  mutate(mean_yfp = mean(yfp), 
+         mean_rfp = mean(rfp), 
+         mean_ratio = mean(yfp_rfp_ratio), 
+         se_yfp = std.error(yfp), 
+         se_rfp = std.error(rfp),
+         se_ratio = std.error(yfp_rfp_ratio),
+         n = n()) %>% 
+  slice(1) %>% 
+  ungroup() %>% 
+  print()
+
+normalization <- avg_data %>% 
+  filter(strain == "schp19")
+```
+
+
+# Plot and tabulate background subtracted and normalized YFP/RFP ratio as a function of initiation codon
+
+```{r, fig.width=1.5, fig.height=3}
+plot_data <- avg_data %>% 
+  mutate(mean_ratio = mean_ratio / normalization[[1, "mean_ratio"]]) %>% 
+  mutate(se_ratio = se_ratio / normalization[[1, "mean_ratio"]]) %>% 
+  filter(initiationmutation != "CTG") %>%
+  # arrange initiationmutation in this order
+  mutate(initiationmutation = fct_reorder(
+      initiationmutation,
+      initiationmutation_order[initiationmutation])) %>%
+  filter(gene == "pgk1") %>% 
+  mutate(codonmutation = paste0("10×", toupper(codonmutation)))
+
+plot_data %>% 
+  ggplot(aes(x = initiationmutation, y = mean_ratio, 
+             ymin = mean_ratio - se_ratio, ymax = mean_ratio + se_ratio,
+             group = codonmutation)) +
+  geom_point(size = 1.5) +
+  geom_line() +
+  geom_errorbar(width = 0.75) +
+  facet_wrap(~fct_rev(codonmutation), ncol = 1, scales = "free") + 
+  labs(y = 'fluorescence (a.u.)',
+       x = '-4 to -1 nt from ATG') +
+  theme(legend.title = element_text(size = 8),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n=4))
+
+ggsave('figures/initiation_pgk1_aag_flow.pdf')
+
+plot_data %>% 
+  arrange(codonmutation, initiationmutation) %>% 
+  select(codonmutation, initiationmutation, mean_ratio, se_ratio, n) %>% 
+  mutate_if(is.numeric, funs(round(., 3))) %>% 
+  knitr::kable()
+```
