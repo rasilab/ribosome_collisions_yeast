@@ -1,0 +1,63 @@
+---
+title: "Analysis of Western blot quantification from PGK1 reporters in different genetic backgrounds"
+author: "`r Sys.info()[['user']]`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  github_document:
+    toc: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Import libraries and analysis-specific parameters
+
+```{r}
+# standard analysis and plotting functions, includes dplyr, ggplot2 
+library(tidyverse)
+# loads lab default ggplot2 theme and provides color-blind friendly palette
+library(rasilabRtemplates)
+
+# initiation sites are arranged in this order
+initiationmutation_order <- seq(1,3)
+names(initiationmutation_order) <- toupper(c( 'ctgc', 'ccac', 'caaa'))
+
+# this folder contains the data and annotations
+data_folder <- "../../data/western/"
+```
+
+# Read data and annotations
+
+```{r}
+data  <- read_tsv(paste0(data_folder, '/quantification.tsv')) %>% 
+  print()
+```
+
+# Group by each blot, subtract background, normalize FLAG by H3 for each lane, and then by max ratio
+
+```{r}
+data %>% 
+  group_by(blot, antibody) %>% 
+  # subtract background
+  mutate(mean = mean - mean[is.na(codon) & is.na(initiation)]) %>% 
+  ungroup() %>% 
+  # get rid of unwanted columns
+  select(-area, -min, -max) %>% 
+  # get rid of background lanes
+  filter(!is.na(codon) & !is.na(initiation)) %>% 
+  # get FLAG and H3 quantification side by side for each lane
+  spread(antibody, mean) %>% 
+  # normalize FLAG by H3
+  mutate(ratio = flag / h3) %>% 
+  select(-flag, -h3) %>% 
+  # normalize by maximum ratio within each blot
+  group_by(blot) %>% 
+  mutate(ratio = ratio / max(ratio)) %>%
+  ungroup() %>% 
+  # multiply by 10 and convert to integer for ease of display
+  mutate(ratio = as.integer(ratio * 10)) %>%
+  arrange(blot, lane) %>% 
+  select(blot, lane, strain, codon, initiation, ratio) %>%
+  knitr::kable()
+```

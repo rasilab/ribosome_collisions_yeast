@@ -4,7 +4,11 @@ Heungwon Park  & Arvind R. Subramaniam
 
 [[http://rasilab.fredhutch.org/]]
 
-This repository contains code and instructions for running simulations, analyzing high-throughput sequencing and flow cytometry data, and generating the corresponding figures in the manuscript.
+This repository contains raw experimental data, code, and instructions for:
+ - running simulations
+ - analyzing high-throughput sequencing data and flow cytometry data
+ - quantification of western blots
+ - generating figures in the manuscript
 
 ** Contents                                                          :toc_3:
   - [[#modeling][Modeling]]
@@ -13,6 +17,7 @@ This repository contains code and instructions for running simulations, analyzin
   - [[#data-analysis][Data Analysis]]
     - [[#high-throughput-sequencing][High-Throughput Sequencing]]
     - [[#flow-cytometry][Flow Cytometry]]
+    - [[#western-blots][Western Blots]]
 
 ** Modeling
 
@@ -184,3 +189,12 @@ for file in *.Rmd; do R -e "rmarkdown::render('$file')"; done
 - [[file:analysis/flow/hel2_asc1_mutants.md]] generates Fig. [[file:analysis/flow/figures/hel2_rescue.pdf][7C top panels]] and [[file:analysis/flow/figures/asc1_rescue.pdf][7C bottom panels]]. Note: The mKate2 channel measurement did not work properly in this experiment. Hence the YFP fluorescence is not normalized by mKate2 fluorescence in these figures.
 - [[file:analysis/flow/5xcgg_3ko.md]] and [[file:analysis/flow/5xcgg_asc1ko.md]] generate Fig. [[file:analysis/flow/figures/5xcgg_3ko.pdf][S5A left two panels]] and [[file:analysis/flow/figures/5xcgg_asc1ko.pdf][S5A right panels]]. Note: The measurement in the /ΔASC1/ strain background was very noisy due to poor growth in the first experiment. So this measurement was repeated with longer growth times and inoculation with larger /S. cerevisiae/ colonies.
 
+*** Western Blots
+
+Un-cropped western blot images corresponding to Fig. 5D, 7C are provided as =.png= images in [[file:data/western/]]. 
+The region in each image cropped for inclusion in the manuscript is shown as a rectangle.
+
+The lanes are quantified using ImageJ (Rectangle Select → Analyze → Measure) and pasted as tab-delimited rows.
+This quantification for all lanes in the manuscript is in [[file:data/western/quantification.tsv]].
+
+Normalization of the lanes for display in figures is carried out in [[file:analysis/western/western_analysis.md]].
