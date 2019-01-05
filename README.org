@@ -142,7 +142,7 @@ All the simulations in this work (997 distinct parameter combinations) can be ru
 - [[file:data/htseq/strain_annotations.tsv]] contains the initiation and codon mutations in each reporter plasmid that barcoded, and is similar to Table S1 of the manuscript.
 - [[file:data/htseq/r2_barcode_annotations.tsv]] contains the Illumina multiplexing barcodes and the corresponding the strain background and whether the library is prepared from cDNA or gDNA.
 
-Raw sequencing data in =.fastq= format must be downloaded to the [[file:data/htseq/]] folder, and will be made accessible from GEO.
+Raw sequencing data in =.fastq= format must be downloaded to the [[file:data/htseq/]] folder.
 
 The number of Illumina sequencing reads aligning to each barcode in each sample is counted using [[file:analysis/htseq/count_barcodes.py]].
 These counts are available as =.tsv= files in [[file:analysis/htseq/tables/]].
