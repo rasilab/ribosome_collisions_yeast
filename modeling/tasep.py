@@ -60,8 +60,10 @@ class Tasep(sb.Model):
         sb.Parameter('k_deadenylation', 0.03)
         # rate of decapping once the polyA tail is completely removed
         sb.Parameter('k_decapping', 0.01)
-        # rate at which each nt in the mRNA
+        # rate at which each nt in the mRNA is removed 5' to 3'
         sb.Parameter('k_exo_53', 1)
+        # rate at which each nt in the mRNA is removed 3' to 5'
+        sb.Parameter('k_exo_35', 0)
 
         # stalling params
         # rate of elongation at the first stall
@@ -776,12 +778,8 @@ class Tasep(sb.Model):
         """
         # convert the position from intact to exocleaved only if not occupied by
         # ribosome
-        mrna_reactant_args = {'p' + str(pos): None,
-                              'r' + str(pos): 'intact',
-                              }
-        mrna_product_args = {'p' + str(pos): None,
-                             'r' + str(pos): 'exocleaved',
-                             }
+        mrna_reactant_args = {f'p{pos}': None, f'r{pos}': 'intact'}
+        mrna_product_args = {f'p{pos}': None, f'r{pos}': 'exocleaved'}
         # 5' to 3' exonucleolysis can occur only
         # if previous nt was also cleaved endo or exonucleolytically.
         # The exception is the first nt of the mRNA which can be
@@ -796,18 +794,55 @@ class Tasep(sb.Model):
             )
         else:
             # exo
-            mrna_reactant_args['r' + str(pos - 1)] = 'exocleaved'
-            mrna_product_args['r' + str(pos - 1)] = 'exocleaved'
+            mrna_reactant_args[f'r{pos - 1}'] = 'exocleaved'
+            mrna_product_args[f'r{pos - 1}'] = 'exocleaved'
             sb.Rule(
                 'exonucleolysis_5end_' + str(pos),
                 mrna(**mrna_reactant_args) >> mrna(**mrna_product_args),
                 k, tag=tag
             )
             # endo
-            mrna_reactant_args['r' + str(pos - 1)] = 'endocleaved'
-            mrna_product_args['r' + str(pos - 1)] = 'endocleaved'
+            mrna_reactant_args[f'r{pos - 1}'] = 'endocleaved'
+            mrna_product_args[f'r{pos - 1}'] = 'endocleaved'
             sb.Rule(
                 'exonucleolysis_from_endo_5end_' + str(pos),
+                mrna(**mrna_reactant_args) >> mrna(**mrna_product_args),
+                k, tag=tag
+            )
+
+    def exo_35(self, mrna, pos, k, tag=False):
+        """Inactivate deadenylated/endonucleolytically cleaved mRNA from 3' to 5'
+        """
+        # convert the position from intact to exocleaved only if not occupied by
+        # ribosome
+        mrna_reactant_args = {f'p{pos}': None, f'r{pos}': 'intact'}
+        mrna_product_args = {f'p{pos}': None, f'r{pos}': 'exocleaved'}
+        # 3' to 5' exonucleolysis can occur only
+        # if 3' nt was also cleaved endo or exonucleolytically.
+        # The exception is the last nt of the mRNA which can be
+        # exonucleosed only if the poly A is absent.
+        if pos == self.mrna_length:
+            mrna_reactant_args['pA1'] = 'exocleaved'
+            mrna_product_args['pA1'] = 'exocleaved'
+            sb.Rule(
+                'exonucleolysis_3end_' + str(pos),
+                mrna(**mrna_reactant_args) >> mrna(**mrna_product_args),
+                k, tag=tag
+            )
+        else:
+            # exo
+            mrna_reactant_args[f'r{pos + 1}'] = 'exocleaved'
+            mrna_product_args[f'r{pos + 1}'] = 'exocleaved'
+            sb.Rule(
+                'exonucleolysis_3end_' + str(pos),
+                mrna(**mrna_reactant_args) >> mrna(**mrna_product_args),
+                k, tag=tag
+            )
+            # endo
+            mrna_reactant_args[f'r{pos + 1}'] = 'endocleaved'
+            mrna_product_args[f'r{pos + 1}'] = 'endocleaved'
+            sb.Rule(
+                'exonucleolysis_from_endo_3end_' + str(pos),
                 mrna(**mrna_reactant_args) >> mrna(**mrna_product_args),
                 k, tag=tag
             )
@@ -914,6 +949,10 @@ class Tasep(sb.Model):
         # 5' to 3' exonucleolysis
         for pos in range(self.mrna_length):
             self.exo_53(mrna, pos, k_exo_53, tag=True)
+
+        # 3' to 5' exonucleolysis
+        for pos in range(self.mrna_length):
+            self.exo_35(mrna, pos, k_exo_35, tag=True)
 
         # collision
         for pos in range(self.mrna_length - self.ribosome_footprint_size):
