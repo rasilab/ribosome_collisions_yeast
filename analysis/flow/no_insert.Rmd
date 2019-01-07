@@ -95,7 +95,7 @@ annotations <- paste0(fcs_file_folder, '/sampleannotations.tsv') %>%
 # This chunk is for preprocessing and is not evaluated (`eval = FALSE`).
 raw_data %>% 
   right_join(select(annotations, plate, well)) %>% 
-  write_tsv(paste0(fcs_file_folder, '/data.tsv'))
+  write_tsv(paste0(fcs_file_folder, '/data.tsv.xz'))
 ```
 
 
@@ -103,7 +103,7 @@ raw_data %>%
 # Read data
 
 ```{r}
-flowdata  <- read_tsv(paste0(fcs_file_folder, '/data.tsv')) %>% 
+flowdata  <- read_tsv(paste0(fcs_file_folder, '/data.tsv.xz')) %>% 
   print()
 ```
 

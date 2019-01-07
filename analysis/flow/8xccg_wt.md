@@ -1,7 +1,7 @@
 Fluorescence of PGK1 WT reporters with 8xCCG / 8xCCA inserts and varying 5'UTR mutations
 ================
 rasi
-02 January, 2019
+07 January, 2019
 
 -   [Import libraries and analysis specific parameters](#import-libraries-and-analysis-specific-parameters)
 -   [Read data](#read-data)
@@ -34,7 +34,7 @@ Read data
 =========
 
 ``` r
-flowdata  <- read_tsv(paste0(fcs_file_folder, '/data.tsv')) %>% 
+flowdata  <- read_tsv(paste0(fcs_file_folder, '/data.tsv.xz')) %>% 
   print()
 ```
 

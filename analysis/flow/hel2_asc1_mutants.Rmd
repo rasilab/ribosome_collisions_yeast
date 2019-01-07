@@ -110,13 +110,13 @@ annotations <- paste0(fcs_file_folder, '/sampleannotations.tsv') %>%
 raw_data %>% 
   right_join(select(annotations, plate, well)) %>% 
   filter(!is.na(FITC.A) & !is.na(PE.Texas.Red.A)) %>%
-  write_tsv(paste0(fcs_file_folder, '/data.tsv'))
+  write_tsv(paste0(fcs_file_folder, '/data.tsv.xz'))
 ```
 
 # Read data
 
 ```{r}
-flowdata  <- read_tsv(paste0(fcs_file_folder, '/data.tsv')) %>% 
+flowdata  <- read_tsv(paste0(fcs_file_folder, '/data.tsv.xz')) %>% 
   # get only values greater than 0
   filter(FITC.A > 0 & PE.Texas.Red.A > 0) %>% 
   print()
@@ -206,7 +206,7 @@ ggsave('figures/hel2_rescue.pdf')
 plot_data %>% 
   filter(replicate == 1) %>% 
   arrange(complement, codonmutation, initiationmutation) %>% 
-  select(complement, codonmutation, initiationmutation, mean_ratio, se_ratio, n) %>% 
+  select(complement, codonmutation, initiationmutation, mean_yfp, se_yfp, n) %>% 
   mutate_if(is.numeric, funs(round(., 3))) %>% 
   knitr::kable()
 ```
@@ -268,7 +268,7 @@ ggsave('figures/asc1_rescue.pdf')
 plot_data %>% 
   filter(replicate == 1) %>% 
   arrange(complement, codonmutation, initiationmutation) %>% 
-  select(complement, codonmutation, initiationmutation, mean_ratio, se_ratio, n) %>% 
+  select(complement, codonmutation, initiationmutation, mean_yfp, se_yfp, n) %>% 
   mutate_if(is.numeric, funs(round(., 3))) %>% 
   knitr::kable()
 ```

@@ -1,7 +1,7 @@
 Fluorescence of PGK1 constructs with 8xCCG / 8xCCA inserts and varying Kozak, complementation by HEL2 and ASC1 mutants
 ================
 rasi
-03 January, 2019
+07 January, 2019
 
 -   [Import libraries and analysis specific parameters](#import-libraries-and-analysis-specific-parameters)
 -   [Read data](#read-data)
@@ -52,7 +52,7 @@ Read data
 =========
 
 ``` r
-flowdata  <- read_tsv(paste0(fcs_file_folder, '/data.tsv')) %>% 
+flowdata  <- read_tsv(paste0(fcs_file_folder, '/data.tsv.xz')) %>% 
   # get only values greater than 0
   filter(FITC.A > 0 & PE.Texas.Red.A > 0) %>% 
   print()
@@ -198,37 +198,37 @@ ggsave('figures/hel2_rescue.pdf')
 plot_data %>% 
   filter(replicate == 1) %>% 
   arrange(complement, codonmutation, initiationmutation) %>% 
-  select(complement, codonmutation, initiationmutation, mean_ratio, se_ratio, n) %>% 
+  select(complement, codonmutation, initiationmutation, mean_yfp, se_yfp, n) %>% 
   mutate_if(is.numeric, funs(round(., 3))) %>% 
   knitr::kable()
 ```
 
-| complement | codonmutation | initiationmutation |  mean\_ratio|  se\_ratio|    n|
-|:-----------|:--------------|:-------------------|------------:|----------:|----:|
-| WT         | cca           | CTGC               |        0.118|      0.069|    4|
-| WT         | cca           | CCAC               |       -1.192|      1.415|    4|
-| WT         | cca           | CAAA               |      -44.051|     45.864|    4|
-| WT         | ccg           | CTGC               |        0.077|      0.038|    4|
-| WT         | ccg           | CCAC               |       -0.185|      0.296|    4|
-| WT         | ccg           | CAAA               |       -2.778|      2.846|    4|
-| C64A,C67A  | cca           | CTGC               |        0.042|      0.006|    4|
-| C64A,C67A  | cca           | CCAC               |        0.131|      0.011|    4|
-| C64A,C67A  | cca           | CAAA               |        0.209|      0.013|    4|
-| C64A,C67A  | ccg           | CTGC               |        0.046|      0.006|    4|
-| C64A,C67A  | ccg           | CCAC               |        0.117|      0.011|    4|
-| C64A,C67A  | ccg           | CAAA               |        0.107|      0.017|    4|
-| DRING      | cca           | CTGC               |        0.150|      0.106|    4|
-| DRING      | cca           | CCAC               |        0.216|      0.090|    4|
-| DRING      | cca           | CAAA               |       -0.324|      0.549|    4|
-| DRING      | ccg           | CTGC               |        0.045|      0.003|    4|
-| DRING      | ccg           | CCAC               |        0.155|      0.038|    4|
-| DRING      | ccg           | CAAA               |      -11.809|     11.910|    4|
-| Empty      | cca           | CTGC               |        0.085|      0.038|    4|
-| Empty      | cca           | CCAC               |        0.119|      0.008|    4|
-| Empty      | cca           | CAAA               |        0.203|      0.011|    4|
-| Empty      | ccg           | CTGC               |        0.086|      0.047|    4|
-| Empty      | ccg           | CCAC               |        0.263|      0.105|    4|
-| Empty      | ccg           | CAAA               |       -1.609|      1.716|    4|
+| complement | codonmutation | initiationmutation |  mean\_yfp|  se\_yfp|    n|
+|:-----------|:--------------|:-------------------|----------:|--------:|----:|
+| WT         | cca           | CTGC               |      0.808|    0.031|    4|
+| WT         | cca           | CCAC               |      2.401|    0.097|    4|
+| WT         | cca           | CAAA               |      3.720|    0.192|    4|
+| WT         | ccg           | CTGC               |      0.684|    0.028|    4|
+| WT         | ccg           | CCAC               |      1.856|    0.041|    4|
+| WT         | ccg           | CAAA               |      1.112|    0.096|    4|
+| C64A,C67A  | cca           | CTGC               |      0.637|    0.016|    4|
+| C64A,C67A  | cca           | CCAC               |      2.077|    0.034|    4|
+| C64A,C67A  | cca           | CAAA               |      3.289|    0.030|    4|
+| C64A,C67A  | ccg           | CTGC               |      0.644|    0.006|    4|
+| C64A,C67A  | ccg           | CCAC               |      1.877|    0.024|    4|
+| C64A,C67A  | ccg           | CAAA               |      1.451|    0.020|    4|
+| DRING      | cca           | CTGC               |      0.747|    0.066|    4|
+| DRING      | cca           | CCAC               |      2.284|    0.078|    4|
+| DRING      | cca           | CAAA               |      3.382|    0.089|    4|
+| DRING      | ccg           | CTGC               |      0.608|    0.006|    4|
+| DRING      | ccg           | CCAC               |      1.856|    0.039|    4|
+| DRING      | ccg           | CAAA               |      1.490|    0.072|    4|
+| Empty      | cca           | CTGC               |      0.735|    0.090|    4|
+| Empty      | cca           | CCAC               |      2.118|    0.060|    4|
+| Empty      | cca           | CAAA               |      3.219|    0.059|    4|
+| Empty      | ccg           | CTGC               |      0.649|    0.040|    4|
+| Empty      | ccg           | CCAC               |      2.155|    0.173|    4|
+| Empty      | ccg           | CAAA               |      1.738|    0.095|    4|
 
 Two-sided `t` test for difference in means between Empty and HEL2 mutants for a given 5'UTR mutant (8xCCG only)
 ===============================================================================================================
@@ -308,43 +308,43 @@ ggsave('figures/asc1_rescue.pdf')
 plot_data %>% 
   filter(replicate == 1) %>% 
   arrange(complement, codonmutation, initiationmutation) %>% 
-  select(complement, codonmutation, initiationmutation, mean_ratio, se_ratio, n) %>% 
+  select(complement, codonmutation, initiationmutation, mean_yfp, se_yfp, n) %>% 
   mutate_if(is.numeric, funs(round(., 3))) %>% 
   knitr::kable()
 ```
 
-| complement | codonmutation | initiationmutation |  mean\_ratio|  se\_ratio|    n|
-|:-----------|:--------------|:-------------------|------------:|----------:|----:|
-| WT         | cca           | CTGC               |        0.087|      0.011|    4|
-| WT         | cca           | CCAC               |        0.174|      0.016|    4|
-| WT         | cca           | CAAA               |        3.735|      3.478|    4|
-| WT         | ccg           | CTGC               |        1.486|      1.410|    4|
-| WT         | ccg           | CCAC               |        0.143|      0.014|    4|
-| WT         | ccg           | CAAA               |        0.071|      0.009|    4|
-| 16HNG18AAA | cca           | CTGC               |        0.120|      0.026|    4|
-| 16HNG18AAA | cca           | CCAC               |       -0.167|      0.329|    4|
-| 16HNG18AAA | cca           | CAAA               |       -3.972|      4.203|    4|
-| 16HNG18AAA | ccg           | CTGC               |        0.076|      0.005|    4|
-| 16HNG18AAA | ccg           | CCAC               |        0.170|      0.015|    4|
-| 16HNG18AAA | ccg           | CAAA               |        0.175|      0.014|    4|
-| 38RDK40AAA | cca           | CTGC               |        0.098|      0.011|    4|
-| 38RDK40AAA | cca           | CCAC               |        0.182|      0.023|    4|
-| 38RDK40AAA | cca           | CAAA               |        0.247|      0.019|    4|
-| 38RDK40AAA | ccg           | CTGC               |        0.097|      0.014|    4|
-| 38RDK40AAA | ccg           | CCAC               |        0.207|      0.028|    4|
-| 38RDK40AAA | ccg           | CAAA               |        0.326|      0.035|    4|
-| 85WDK87AAA | cca           | CTGC               |        0.086|      0.011|    4|
-| 85WDK87AAA | cca           | CCAC               |        0.162|      0.013|    4|
-| 85WDK87AAA | cca           | CAAA               |        0.227|      0.024|    4|
-| 85WDK87AAA | ccg           | CTGC               |       -0.083|      0.167|    4|
-| 85WDK87AAA | ccg           | CCAC               |        1.617|      1.439|    4|
-| 85WDK87AAA | ccg           | CAAA               |       -1.717|      2.071|    4|
-| Empty      | cca           | CTGC               |        0.202|      0.124|    4|
-| Empty      | cca           | CCAC               |       -0.191|      0.336|    4|
-| Empty      | cca           | CAAA               |       -0.560|      0.774|    3|
-| Empty      | ccg           | CTGC               |        0.083|      0.007|    4|
-| Empty      | ccg           | CCAC               |        0.207|      0.028|    4|
-| Empty      | ccg           | CAAA               |        0.686|      0.264|    4|
+| complement | codonmutation | initiationmutation |  mean\_yfp|  se\_yfp|    n|
+|:-----------|:--------------|:-------------------|----------:|--------:|----:|
+| WT         | cca           | CTGC               |      1.114|    0.015|    4|
+| WT         | cca           | CCAC               |      2.306|    0.019|    4|
+| WT         | cca           | CAAA               |      3.483|    0.053|    4|
+| WT         | ccg           | CTGC               |      1.136|    0.071|    4|
+| WT         | ccg           | CCAC               |      1.983|    0.034|    4|
+| WT         | ccg           | CAAA               |      0.884|    0.009|    4|
+| 16HNG18AAA | cca           | CTGC               |      1.437|    0.017|    4|
+| 16HNG18AAA | cca           | CCAC               |      2.697|    0.022|    4|
+| 16HNG18AAA | cca           | CAAA               |      4.093|    0.182|    4|
+| 16HNG18AAA | ccg           | CTGC               |      1.319|    0.024|    4|
+| 16HNG18AAA | ccg           | CCAC               |      2.904|    0.049|    4|
+| 16HNG18AAA | ccg           | CAAA               |      3.047|    0.022|    4|
+| 38RDK40AAA | cca           | CTGC               |      1.620|    0.039|    4|
+| 38RDK40AAA | cca           | CCAC               |      2.781|    0.122|    4|
+| 38RDK40AAA | cca           | CAAA               |      4.150|    0.045|    4|
+| 38RDK40AAA | ccg           | CTGC               |      1.511|    0.066|    4|
+| 38RDK40AAA | ccg           | CCAC               |      3.264|    0.148|    4|
+| 38RDK40AAA | ccg           | CAAA               |      6.103|    0.132|    4|
+| 85WDK87AAA | cca           | CTGC               |      1.374|    0.013|    4|
+| 85WDK87AAA | cca           | CCAC               |      2.565|    0.026|    4|
+| 85WDK87AAA | cca           | CAAA               |      3.733|    0.053|    4|
+| 85WDK87AAA | ccg           | CTGC               |      1.331|    0.077|    4|
+| 85WDK87AAA | ccg           | CCAC               |      3.104|    0.226|    4|
+| 85WDK87AAA | ccg           | CAAA               |      6.872|    0.443|    4|
+| Empty      | cca           | CTGC               |      1.560|    0.058|    4|
+| Empty      | cca           | CCAC               |      2.977|    0.159|    4|
+| Empty      | cca           | CAAA               |      4.274|    0.273|    3|
+| Empty      | ccg           | CTGC               |      1.500|    0.028|    4|
+| Empty      | ccg           | CCAC               |      3.302|    0.051|    4|
+| Empty      | ccg           | CAAA               |      6.398|    0.435|    4|
 
 Two-sided `t` test for difference in means between Empty and ASC1 mutants for a given 5'UTR mutant (8xCCG only)
 ===============================================================================================================
