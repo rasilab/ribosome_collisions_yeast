@@ -821,7 +821,7 @@ class Tasep(sb.Model):
         # if 3' nt was also cleaved endo or exonucleolytically.
         # The exception is the last nt of the mRNA which can be
         # exonucleosed only if the poly A is absent.
-        if pos == self.mrna_length:
+        if pos == self.mrna_length - 1:
             mrna_reactant_args['pA1'] = 'exocleaved'
             mrna_product_args['pA1'] = 'exocleaved'
             sb.Rule(
