@@ -120,17 +120,12 @@ snakemake
 sh submit_cluster.sh > submit.log 2> submit.log &
 #+END_SRC
 
-All the simulations in this work (997 distinct parameter combinations) can be run in a single workflow using [[file:modeling/Snakefile]], but this is not typically recommended unless you are re-running only a few simulations.
+All the simulations in this work can be run in a single workflow using [[file:modeling/Snakefile]], but this is not typically recommended unless you are re-running only a few simulations.
 
-- [[file:modeling/simulation_runs/network_flag_effect/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/network_flag_effect/figures/cputime_per_simulation_time.pdf][S1A]], [[file:modeling/simulation_runs/network_flag_effect/figures/n_proteins_vs_simulation_time.pdf][S1B]].
-- [[file:modeling/simulation_runs/tasep_with_canonical_decay/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/tasep_with_canonical_decay/figures/protein_per_mrna_vs_initiation_rate.pdf][S1C]].
-- [[file:modeling/simulation_runs/deadenylation_vary_num_steps/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/deadenylation_vary_num_steps/figures/mrna_lifetime_vs_l_polya.pdf][S1D]].
-- [[file:modeling/simulation_runs/preterm_compare_models/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_all_models_medium_stall_medium_pretermintact.pdf][2C]], [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_tj_model_vary_stall_strength.pdf][S2A]], [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_sat_model_vary_stall_rate.pdf][S2B]], [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_sat_model_vary_abort_rate.pdf][S2C]], [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_csat_model_vary_stall_rate.pdf][S2D]], [[file:modeling/simulation_runs/preterm_compare_models/figures/collision_rate_vs_initiation_rate.pdf][4A top panel]], [[file:modeling/simulation_runs/preterm_compare_models/figures/collision_rate_vs_initiation_rate_log_scale.pdf][4A top panel inset]].
-- [[file:modeling/simulation_runs/csat_model_vary_num_stalls/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/csat_model_vary_num_stalls/figures/psr_csat_effect_of_num_stalls.pdf][2D]].
-- [[file:modeling/simulation_runs/mrna_endocleave_compare_models/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/mrna_endocleave_compare_models/figures/mrna_lifetime_vs_initiation_rate.pdf][3C]], [[file:modeling/simulation_runs/mrna_endocleave_compare_models/figures/psr_vs_initiation_rate.pdf][3D]], [[file:modeling/simulation_runs/mrna_endocleave_compare_models/figures/psr_vs_initiation_rate_vary_cleave_rate.pdf][S3A]], [[file:modeling/simulation_runs/mrna_endocleave_compare_models/figures/collision_rate_vs_initiation_rate.pdf][4A bottom panel]], [[file:modeling/simulation_runs/mrna_endocleave_compare_models/figures/collision_rate_vs_initiation_rate_log_scale.pdf][4A bottom panel inset]].
+- [[file:modeling/simulation_runs/preterm_compare_models/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_all_models_medium_stall_medium_pretermintact.pdf][3B]], [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_tj_model_vary_stall_strength.pdf][S2A]], [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_sat_model_vary_stall_rate.pdf][S2B]], [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_sat_model_vary_abort_rate.pdf][S2C]], [[file:modeling/simulation_runs/preterm_compare_models/figures/psr_csat_model_vary_stall_rate.pdf][S2D]].
+- [[file:modeling/simulation_runs/csat_model_vary_num_stalls/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/csat_model_vary_num_stalls/figures/psr_csat_effect_of_num_stalls.pdf][3C]].
+- [[file:modeling/simulation_runs/mrna_endocleave_compare_models/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/mrna_endocleave_compare_models/figures/mrna_lifetime_vs_initiation_rate.pdf][4B]], [[file:modeling/simulation_runs/mrna_endocleave_compare_models/figures/psr_vs_initiation_rate.pdf][4C]], [[file:modeling/simulation_runs/mrna_endocleave_compare_models/figures/psr_vs_initiation_rate_vary_cleave_rate.pdf][S3A]].
 - [[file:modeling/simulation_runs/csec_model_vary_num_stalls/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/csec_model_vary_num_stalls/figures/psr_vs_initiation_rate_vary_n_stalls.pdf][S3B]].
-- [[file:modeling/simulation_runs/preterm_rate_vary/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/preterm_rate_vary/figures/psr_vs_abortive_termination_rate.pdf][7B]].
-- [[file:modeling/simulation_runs/endocleave_rate_vary/Snakefile]] workflow generates Fig. [[file:modeling/simulation_runs/endocleave_rate_vary/figures/mrna_lifetime_vs_cleavage_rate.pdf][7C]].
  
 ** Data Analysis
 
@@ -147,7 +142,7 @@ Raw sequencing data in =.fastq= format must be downloaded to the [[file:data/hts
 The number of Illumina sequencing reads aligning to each barcode in each sample is counted using [[file:analysis/htseq/count_barcodes.py]].
 These counts are available as =.tsv= files in [[file:analysis/htseq/tables/]].
 
-The tabulated counts are processed and plotted in [[file:analysis/htseq/analyze_barcode_counts.Rmd]] to generate Fig. [[file:analysis/htseq/figures/mrna_level_wt_pgk1_no_insert.pdf][5B]], [[file:analysis/htseq/figures/mrna_level_wt_4_codons.pdf][5C]], and [[file:analysis/htseq/figures/mrna_level_ko_2_codons.pdf][6C]] in the manuscript.
+The tabulated counts are processed and plotted in [[file:analysis/htseq/analyze_barcode_counts.Rmd]] to generate Fig. [[file:analysis/htseq/figures/mrna_level_wt_pgk1_no_insert.pdf][2B]], [[file:analysis/htseq/figures/mrna_level_wt_4_codons.pdf][2C]], and [[file:analysis/htseq/figures/mrna_level_ko_2_codons.pdf][5C]] in the manuscript.
 The knitted code and figures from this analysis can be browsed at [[file:analysis/htseq/analyze_barcode_counts.md]].
 
 The above steps are implemented as a =Snakemake= workflow in [[file:analysis/htseq/Snakefile]]. 
@@ -167,7 +162,7 @@ snakemake --forceall -dag | dot -Tpng -o dag.png
 which produces the following graph:
 [[file:analysis/htseq/dag.png]]
 
-This workflow generates Fig. [[file:analysis/htseq/figures/mrna_level_wt_pgk1_no_insert.pdf][5B]], [[file:analysis/htseq/figures/mrna_level_wt_4_codons.pdf][5C]], [[file:analysis/htseq/figures/mrna_level_ko_2_codons.pdf][6B]], and [[file:analysis/htseq/figures/mrna_level_ko_2_codons.pdf][S5B]].
+This workflow generates Fig. [[file:analysis/htseq/figures/mrna_level_wt_pgk1_no_insert.pdf][2B]], [[file:analysis/htseq/figures/mrna_level_wt_4_codons.pdf][2C]], [[file:analysis/htseq/figures/mrna_level_ko_2_codons.pdf][5B]], and [[file:analysis/htseq/figures/mrna_level_ko_2_codons.pdf][S4B]].
 
 *** Flow Cytometry
 
@@ -182,16 +177,16 @@ cd analysis/flow
 for file in *.Rmd; do R -e "rmarkdown::render('$file')"; done
 #+END_SRC
 
-- [[file:analysis/flow/no_insert.md]] generates Fig. [[file:analysis/flow/figures/no_insert.pdf][4B]].
-- [[file:analysis/flow/10xaag_wt.md]], [[file:analysis/flow/8xccg_wt.md]], and [[file:analysis/flow/cgg_position_number.md]] generate Fig. [[file:analysis/flow/figures/10xaag_wt.pdf][4C left panels]], [[file:analysis/flow/figures/8xccg_wt.pdf][4C middle panels]], and [[file:analysis/flow/figures/5xcgg_wt.pdf][4C right panels]] respectively.
-- [[file:analysis/flow/cgg_position_number.md]] generates Fig. [[file:analysis/flow/figures/stall_position_pgk1_cgg.pdf][S4B]].
-- [[file:analysis/flow/lowmedhigh_8xcgg_4ko.md]] generates Fig. [[file:analysis/flow/figures/lowmedhigh_ccg_4ko_wt.pdf][6A]].
-- [[file:analysis/flow/hel2_asc1_mutants.md]] generates Fig. [[file:analysis/flow/figures/hel2_rescue.pdf][6C top panels]] and [[file:analysis/flow/figures/asc1_rescue.pdf][6C bottom panels]]. The P-values indicated in Fig. 6C in the manuscript are also calculated and displayed in this page. Note: The mKate2 channel measurement did not work properly in this experiment. Hence the YFP fluorescence is not normalized by mKate2 fluorescence in these figures.
-- [[file:analysis/flow/5xcgg_3ko.md]] and [[file:analysis/flow/5xcgg_asc1ko.md]] generate Fig. [[file:analysis/flow/figures/5xcgg_3ko.pdf][S5A left two panels]] and [[file:analysis/flow/figures/5xcgg_asc1ko.pdf][S5A right panels]]. Note: The measurement in the /ΔASC1/ strain background was very noisy due to poor growth in the first experiment. So this measurement was repeated with longer growth times and inoculation with larger /S. cerevisiae/ colonies.
+- [[file:analysis/flow/no_insert.md]] generates Fig. [[file:analysis/flow/figures/no_insert.pdf][1B]].
+- [[file:analysis/flow/10xaag_wt.md]], [[file:analysis/flow/8xccg_wt.md]], and [[file:analysis/flow/cgg_position_number.md]] generate Fig. [[file:analysis/flow/figures/10xaag_wt.pdf][1C left panels]], [[file:analysis/flow/figures/8xccg_wt.pdf][1C middle panels]], and [[file:analysis/flow/figures/5xcgg_wt.pdf][1C right panels]] respectively.
+- [[file:analysis/flow/cgg_position_number.md]] generates Fig. [[file:analysis/flow/figures/stall_position_pgk1_cgg.pdf][S1B]].
+- [[file:analysis/flow/lowmedhigh_8xcgg_4ko.md]] generates Fig. [[file:analysis/flow/figures/lowmedhigh_ccg_4ko_wt.pdf][5A]].
+- [[file:analysis/flow/hel2_asc1_mutants.md]] generates Fig. [[file:analysis/flow/figures/hel2_rescue.pdf][5C top panels]] and [[file:analysis/flow/figures/asc1_rescue.pdf][5C bottom panels]]. The P-values indicated in Fig. 5C in the manuscript are also calculated and displayed in this page. Note: The mKate2 channel measurement did not work properly in this experiment. Hence the YFP fluorescence is not normalized by mKate2 fluorescence in these figures.
+- [[file:analysis/flow/5xcgg_3ko.md]] and [[file:analysis/flow/5xcgg_asc1ko.md]] generate Fig. [[file:analysis/flow/figures/5xcgg_3ko.pdf][S4A left two panels]] and [[file:analysis/flow/figures/5xcgg_asc1ko.pdf][S4A right panels]]. Note: The measurement in the /ΔASC1/ strain background was very noisy due to poor growth in the first experiment. So this measurement was repeated with longer growth times and inoculation with larger /S. cerevisiae/ colonies.
 
 *** Western Blots
 
-Un-cropped western blot images corresponding to Fig. 4D, 6C are provided as =.png= images in [[file:data/western/]]. 
+Un-cropped western blot images corresponding to Fig. 1D, 5C are provided as =.png= images in [[file:data/western/]]. 
 The region in each image cropped for inclusion in the manuscript is shown as a rectangle.
 
 The lanes are quantified using ImageJ (Rectangle Select → Analyze → Measure) and pasted as tab-delimited rows.
