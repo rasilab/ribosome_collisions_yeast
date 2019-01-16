@@ -1,4 +1,4 @@
-#+TITLE: A Unified Kinetic Model of Ribosome Collision Stimulated Quality Control in Eukaryotes
+#+TITLE: Translational Control of Eukaryotic Gene Expression by Ribosome Collisions
 
 Heungwon Park  & Arvind R. Subramaniam
 
