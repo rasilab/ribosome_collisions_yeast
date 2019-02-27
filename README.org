@@ -1,4 +1,4 @@
-#+TITLE: Translational Control of Eukaryotic Gene Expression by Ribosome Collisions
+#+TITLE: Inverted Translational Control of Eukaryotic Gene Expression by Ribosome Collisions
 
 Heungwon Park  & Arvind R. Subramaniam
 
