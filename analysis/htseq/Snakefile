@@ -1,0 +1,45 @@
+"""Workflow for pooled quantification of reporter mRNA
+
+  :Author: Arvind Rasi Subramaniam
+  :Date: 1 Dec 2018
+"""
+
+# useful libraries
+import os
+
+# configuration specific to this analysis
+# BARCODES is defined here
+include: 'config.py'
+
+# these rules are run locally 
+localrules: plot_figures
+
+
+# Rules ----------------------------------------------------------------------
+
+rule plot_figures:
+  """Analyze barcode counts and plot figures"""
+  input: 
+    expand('tables/{barcode}_r1barcode_counts.tsv', barcode=BARCODES),
+    expand('tables/{barcode}_read_counts.tsv', barcode=BARCODES),
+    'analyze_barcode_counts.Rmd'
+  output:
+    'analyze_barcode_counts.md'
+  script:
+    'analyze_barcode_counts.Rmd'
+
+
+rule count_barcode:
+  """Count the number of reads aligning to each R1 barcode"""
+  input:
+    # the script itself is monitored
+    'count_barcodes.py',
+    # all fastq files that contain the barcode of interest in their name
+    lambda wildcards: [f'../../data/htseq/{f}' 
+                       for f in os.listdir('../../data/htseq/') 
+                       if ((wildcards.barcode in f) and (f.endswith('.fastq')))]
+  output:
+    'tables/{barcode}_r1barcode_counts.tsv',
+    'tables/{barcode}_read_counts.tsv'
+  shell:
+    'python count_barcodes.py {wildcards.barcode}'
