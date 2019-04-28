@@ -13,7 +13,7 @@ import itertools as it
 # include each of these params and one of its values in each simulation
 and_params = {
     # canonical translation params
-    'k_init': list(2.0**np.arange(-8, 1, 1)),
+    'k_init': list(2.0**np.arange(-8, 5, 1)),
 
     # canonical mrna metabolism params
     'k_transcription': [0.000],  # set to 0 for single mrna sim
