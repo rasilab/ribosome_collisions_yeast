@@ -14,12 +14,6 @@ k_elong_stall_value = 0.1
 and_params = {
     # translation params
     'k_init': list(2.0**np.arange(-8, 1, 1)),
-    'k_preterm_no_hit_intact': [0],
-    'k_preterm_5_hit_intact': [0],
-    'k_preterm_3_hit_intact': [0],
-    'k_preterm_both_hit_intact': [0],
-    'preterm_intact_model': ['trafficjam'],
-    'preterm_intact_rate': [0],
     'n_stall': [6],
     'x_stall': [','.join([str(x) for x in range(400, 406)])],
     'k_elong_stall': [','.join([str(np.round(k_elong_stall * 6,3))] * 6) 
