@@ -32,32 +32,33 @@ and_params = [list(x) for x in it.product(*[[(p, v)
                                              for v in and_params[p]]
                                             for p in and_params])]
 
-preterm_intact_rate_list = [0, 0.02, 0.1, 0.5, 1, 4] 
-cleave_rate = 0.001
+preterm_intact_rate_list = [0, 1] 
+cleave_rate_list = [0.001, 0.002, 0.004, 0.008]
 preterm_intact_params = list()
-for preterm_intact_rate in preterm_intact_rate_list:
-    scale_factor = (k_elong_stall_value + preterm_intact_rate) / k_elong_stall_value
-    preterm_intact_params.append({
-        # this is the CSAT model
-        'k_preterm_no_hit_intact': 0,
-        'k_preterm_5_hit_intact': preterm_intact_rate,
-        'k_preterm_3_hit_intact': 0,
-        'k_preterm_both_hit_intact': preterm_intact_rate,
-        'preterm_intact_model': 'hit5',
-        'preterm_intact_rate': preterm_intact_rate,
-        # co-translational cleavage params
-        # endocleavage occurs these many codons behind a-site
-        # this is the simple cleavage model
-        'l_cleave': 5,
-        # scale cleavage rate to maintain the same cleavage efficacy despite
-        # the abortive termination relieving the stall
-        'k_cleave_no_hit': 0,
-        'k_cleave_5_hit': cleave_rate * scale_factor,
-        'k_cleave_3_hit': 0,
-        'k_cleave_both_hit': cleave_rate * scale_factor,
-        'cleave_model': 'hit5',
-        'cleave_rate': cleave_rate * scale_factor,
-    })
+for cleave_rate in cleave_rate_list:
+    for preterm_intact_rate in preterm_intact_rate_list:
+        scale_factor = (k_elong_stall_value + preterm_intact_rate) / k_elong_stall_value
+        preterm_intact_params.append({
+            # this is the CSAT model
+            'k_preterm_no_hit_intact': 0,
+            'k_preterm_5_hit_intact': preterm_intact_rate,
+            'k_preterm_3_hit_intact': 0,
+            'k_preterm_both_hit_intact': preterm_intact_rate,
+            'preterm_intact_model': 'hit5',
+            'preterm_intact_rate': preterm_intact_rate,
+            # co-translational cleavage params
+            # endocleavage occurs these many codons behind a-site
+            # this is the simple cleavage model
+            'l_cleave': 5,
+            # scale cleavage rate to maintain the same cleavage efficacy despite
+            # the abortive termination relieving the stall
+            'k_cleave_no_hit': 0,
+            'k_cleave_5_hit': cleave_rate * scale_factor,
+            'k_cleave_3_hit': 0,
+            'k_cleave_both_hit': cleave_rate * scale_factor,
+            'cleave_model': 'hit5',
+            'cleave_rate': cleave_rate * scale_factor,
+        })
 
 # convert each param combination from dict to list of tuples
 preterm_intact_params = [list(x.items()) for x in preterm_intact_params]
