@@ -58,7 +58,7 @@ sim_params <- read_tsv("sim.params.tsv") %>%
   unnest() %>%
   mutate(x_stall = stringr::str_split(x_stall, ',')) %>%
   mutate(k_stall = round(k_elong_stall / as.numeric(n_stall), 2)) %>%
-  select(sim_id, cleave_rate, cleave_model, k_stall) %>%
+  select(sim_id, cleave_rate, cleave_model, k_stall, preterm_intact_rate, preterm_intact_model) %>%
   print()
 
 annotations <- list.files("output/", pattern = "params.tsv.gz$", full.names = T) %>%
@@ -89,109 +89,131 @@ data <- annotations %>%
   print()
 ```
 
-# mRNA lifetime as a function of initiation rate 
+# mRNA lifetime as a function of initiation rate for different rates of premature termination
 
-```{r, fig.width=1.8, fig.height=2.2}
+```{r, fig.width=3.6, fig.height=2.2}
 plot_data <- data %>% 
-  filter(cleave_rate == 0.001 & k_stall == 0.1) %>%
   mutate(model = cleave_model_names[cleave_model]) %>%
+  mutate(preterm_intact_rate = as.factor(preterm_intact_rate)) %>%
+  mutate(cleave_rate = as.factor(cleave_rate)) %>%
+  group_by(cleave_rate, preterm_intact_rate, model) %>% 
+  mutate(mean_lifetime = mean_lifetime / max(mean_lifetime)) %>% 
+  mutate(psr = psr / max(psr)) %>% 
+  ungroup() %>% 
   print()
 
 plot_data %>%
-  ggplot(aes(x = k_init, y = mean_lifetime, color = model, shape = model)) +
+  ggplot(aes(x = k_init, y = mean_lifetime, color = cleave_rate, shape = model, group = cleave_rate)) +
+  facet_wrap(~ preterm_intact_rate) +
   geom_point(size = 2) +
   geom_line() +
   scale_x_continuous(trans = "log2",
                      labels = scales::trans_format("log2", scales::math_format(2^.x)),
                      breaks = 2^(seq(-8,0,2))) +
-  scale_color_manual(values = cbPalette[c(3,2)]) +
+  # scale_color_manual(values = cbPalette[c(3,2)]) +
+  viridis::scale_color_viridis(discrete = T) +
   scale_shape_manual(values = c(19, 17)) +
   labs(x = "initiation rate (s-1)", y = "mean mRNA lifetime (s)", color = "", shape = "") +
   theme(legend.position = "top")
 
-ggsave("figures/mrna_lifetime_vs_initiation_rate.pdf", width = 1.7, height = 2)
+# ggsave("figures/mrna_lifetime_vs_initiation_rate.pdf", width = 1.7, height = 2)
 ```
 
-# PSR as a function of initiation rate
+# mRNA lifetime as a function of initiation rate for different rates of premature termination, Reviewer response figure 
 
-```{r psr_cshl_poster, fig.width=1.8, fig.height=2.2}
+```{r, fig.width=2, fig.height=2.2}
 plot_data <- data %>% 
-  filter(cleave_rate == 0.001 & k_stall == 0.1) %>% 
-  mutate(model = cleave_model_names[cleave_model]) 
+  mutate(model = cleave_model_names[cleave_model]) %>%
+  mutate(preterm_intact_rate = as.factor(preterm_intact_rate)) %>%
+  mutate(cleave_rate = as.factor(cleave_rate)) %>%
+  filter(cleave_rate %in% c(0.002, 0.022)) %>% 
+  print()
 
 plot_data %>%
-  ggplot(aes(x = k_init, y = psr, color = model, shape = model)) +
+  ggplot(aes(x = k_init, y = mean_lifetime, color = preterm_intact_rate, shape = preterm_intact_rate, group = preterm_intact_rate)) +
+  geom_point(size = 2) +
+  geom_line() +
+  scale_x_continuous(trans = "log2",
+                     labels = scales::trans_format("log2", scales::math_format(2^.x)),
+                     breaks = 2^(seq(-8,0,2))) +
+  scale_color_manual(values = cbPalette[c(1,3)]) +
+  scale_shape_manual(values = c(16, 17)) +
+  labs(x = "initiation rate (s-1)", y = "mean mRNA lifetime (s)", color = "", shape = "") +
+  theme(legend.position = "top")
+
+# ggsave("figures/mrna_lifetime_vs_initiation_rate.pdf", width = 1.7, height = 2)
+```
+# PSR as a function of initiation rate
+
+```{r, fig.width=3.6, fig.height=2.2}
+plot_data <- data %>% 
+  mutate(model = cleave_model_names[cleave_model]) %>%
+  mutate(preterm_intact_rate = as.factor(preterm_intact_rate)) %>%
+  mutate(cleave_rate = as.factor(cleave_rate)) %>%
+  group_by(cleave_rate, preterm_intact_rate, model) %>% 
+  mutate(mean_lifetime = mean_lifetime / max(mean_lifetime)) %>% 
+  mutate(psr = psr / max(psr)) %>% 
+  ungroup() %>% 
+  print()
+
+plot_data %>%
+  ggplot(aes(x = k_init, y = psr, color = cleave_rate, shape = model, group = cleave_rate)) +
+  facet_wrap(~ preterm_intact_rate) +
+  geom_point(size = 2) +
+  geom_line() +
+  scale_x_continuous(trans = "log2",
+                     labels = scales::trans_format("log2", scales::math_format(2^.x)),
+                     breaks = 2^(seq(-8,0,2))) +
+  # scale_color_manual(values = cbPalette[c(3,2)]) +
+  viridis::scale_color_viridis(discrete = T) +
+  scale_shape_manual(values = c(19, 17)) +
+  labs(x = "initiation rate (s-1)", y = "protein synthesis rate (s-1)", color = "", shape = "") +
+  theme(legend.position = "top")
+
+# ggsave("figures/mrna_lifetime_vs_initiation_rate.pdf", width = 1.7, height = 2)
+```
+
+# PSR as a function of initiation rate for different rates of premature termination, Reviewer response figure 
+
+```{r, fig.width=2, fig.height=2.2}
+plot_data <- data %>% 
+  mutate(model = cleave_model_names[cleave_model]) %>%
+  mutate(preterm_intact_rate = as.factor(preterm_intact_rate)) %>%
+  mutate(cleave_rate = as.factor(cleave_rate)) %>%
+  filter(cleave_rate %in% c(0.002, 0.022)) %>% 
+  print()
+
+plot_data %>%
+  ggplot(aes(x = k_init, y = psr, color = preterm_intact_rate, shape = preterm_intact_rate, group = preterm_intact_rate)) +
   geom_point(size = 2) +
   geom_line() +
   scale_x_continuous(trans = "log2",
                      labels = scales::trans_format("log2", scales::math_format(2^.x)),
                      breaks = 2^(seq(-8,0,2))) +
   scale_y_continuous(limits = c(0, NA)) +
-  scale_color_manual(values = cbPalette[c(3,2)]) +
-  scale_shape_manual(values = c(19,17)) +
-  labs(x = "initiation rate (s-1)", y = "protein synthesis rate (s-1)", color = "", shape = "") +
+  scale_color_manual(values = cbPalette[c(1,3)]) +
+  scale_shape_manual(values = c(16, 17)) +
+  labs(x = "initiation rate (s-1)", y = "protein synthesis rate (s)", color = "", shape = "") +
   theme(legend.position = "top")
 
-ggsave("figures/psr_vs_initiation_rate.pdf", width = 1.6, height = 2)
+# ggsave("figures/mrna_lifetime_vs_initiation_rate.pdf", width = 1.7, height = 2)
 ```
+# PSR / mRNA lifetime as a function of initiation rate
 
-# Collision rate as a function of initiation rate 
-
-```{r collision_cshl_poster, fig.width=1.4, fig.height=2}
+```{r, fig.width=3.6, fig.height=2.2}
 plot_data <- data %>% 
-  filter(cleave_rate == 0.001 & k_stall == 0.1) %>% 
-  mutate(model = cleave_model_names[cleave_model]) 
+  mutate(model = cleave_model_names[cleave_model]) %>%
+  mutate(preterm_intact_rate = as.factor(preterm_intact_rate)) %>%
+  mutate(cleave_rate = as.factor(cleave_rate)) %>%
+  group_by(cleave_rate, preterm_intact_rate, model) %>% 
+  mutate(mean_lifetime = mean_lifetime / max(mean_lifetime)) %>% 
+  mutate(psr = psr / max(psr)) %>% 
+  ungroup() %>% 
+  print()
 
 plot_data %>%
-  ggplot(aes(x = k_init, y = collision_freq, color = model, shape = model)) +
-  geom_point(size = 1.5) +
-  geom_line() +
-  scale_x_continuous(trans = "log2",
-                     labels = scales::trans_format("log2", scales::math_format(2^.x)),
-                     breaks = 2^(seq(-8,0,4))) +
-  # scale_y_continuous(trans = "log2",
-  #                    labels = scales::trans_format("log2", scales::math_format(2^.x))) +
-  scale_color_manual(values = cbPalette[c(3,2,1)]) +
-  scale_shape_manual(values = c(19, 17,  16)) +
-  labs(x = "initiation rate (s-1)", y = "collision frequency (s-1)", color = "", shape = "") +
-  theme(legend.position = "top")
-
-ggsave("figures/collision_rate_vs_initiation_rate.pdf")
-```
-
-# Same as above but with log Y-scale
-
-```{r, fig.width=0.8, fig.height=0.8}
-plot_data <- data %>% 
-  filter(cleave_rate == 0.001 & k_stall == 0.1) %>% 
-  mutate(model = cleave_model_names[cleave_model]) 
-
-plot_data %>%
-  ggplot(aes(x = k_init, y = collision_freq, color = model, shape = model)) +
-  geom_point(size = 1, show.legend = F) +
-  geom_line(show.legend = F) +
-  theme(axis.text = element_text(size = 6)) +
-  scale_x_continuous(trans = "log2",
-                     labels = scales::trans_format("log2", scales::math_format(2^.x)),
-                     breaks = 2^(seq(-8,0,4))) +
-  scale_y_continuous(trans = "log2",
-                     labels = scales::trans_format("log2", scales::math_format(2^.x))) +
-  scale_color_manual(values = cbPalette[c(3,2,1)]) +
-  scale_shape_manual(values = c(19, 17,  16)) +
-  labs(x = "", y = "", color = "", shape = "") +
-
-ggsave("figures/collision_rate_vs_initiation_rate_log_scale.pdf", width=0.8, height=0.8)
-```
-
-# PSR as a function of initiation rate for different cleavage rates in SEC model
-
-```{r, fig.width=2.5, fig.height=1.7}
-plot_data <- data %>% 
-  filter(k_stall == 0.1 & cleave_rate <= 0.001) %>% 
-  filter(cleave_model == "simple")
-
-plot_data %>%
-  ggplot(aes(x = k_init, y = psr, color = as.factor(cleave_rate), shape = as.factor(cleave_rate))) +
+  ggplot(aes(x = k_init, y = psr / mean_lifetime * 1, color = cleave_rate, shape = model, group = cleave_rate)) +
+  facet_wrap(~ preterm_intact_rate) +
   geom_point(size = 2) +
   geom_line() +
   scale_x_continuous(trans = "log2",
@@ -199,10 +221,42 @@ plot_data %>%
                      breaks = 2^(seq(-8,0,2))) +
   scale_y_continuous(trans = "log2",
                      labels = scales::trans_format("log2", scales::math_format(2^.x))) +
-  viridis::scale_color_viridis(discrete = T, end = 0.9) +
-  labs(x = "initiation rate (s-1)", y = "protein synthesis rate (s-1)", 
-       color = "kcleave (s-1)", shape = "kcleave (s-1)") +
+  # coord_trans(y = "log2", x = "identity") +
+  # scale_color_manual(values = cbPalette[c(3,2)]) +
+  viridis::scale_color_viridis(discrete = T) +
+  scale_shape_manual(values = c(19, 17)) +
+  labs(x = "initiation rate (s-1)", y = "protein synthesis rate / mRNA lifetime", color = "", shape = "") +
+  theme(legend.position = "top")
+```
 
-ggsave("figures/psr_vs_initiation_rate_vary_cleave_rate.pdf", 
-       width = 2.5, height = 1.7)
+# PSR / mRNA lifetime normalized to maximum as a function of initiation rate for different rates of premature termination, Reviewer response figure 
+
+```{r, fig.width=2, fig.height=2.2}
+plot_data <- data %>% 
+  mutate(model = cleave_model_names[cleave_model]) %>%
+  mutate(preterm_intact_rate = as.factor(preterm_intact_rate)) %>%
+  mutate(cleave_rate = as.factor(cleave_rate)) %>%
+  filter(cleave_rate %in% c(0.002, 0.022)) %>% 
+  group_by(cleave_rate, preterm_intact_rate, model) %>% 
+  mutate(mean_lifetime = mean_lifetime / max(mean_lifetime)) %>% 
+  mutate(psr = psr / max(psr)) %>% 
+  ungroup() %>% 
+  print()
+
+plot_data %>%
+  ggplot(aes(x = k_init, y = psr / mean_lifetime, color = preterm_intact_rate, shape = preterm_intact_rate, group = preterm_intact_rate)) +
+  geom_point(size = 2) +
+  geom_line() +
+  scale_x_continuous(trans = "log2",
+                     labels = scales::trans_format("log2", scales::math_format(2^.x)),
+                     breaks = 2^(seq(-8,0,2))) +
+  # scale_y_continuous(limits = c(0, NA)) +
+  scale_y_continuous(trans = "log2",
+                     labels = scales::trans_format("log2", scales::math_format(2^.x))) +
+  scale_color_manual(values = cbPalette[c(1,3)]) +
+  scale_shape_manual(values = c(16, 17)) +
+  labs(x = "initiation rate (s-1)", y = "protein synthesis rate / mRNA lifetime", color = "", shape = "") +
+  theme(legend.position = "top")
+
+# ggsave("figures/mrna_lifetime_vs_initiation_rate.pdf", width = 1.7, height = 2)
 ```
