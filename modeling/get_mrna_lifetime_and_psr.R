@@ -84,9 +84,7 @@ all_data %>%
   # calculate mean and sd of collisions per mRNA and average collision synthesis
   # rate across the whole simulation
   group_by(sim_id) %>% 
-  summarize(mean_p_per_m = as.integer(mean(n_collision)), 
-            sd_p_per_m = as.integer(sd(n_collision)), 
-            total_collision = sum(n_collision),
+  summarize(total_collision = sum(n_collision),
             total_time = as.integer(max(time)),
             collision_freq = round(sum(n_collision)/max(time), 6)) %>% 
   ungroup() %>% 

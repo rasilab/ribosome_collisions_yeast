@@ -26,7 +26,7 @@ and_params = [list(x) for x in it.product(*[[(p, v)
                                              for v in and_params[p]]
                                             for p in and_params])]
 
-preterm_intact_rate_list = [0, 1] 
+preterm_intact_rate_list = [0, 0.001, 0.1, 1, 10] 
 cleave_rate_list = [0.001, 0.002, 0.004, 0.008]
 preterm_intact_params = list()
 for cleave_rate in cleave_rate_list:
