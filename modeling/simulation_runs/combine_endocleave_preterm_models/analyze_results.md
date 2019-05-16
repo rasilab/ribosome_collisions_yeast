@@ -1,7 +1,7 @@
 Analyze simulation results
 ================
 rasi
-10 May, 2019
+16 May, 2019
 
 -   [Load libraries](#load-libraries)
 -   [Read protein count data](#read-protein-count-data)
@@ -333,20 +333,20 @@ plot_data <- data %>%
 
 ``` r
 plot_data %>%
-  ggplot(aes(x = k_init, y = mean_lifetime, color = preterm_intact_rate, group = preterm_intact_rate)) +
+  ggplot(aes(x = k_init, y = mean_lifetime/1000, color = preterm_intact_rate, group = preterm_intact_rate)) +
   geom_point(size = 2) +
   geom_line() +
   scale_x_continuous(trans = "log2",
                      labels = scales::trans_format("log2", scales::math_format(2^.x)),
                      breaks = 2^(seq(-8,0,2))) +
-  labs(x = "initiation rate (s-1)", y = "mean mRNA lifetime (s)", color = "", shape = "") +
+  labs(x = "initiation rate (s-1)", y = "mean mRNA lifetime (x 10^3 s)", color = "", shape = "") +
   viridis::scale_color_viridis(discrete = T)
 ```
 
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ``` r
-# ggsave("figures/mrna_lifetime_vs_initiation_rate.pdf", width = 1.7, height = 2)
+ggsave("figures/mrna_lifetime_vs_initiation_rate.pdf")
 ```
 
 PSR as a function of initiation rate
@@ -444,13 +444,13 @@ plot_data %>%
                      breaks = 2^(seq(-8,0,2))) +
   scale_y_continuous(limits = c(0, NA)) +
   viridis::scale_color_viridis(discrete = T) +
-  labs(x = "initiation rate (s-1)", y = "full proteins / mRNA", color = "", shape = "")
+  labs(x = "initiation rate (s-1)", y = "num. full proteins / mRNA", color = "", shape = "")
 ```
 
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-11-1.png)
 
 ``` r
-# ggsave("figures/mrna_lifetime_vs_initiation_rate.pdf", width = 1.7, height = 2)
+ggsave("figures/psr_vs_initiation_rate.pdf")
 ```
 
 Abort rate as a function of initiation rate for different rates of premature termination, Reviewer response figure
@@ -495,11 +495,11 @@ plot_data %>%
                      breaks = 2^(seq(-8,0,2))) +
   scale_y_continuous(limits = c(0, NA)) +
   viridis::scale_color_viridis(discrete = T) +
-  labs(x = "initiation rate (s-1)", y = "aborted proteins / mRNA", color = "", shape = "")
+  labs(x = "initiation rate (s-1)", y = "num. aborted proteins before cleavage", color = "", shape = "")
 ```
 
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
 ``` r
-# ggsave("figures/mrna_lifetime_vs_initiation_rate.pdf", width = 1.7, height = 2)
+ggsave("figures/abort_proteins_vs_initiation_rate.pdf")
 ```
