@@ -171,12 +171,12 @@ normalization <- avg_data %>%
 
 # Plot mean YFP / RFP ratio as a function of initiation codon
 
-```{r, fig.width=6, fig.height=3}
+```{r, fig.width=4.8, fig.height=1.5}
 plot_data <- avg_data %>% 
   mutate(mean_ratio = mean_ratio / normalization[[1, "mean_ratio"]]) %>% 
   mutate(se_ratio = se_ratio / normalization[[1, "mean_ratio"]]) %>% 
   filter(gene == "pgk1") %>% 
-  mutate(codonmutation = forcats::fct_rev(paste0("8×", toupper(codonmutation)))) %>% 
+  mutate(codonmutation = paste0("8×", toupper(codonmutation))) %>% 
   # arrange initiationmutation in this order
   mutate(initiationmutation = fct_reorder(
       initiationmutation,
@@ -188,15 +188,18 @@ plot_data %>%
              ymin = mean_ratio - se_ratio, ymax = mean_ratio + se_ratio,
              group = codonmutation, color = codonmutation, shape = codonmutation)) +
   geom_errorbar(width = 0.5, color = "black") +
-  geom_point(size = 2, height = 0, width = 0.1) +
+  geom_point(size = 2) +
   geom_line(size = 0.5) +
-  facet_wrap(codonmutation ~ knockout, ncol = 5, scales = "free") + 
-  scale_color_manual(values = cbPalette[c(2,1)]) +
-  labs(y = 'fluorescence (a.u.)',
+  facet_wrap(~ knockout, ncol = 5, scales = "free_x") +
+  scale_color_manual(values = cbPalette) +
+  labs(y = 'protein level (a.u.)',
        x = '-4 to -1 nt from ATG') +
-  theme(legend.title = element_text(size = 8),
+  theme(legend.position = "None",
         axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
-  scale_y_continuous(breaks = scales::pretty_breaks(n=4))
+  scale_y_continuous(trans = "log2",
+                     limits = c(0.4, 7),
+                     breaks = c(0.5, 1, 2, 4),
+                     labels = scales::trans_format("log2", scales::math_format(2^.x))) 
 
 ggsave('figures/lowmedhigh_ccg_4ko_wt.pdf')
 

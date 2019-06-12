@@ -160,7 +160,7 @@ normalization <- avg_data %>%
 
 # Plot and tabulate background subtracted and normalized YFP/RFP ratio as a function of initiation codon
 
-```{r, fig.width=1.5, fig.height=3}
+```{r, fig.width=1.5, fig.height=1.4}
 plot_data <- avg_data %>% 
   mutate(mean_ratio = mean_ratio / normalization[[1, "mean_ratio"]]) %>% 
   mutate(se_ratio = se_ratio / normalization[[1, "mean_ratio"]]) %>% 
@@ -175,16 +175,22 @@ plot_data <- avg_data %>%
 plot_data %>% 
   ggplot(aes(x = initiationmutation, y = mean_ratio, 
              ymin = mean_ratio - se_ratio, ymax = mean_ratio + se_ratio,
-             group = codonmutation)) +
-  geom_point(size = 1.5) +
+             group = codonmutation, color = codonmutation, shape = codonmutation)) +
+  geom_errorbar(width = 0.75, color = "black") +
+  geom_point(size = 2) +
   geom_line() +
-  geom_errorbar(width = 0.75) +
-  facet_wrap(~fct_rev(codonmutation), ncol = 1, scales = "free") + 
-  labs(y = 'fluorscence (a.u.)',
-       x = '-4 to -1 from ATG') +
+  # facet_wrap(~fct_rev(codonmutation), ncol = 1, scales = "free") + 
+  labs(y = 'fluorescence (a.u.)',
+       x = '-4 to -1 nt from ATG') +
   theme(legend.title = element_text(size = 8),
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
-  scale_y_continuous(breaks = scales::pretty_breaks(n=4))
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6),
+        legend.position = "None") +
+  scale_y_continuous(trans = "log2",
+                     limits = c(0.4, 5),
+                     breaks = c(0.5, 1, 2, 4),
+                     labels = scales::trans_format("log2", scales::math_format(2^.x))) +
+  # scale_y_continuous(breaks = scales::pretty_breaks(n=4), limits = c(0, NA)) +
+  scale_color_manual(values = cbPalette)
 
 ggsave('figures/8xccg_wt.pdf')
 
