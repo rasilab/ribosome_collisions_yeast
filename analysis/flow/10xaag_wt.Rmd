@@ -154,7 +154,7 @@ avg_data  <- by_file %>%
   print()
 
 normalization <- avg_data %>% 
-  filter(strain == "schp19")
+  filter(strain == "schp20")
 ```
 
 

@@ -157,7 +157,7 @@ avg_data  <- by_file %>%
   ungroup()
 
 normalization <- avg_data %>% 
-  filter(strain == "schp19")
+  filter(strain == "schp20")
 ```
 
 # Plot and tabulate background subtracted and normalized YFP/RFP ratio as a function of initiation codon
@@ -183,11 +183,11 @@ plot_data %>%
   labs(y = 'protein level (a.u.)',
        x = '-4 to -1 nt from ATG') +
   theme(legend.title = element_text(size = 8),
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
-  scale_y_continuous(trans = "log2",
-                     limits = c(3, 16),
-                     breaks = c(2, 4, 8, 16),
-                     labels = scales::trans_format("log2", scales::math_format(2^.x)))
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6))
+  # scale_y_continuous(trans = "log2",
+  #                    limits = c(3, 16),
+  #                    breaks = c(2, 4, 8, 16),
+  #                    labels = scales::trans_format("log2", scales::math_format(2^.x)))
 
 ggsave("figures/no_insert.pdf")
 
