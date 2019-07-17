@@ -1,0 +1,208 @@
+---
+title: "Analyze changes in gene ribosome density between WT and HEL2/ASC1 mutants"
+author: "`r Sys.info()[['user']]`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  github_document:
+    toc: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Import libraries
+
+```{r}
+library(data.table)
+library(TxDb.Scerevisiae.UCSC.sacCer3.sgdGene)
+library(org.Sc.sgd.db)
+library(biobroom)
+library(DESeq2)
+library(tidyverse)
+library(rasilabRtemplates)
+
+# genes having below these counts in any sample are discarded
+count_threshold <- 100
+```
+
+# Load SGD annotations
+```{r}
+gene_annotations <- "/fh/fast/subramaniam_a/db/rasi/genomes/yeast/Saccharomyces_cerevisiae/sgd/S288C_reference_genome_R64-1-1_20110203/saccharomyces_cerevisiae_R64-1-1_20110208.gff" %>% 
+  rtracklayer::readGFF() %>% 
+  as_tibble() %>% 
+  filter(type == "gene" & orf_classification == "Verified") %>% 
+  select(gene, ID, Note) %>%
+  print()
+```
+
+# Get transcript annotations 
+```{r}
+tx <- transcripts(TxDb.Scerevisiae.UCSC.sacCer3.sgdGene)
+
+tx_annotations <- org.Sc.sgd.db %>% 
+  AnnotationDbi::select(keys = keys(., keytype = "ENSEMBLTRANS"), 
+         keytype = "ENSEMBLTRANS", 
+         columns = c("ENSEMBLTRANS", "GENENAME", "DESCRIPTION")) %>% 
+  as_tibble() %>% 
+  magrittr::set_colnames(tolower(colnames(.))) %>% 
+  right_join(tidy(tx) %>% dplyr::select(tx_id, tx_name, strand), 
+             by = c("ensembltrans" = "tx_name")) %>% 
+  group_by(tx_id) %>% 
+  slice(1) %>% 
+  ungroup() %>% 
+  print()
+```
+
+# Load RQC stalls 
+```{r}
+rqc_stalls <- read_tsv("../../rqc_stalls_in_yeast_orfs/tables/ngrams_annotated.tsv") %>% 
+  select(id, pos, ngram_weight, ngram) %>%
+  print()
+```
+
+# Read count data
+
+```{r}
+counts <- list.files("../processeddata/", pattern = "tx_read_counts.tsv", 
+                    recursive = T, full.names = T) %>% 
+  enframe("sno", "file") %>% 
+  mutate(sample = str_extract(file, "[^/]+(?=/+tx_read_counts.tsv)")) %>% 
+  separate(sample, c("genotype", "reporter", "sampletype"), remove = F) %>% 
+  mutate(data = map(file, read_tsv)) %>%
+  select(-sno, -file) %>% 
+  unnest() %>% 
+  print()
+```
+
+# Check that the genotypes are correct
+
+We see that the genes that are deleted have very low counts as expected.
+
+```{r}
+genotype_genes <- c(
+  "HEL2" = "YDR266C",
+  "ASC1" = "YMR116C",
+  "SLH1" = "YGR271W")
+
+counts %>% 
+  left_join(tx_annotations, by = c("txHit" = "tx_id")) %>%
+  filter(ensembltrans %in% genotype_genes) %>%
+  arrange(desc(genename)) %>% 
+  select(genename, sample, genotype, alncount) %>%
+  knitr::kable()
+```
+
+# Sum only read counts for gene that have > `count_threshold` reads in all samples
+
+```{r}
+count_data <- counts %>% 
+  group_by(txHit, sample) %>%
+  summarize(count = sum(alncount)) %>%
+  ungroup() %>%
+  filter(!is.na(txHit)) %>%
+  filter(count > count_threshold) %>% 
+  filter(str_detect(sample, "nonstall")) %>%
+  filter(str_detect(sample, "mrna")) %>%
+  select(sample, txHit, count) %>%
+  spread(sample, count) %>%
+  filter_all(all_vars(!is.na(.))) %>%
+  inner_join(tx_annotations %>% select(tx_id, ensembltrans), by = c("txHit" = "tx_id")) %>%
+  inner_join(gene_annotations %>% select(ID), by = c("ensembltrans" = "ID")) %>%
+  select(-ensembltrans) %>% 
+  as.data.frame() %>%
+  column_to_rownames(var = "txHit")
+
+as_tibble(count_data)
+```
+
+# Prepare column data for DESeq 2 input
+
+```{r}
+col_data <- colnames(count_data) %>% 
+  enframe("sno", "sample") %>% 
+  separate(sample, c("genotype", "reporter", "sampletype"), remove = F) %>% 
+  mutate(genotype = if_else(genotype %in% c("asc1", "hel2"), "asc1hel2", genotype)) %>%
+  select(-sno) %>% 
+  as.data.frame() %>% 
+  column_to_rownames(var = "sample") %>% 
+  # set WT to be the reference level for log2 fold-changes in DESeq2
+  mutate(genotype = relevel(factor(genotype), ref = "wt"))
+
+col_data
+```
+
+# Run DESeq2
+
+```{r}
+dds <- DESeqDataSetFromMatrix(count_data, col_data, ~ genotype)
+dds <- DESeq(dds)
+```
+
+# Calculate log2 fold-changes between WT and mutant strains
+
+```{r}
+# skip the Intercept column
+lfc <- resultsNames(dds)[2:3] %>% 
+  enframe() %>% 
+  mutate(deseq_results = map(value, function(x) DESeq2::results(dds, contrast = list(x)))) %>%
+  mutate(lfc = map(deseq_results, function(res)
+    res[c('log2FoldChange', 'baseMean')] %>% as.data.frame() %>% rownames_to_column("tx_id"))) %>%
+  mutate(samplepair = str_extract(value, "(?<=genotype_).+")) %>%
+  select(-deseq_results, -name, -value) %>%
+  unnest() %>%
+  rename(lfc = log2FoldChange) %>%
+  spread(samplepair, lfc) %>%
+  mutate(tx_id = as.integer(tx_id)) %>% 
+  left_join(tx_annotations, by = c("tx_id")) %>%
+  rename(id = ensembltrans) %>% 
+  print()  
+```
+
+# Look at genes that are up-regulated in asc1 and hel2 KO
+
+```{r}
+lfc %>% 
+  arrange(desc(asc1hel2_vs_wt)) %>%
+  select(asc1hel2_vs_wt, genename, everything(), -tx_id, description, -strand) %>%
+  print()
+```
+
+# Join fold-change with RQC stall presence
+```{r}
+lfc_stall_data <- lfc %>% 
+  left_join(rqc_stalls, by = "id") %>% 
+  arrange(desc(asc1hel2_vs_wt)) %>% 
+  print()
+```
+
+# Plot log2 fold-change ASC1 / HEL2 vs WT as a function of stall strength
+
+```{r, fig.width=2, fig.height=2}
+plot_data <- lfc_stall_data %>% 
+  mutate(ngram_weight = as.factor(if_else(is.na(ngram_weight), 0, 1))) %>% 
+  group_by(ngram_weight) %>% 
+  mutate(`n` = paste0("N = ", dplyr::n())) %>% 
+  ungroup() %>% 
+  mutate(ngram_weight = fct_recode(ngram_weight, `No stall` = "0", `Stall` = "1"))
+  
+plot_data %>% 
+  ggplot(aes(x = ngram_weight, y = asc1hel2_vs_wt, fill = ngram_weight)) +
+  geom_violin(alpha = 0.8) +
+  geom_boxplot(width = 0.2, fill = "white", color = "black", outlier.shape = NA) +
+  labs(x = "S. cerevisiae genes", y = "ASC1 & HEL2 / WT (log2, a.u.)") +
+  geom_text(aes(x = ngram_weight, label = n),
+            data = plot_data %>% group_by(ngram_weight) %>% slice(1),
+            y = -2.1, size = 2.8) +
+  scale_y_continuous(limits = c(-2.1, NA)) +
+  scale_fill_manual(values = cbPalette, guide = 'none') + 
+  NULL
+
+ggsave("../figures/distribution_of_asc1hel2ko_lfc_for_rqc_stall_containing_saccer_genes.pdf")
+```
+
+# Test if stall-containing genes have lower or higher Log2 fold change between ASC1+HEL2 KO vs WT
+
+```{r}
+wilcox.test(asc1hel2_vs_wt ~ ngram_weight, data = plot_data, alternative = "two.sided")
+```

@@ -1,0 +1,4 @@
+asc1_nonstall_mrna.fastq.gz
+hel2_nonstall_mrna.fastq.gz
+slh1_nonstall_mrna.fastq.gz
+wt_nonstall_mrna.fastq.gz
