@@ -1,0 +1,255 @@
+---
+title: "Fluorescence of PGK1 WT reporters with endogenous stall inserts and in WT and ASC1Δ strains"
+author: "`r Sys.info()[['user']]`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  github_document:
+    toc: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Import libraries and analysis-specific parameters
+
+```{r}
+# standard analysis and plotting functions, includes dplyr, ggplot2 
+library(tidyverse)
+# loads lab default ggplot2 theme and provides color-blind friendly palette
+library(rasilabRtemplates)
+# standard error
+library(plotrix)
+# to tidy up statistical test results
+library(broom)
+
+# this folder contains the data and annotations
+fcs_file_folder <- "../../data/flow/endogenous_gene_stall/"
+
+# These are the PAR32 plasmid 1 that had a deletion of an AAG
+bad_wells <- tibble(strain = c("schp1499", "schp1491"))
+```
+
+```{r, eval = FALSE, include = FALSE}
+# Combine raw .fcs files into a single dataframe for manuscript
+# This chunk is for preprocessing and is not evaluated (`eval = FALSE`).
+
+raw_data <- fcs_file_folder %>% 
+  # get all fcs files
+  list.files(full.names = T, pattern = '.fcs$') %>% 
+  enframe("sno", "filename") %>% 
+  # get data from each file
+  mutate(data = map(filename, . %>% 
+                      flowCore::read.FCS(transformation = F, alter.names = T) %>% 
+                      flowCore::exprs() %>% 
+                      as_tibble())) %>% 
+  # extract plate and well
+  mutate(plate = as.integer(str_extract(filename, "(?<=Specimen_)[:digit:]{3}"))) %>%
+  mutate(well = str_extract(filename, "(?<=Specimen_[:digit:]{3}_)[:alnum:]+")) %>%
+  # get rid of unwanted columns
+  select(-sno, -filename) %>% 
+  unnest() %>% 
+  # round nicely for storing
+  mutate_at(vars(matches("Time")), funs(round(., 3))) %>% 
+  mutate_at(vars(-matches("Time|well")), funs(as.integer)) %>% 
+  print()
+```
+
+```{r, eval = FALSE, include = FALSE}
+# Clean annotations file for manuscript
+# This chunk is for preprocessing and is not evaluated (`eval = FALSE`).
+
+annotations <- paste0(fcs_file_folder, '/sampleannotations.tsv') %>% 
+                        read_tsv(col_types = list('plate' = col_integer())) %>% 
+  # replace all 'na' ny NA
+  mutate_all(funs(ifelse(. == 'na', NA, .))) %>%
+  # convert to lower case
+  mutate(strain = tolower(strain)) %>% 
+  # these are genes of interest or the standard control strains
+  select(plate, well, strain, gene, stall, kogene, replicate) %>%
+  write_tsv(paste0(fcs_file_folder, '/annotations.tsv')) %>%
+  print()
+```
+
+```{r, eval = FALSE, include = FALSE}
+# Keep only the data that we need for manuscript
+# This chunk is for preprocessing and is not evaluated (`eval = FALSE`).
+raw_data %>% 
+  right_join(select(annotations, plate, well)) %>% 
+  write_tsv(paste0(fcs_file_folder, '/data.tsv.xz'))
+```
+
+# Read data
+
+```{r}
+flowdata  <- read_tsv(paste0(fcs_file_folder, '/data.tsv.xz')) %>% 
+  print()
+```
+
+# Read annotations
+
+```{r}
+annotations  <- read_tsv(paste0(fcs_file_folder, '/annotations.tsv')) %>% 
+  print()
+```
+
+# Rename and calculate average values of fluorescence channels in each well
+
+```{r}
+by_file <- flowdata  %>% 
+  # group by each plate and well
+  group_by(plate, well) %>% 
+  select(FITC.A, PE.Texas.Red.A) %>% 
+  # calculate mean
+  summarise_all(mean) %>% 
+  # rename
+  rename('yfp' = FITC.A, 'rfp' = PE.Texas.Red.A) %>% 
+  # join annotations
+  left_join(annotations, by = c('plate', 'well')) %>% 
+  print()
+```
+
+# Calculate mean and standard error over replicates
+
+```{r}
+avg_data  <- by_file %>% 
+  anti_join(bad_wells) %>%
+  # strain is used to get replicates
+  group_by(strain) %>% 
+  # calculate mean and std.err
+  mutate(mean_yfp = mean(yfp), 
+         mean_rfp = mean(rfp)) %>% 
+  ungroup() %>% 
+  mutate(yfp = yfp - mean_yfp[strain == "schp15" & replicate == 1], 
+         rfp = rfp - mean_rfp[strain == "by4741" & replicate == 1]) %>% 
+  mutate(yfp_rfp_ratio = yfp / rfp) %>% 
+  # calculate mean and standard error
+  group_by(strain) %>% 
+  mutate(mean_yfp = mean(yfp), 
+         mean_rfp = mean(rfp), 
+         mean_ratio = mean(yfp_rfp_ratio), 
+         se_yfp = std.error(yfp), 
+         se_rfp = std.error(rfp),
+         se_ratio = std.error(yfp_rfp_ratio),
+         n = n()) %>% 
+  ungroup()
+
+normalization <- avg_data %>% 
+  filter(strain == "schp19")
+```
+
+# Plot and tabulate background subtracted ratio of YFP/RFP between ASC1KO and WT strains (used for calculating P-value)
+
+```{r, fig.width=2, fig.height=1.6}
+plot_data <- avg_data %>% 
+  # mutate(plasmid_replicate = as.factor(plasmid_replicate)) %>% 
+  filter(gene == "PGK1") %>% 
+  group_by(strain) %>% 
+  slice(1) %>% 
+  ungroup() %>% 
+  group_by(stall) %>% 
+  mutate(mean_asc1_wt_ratio = mean_ratio / mean_ratio[is.na(kogene)] * 100) %>% 
+  mutate(se_asc1_wt_ratio = (se_ratio / mean_ratio + 
+                               se_ratio[is.na(kogene)] / mean_ratio[is.na(kogene)]) * 
+           mean_asc1_wt_ratio) %>% 
+  ungroup() %>% 
+  mutate(stall = if_else(is.na(stall), "No stall", as.character(stall))) %>% 
+  mutate(stall = fct_reorder(stall, -mean_asc1_wt_ratio)) %>% 
+  filter(!is.na(kogene)) %>% 
+  print()
+
+plot_data %>%
+  ggplot(aes(x = stall, y = mean_asc1_wt_ratio,
+             ymin = mean_asc1_wt_ratio - se_asc1_wt_ratio,
+             ymax = mean_asc1_wt_ratio + se_asc1_wt_ratio,
+             group = NA)) +
+  # geom_point(size = 1.5) +
+  geom_col() +
+  geom_errorbar(width = 0.25) +
+  labs(y = 'ASC1 / WT \n protein level ratio (%)',
+       x = 'Endogenous stall') +
+  scale_color_manual(values = cbPalette) +
+  scale_y_continuous(limits = c(0, NA)) +
+  theme(legend.title = element_text(size = 8),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6)
+        )
+```
+
+# Plot and tabulate background subtracted YFP/RFP ratio for endogenous stalls
+
+```{r, fig.width=1.8, fig.height=1.6}
+plot_data <- avg_data %>% 
+  mutate(mean_ratio = mean_ratio / normalization[[1, "mean_ratio"]]) %>% 
+  mutate(se_ratio = se_ratio / normalization[[1, "mean_ratio"]]) %>% 
+  filter(gene == "PGK1") %>% 
+  group_by(strain) %>% 
+  slice(1) %>% 
+  ungroup() %>% 
+  group_by(stall) %>% 
+  mutate(mean_asc1_wt_ratio = mean_ratio / mean_ratio[is.na(kogene)] * 100) %>% 
+  ungroup() %>% 
+  mutate(kogene = fct_rev(if_else(is.na(kogene), "WT", as.character(kogene)))) %>% 
+  mutate(stall = if_else(is.na(stall), "No stall", as.character(stall))) %>% 
+  mutate(stall = fct_reorder(stall, - mean_asc1_wt_ratio)) %>% 
+  print()
+
+plot_data %>%
+  ggplot(aes(x = stall, y = mean_ratio,
+             ymin = mean_ratio - se_ratio,
+             ymax = mean_ratio + se_ratio,
+             color = kogene,
+             group = kogene)) +
+  geom_errorbar(width = 0.5, color = "black") +
+  geom_point(size = 2) +
+  geom_line() +
+  labs(y = 'Protein level (a.u.)',
+       x = 'Endogenous gene stall') +
+  scale_color_manual(values = cbPalette[2:3]) +
+  theme(legend.title = element_text(size = 8),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6),
+        legend.position = "None"
+        ) +
+  scale_y_continuous(trans = "log2",
+                     limits = c(8, 34),
+                     breaks = c(8, 16, 32),
+                     labels = scales::trans_format("log2", scales::math_format(2^.x)))
+
+ggsave("figures/endogenous_stalls.pdf")
+
+avg_data %>%
+  mutate(mean_ratio = mean_ratio / normalization[[1, "mean_ratio"]]) %>%
+  mutate(se_ratio = se_ratio / normalization[[1, "mean_ratio"]]) %>%
+  filter(gene == "PGK1" & replicate == 1) %>%
+  select(kogene, stall, mean_ratio, se_ratio) %>%
+  arrange(stall, kogene) %>% 
+  knitr::kable()
+```
+
+We will normalize the YFP RFP ratio for each strain by the mean no stall value for the WT or ASC1 strain. Then we can compare the ASC1 and WT strain for significance for each stall.
+
+```{r}
+plot_data <- avg_data %>% 
+  # mutate(plasmid_replicate = as.factor(plasmid_replicate)) %>% 
+  filter(gene == "PGK1") %>% 
+  group_by(kogene, replicate) %>% 
+  mutate(norm_yfp_rfp_ratio = yfp_rfp_ratio / yfp_rfp_ratio[is.na(stall)]) %>% 
+  ungroup() %>% 
+  select(kogene, stall, replicate, norm_yfp_rfp_ratio) %>% 
+  print()
+```
+
+# Display t.test P-value for difference in YFP/RFP ratio between WT and ASC1 strains for each stall
+
+```{r}
+plot_data %>% 
+  mutate(kogene = if_else(is.na(kogene), "WT", as.character(kogene))) %>%
+  # get rid of the no stall control since this has P-value of 1 by definition
+  filter(!is.na(stall)) %>%
+  group_by(stall) %>%
+  nest() %>%
+  mutate(t.test = map(data, function(df) tidy(t.test(norm_yfp_rfp_ratio ~ kogene, df, alternative = "greater")))) %>%
+  unnest(t.test) %>%
+  select(stall, p.value, statistic) %>%
+  arrange(p.value) %>%
+  knitr::kable()
+```
