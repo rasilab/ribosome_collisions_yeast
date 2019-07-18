@@ -1,0 +1,125 @@
+"""Workflow for ribosome profiling analysis
+
+  :Author: Arvind Rasi Subramaniam
+  :Date: 7 Oct 2018
+"""
+
+# configuration specific to this analysis
+# RIBO_SAMPLES MRNA_SAMPLES is defined here
+include: 'config.py'
+
+# these rules are run locally 
+localrules: all, test
+
+# Rules ----------------------------------------------------------------------
+
+rule all:
+  """List of all files we want at the end"""
+  input: 
+    alignments = expand('processeddata/{sample}/genome.bam', sample=RIBO_SAMPLES + MRNA_SAMPLES),
+    txcounts = expand('processeddata/{sample}/tx_read_counts.tsv', sample=RIBO_SAMPLES + MRNA_SAMPLES)
+
+
+rule trim_linker_ribo:
+  """Remove the linker ligated to the ribosome footprints or trim 1nt on each side of mRNA fragments"""
+  input:
+    'rawdata/{sample}_mono.fastq.gz'
+  output:
+    'processeddata/{sample}_mono/trim.fastq'
+  shell:
+      """
+      /fh/fast/subramaniam_a/user/rasi/virtualenv/default3/bin/cutadapt \
+      --adapter=CTGTAGGCACCATCAAT \
+      --minimum-length=25 \
+      --discard-untrimmed \
+      --maximum-length=40 \
+      --output {output} \
+      {input} \
+      1> processeddata/{wildcards.sample}_mono/trim.log \
+      2> processeddata/{wildcards.sample}_mono/trim.log
+      """
+
+
+rule trim_n_mrna:
+  """Remove any Ns from mRNA fragments"""
+  input:
+    'rawdata/{sample}_mrna.fastq.gz'
+  output:
+    'processeddata/{sample}_mrna/trim.fastq'
+  shell:
+      """
+      /fh/fast/subramaniam_a/user/rasi/virtualenv/default3/bin/cutadapt \
+      --trim-n \
+      --output {output} \
+      {input} \
+      1> processeddata/{wildcards.sample}_mrna/trim.log \
+      2> processeddata/{wildcards.sample}_mrna/trim.log
+      """
+
+
+rule remove_rrna:
+  """Remove contaminant reads aligning to ribosomal rRNA"""
+  input:
+    'processeddata/{sample}/trim.fastq'
+  output:
+    'processeddata/{sample}/norrna.fastq'
+  shell:
+    """
+    /app/bowtie/1.1.1/bowtie \
+    -v 2 \
+    --un {output} \
+    --sam \
+    /fh/fast/subramaniam_a/db/rasi/bowtie/sacCer3.contaminants \
+    {input} \
+    1> /dev/null \
+    2> processeddata/{wildcards.sample}/norrna.log
+    """
+
+
+rule align_genome:
+  """Align non-contaminant reads against the yeast genome"""
+  input:
+    'processeddata/{sample}/norrna.fastq'
+  output:
+    temp('processeddata/{sample}/genome.sam')
+  threads:
+    8
+  shell:
+    """
+    /app/bowtie/1.1.1/bowtie \
+    -v 2 \
+    --un /dev/null \
+    --threads {threads} \
+    --sam \
+    /fh/fast/subramaniam_a/db/rasi/bowtie/sacCer3.genome \
+    {input} \
+    1> processeddata/{wildcards.sample}/genome.sam \
+    2> processeddata/{wildcards.sample}/genome_align.log
+    """
+
+
+rule sort_and_index_bam:
+  """Convert SAM alignments to sorted and indexed BAM alignments"""
+  input:
+    'processeddata/{sample}/genome.sam'
+  output:
+    unsorted_bam = temp('processeddata/{sample}/unsorted_genome.bam'),
+    bam = 'processeddata/{sample}/genome.bam',
+    bam_index = 'processeddata/{sample}/genome.bam.bai'
+  shell:
+    """
+    samtools view -b {input} > {output.unsorted_bam}
+
+    samtools sort {output.unsorted_bam} > {output.bam}
+
+    samtools index {output.bam}
+    """
+
+rule get_tx_counts:
+  """Sum the counts for each annotated transcript"""
+  input:
+    'processeddata/{sample}/genome.bam'
+  output:
+    'processeddata/{sample}/tx_read_counts.tsv'
+  shell:
+    'Rscript scripts/calculate_tx_counts.R {wildcards.sample}'
