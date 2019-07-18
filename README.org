@@ -201,7 +201,7 @@ This quantification for all lanes in the manuscript is in [[file:data/western/qu
 
 Normalization of the lanes for display in figures is carried out in [[file:analysis/western/western_analysis.md]].
 
-The /LTN1Δ/ western blot gel for Fig. 5B had a splotch near the truncated band region (see [[file:data/western/8xccg_ltn1_knockout_flag.png]]), so we repeated this western blot for Fig. S4C (see [[file:data/western/ltn1_truncated_product_flag.png]]) for responding to a reviewer's comment. 
+The /LTN1Δ/ western blot gel for Fig. 5B had a splotch near the truncated band region (see [[file:data/western/8xccg_ltn1_knockout_flag.png][here]]), so we repeated this western blot for Fig. S4C (see [[file:data/western/ltn1_truncated_product_flag.png][here]]) for responding to a reviewer's comment. 
 
 *** Identification of putative RQC stalls
 
