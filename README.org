@@ -6,12 +6,12 @@ Heungwon Park  & Arvind R. Subramaniam
 
 This repository contains raw experimental data, code, and instructions for:
  - running simulations
- - analyzing high-throughput sequencing data and flow cytometry data
+ - analyzing high-throughput sequencing data and flow cytometry data generated for this study
+ - analysis of publicly available datasets performed in our study
  - quantification of western blots
  - generating figures in the manuscript
 
 ** Contents                                                          :toc_3:
-  - [[#items-to-be-done][Items to be done]]
   - [[#modeling][Modeling]]
     - [[#default-run][Default Run]]
     - [[#parameter-sweep][Parameter Sweep]]
@@ -19,12 +19,6 @@ This repository contains raw experimental data, code, and instructions for:
     - [[#high-throughput-sequencing][High-Throughput Sequencing]]
     - [[#flow-cytometry][Flow Cytometry]]
     - [[#western-blots][Western Blots]]
-
-** TODO Items to be done
-- Add Dvir analysis
-- Add Weinberg analysis
-- Add Sitron analysis
-- Add endogenous gene flow analysis
 
 ** Modeling
 
@@ -191,6 +185,7 @@ for file in *.Rmd; do R -e "rmarkdown::render('$file')"; done
 - [[file:analysis/flow/lowmedhigh_8xcgg_4ko.md]] generates Fig. [[file:analysis/flow/figures/lowmedhigh_ccg_4ko_wt.pdf][5A]].
 - [[file:analysis/flow/hel2_asc1_mutants.md]] generates Fig. [[file:analysis/flow/figures/hel2_rescue.pdf][5C top panels]] and [[file:analysis/flow/figures/asc1_rescue.pdf][5C bottom panels]]. The P-values indicated in Fig. 5C in the manuscript are also calculated and displayed in this page. Note: The mKate2 channel measurement did not work properly in this experiment. Hence the YFP fluorescence is not normalized by mKate2 fluorescence in these figures.
 - [[file:analysis/flow/5xcgg_3ko.md]] and [[file:analysis/flow/5xcgg_asc1ko.md]] generate Fig. [[file:analysis/flow/figures/5xcgg_3ko.pdf][S4A left two panels]] and [[file:analysis/flow/figures/5xcgg_asc1ko.pdf][S4A right panels]]. Note: The measurement in the /ΔASC1/ strain background was very noisy due to poor growth in the first experiment. So this measurement was repeated with longer growth times and inoculation with larger /S. cerevisiae/ colonies.
+- [[file:analysis/flow/endogenous_gene_stall.md]] generates Fig. [[file:analysis/flow/endogenous_gene_stall_files/figure-markdown_github/unnamed-chunk-10-1.png][6C]]. The P-values for this figure  panels are also calculated and displayed in this page. 
 
 *** Western Blots
 
