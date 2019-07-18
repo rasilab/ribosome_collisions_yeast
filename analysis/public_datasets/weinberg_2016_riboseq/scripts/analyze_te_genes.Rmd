@@ -1,0 +1,108 @@
+---
+title: "Analyze TE of yeast genes with or without stalls"
+author: "`r Sys.info()[['user']]`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  github_document:
+    toc: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+```
+
+# Load libraries
+```{r}
+library(topGO)
+library(tidyverse)
+library(rasilabRtemplates)
+# disable scientific notation
+options(scipen=3)
+```
+
+# Load genome and annotations
+```{r}
+annotations <- "/fh/fast/subramaniam_a/db/rasi/genomes/yeast/Saccharomyces_cerevisiae/sgd/S288C_reference_genome_R64-1-1_20110203/saccharomyces_cerevisiae_R64-1-1_20110208.gff" %>% 
+  rtracklayer::readGFF() %>% 
+  as_tibble()
+```
+
+# Load RQC stalls for joining with high TE genes
+```{r}
+rqc_stalls <- read_tsv("../../rqc_stalls_in_yeast_orfs/tables/ngrams_annotated.tsv") %>% 
+  select(id, pos, ngram_weight, ngram) %>%
+  print()
+```
+
+# Calculate TE as log2 ratio of RPF to RNA RPKM in Weinberg 2016
+```{r}
+te_data <- list.files("../annotations/", pattern = "RPKMs.txt.gz", full.names = T) %>% 
+  enframe("sno", "file") %>% 
+  mutate(sample = str_extract(file, "RPF|RiboZero")) %>% 
+  mutate(data = map(file, . %>% read_tsv(col_names = F))) %>% 
+  select(-sno, -file) %>% 
+  unnest() %>% 
+  magrittr::set_colnames(c("sampletype", "id", "rpkm")) %>% 
+  spread(sampletype, rpkm) %>% 
+  dplyr::rename(ribo = RPF, rna = RiboZero) %>% 
+  mutate(te = log2(ribo / rna)) %>% 
+  filter(!is.na(te) & ribo > 5 & rna > 5) %>%
+  left_join(annotations %>% select(gene, ID, Note), by = c("id" = "ID")) %>%
+  mutate(Note = as.character(Note)) %>% 
+  print()
+```
+
+# Look at high TE genes with potential RQC stalls
+```{r}
+te_stall_data <- te_data %>% 
+  left_join(rqc_stalls, by = "id") %>% 
+  arrange(desc(te)) %>% 
+  select(te, gene, pos, ngram, ngram_weight, everything()) %>% 
+  print()
+```
+  
+# Plot TE as a function of stall strength
+
+```{r, fig.width=2, fig.height=2}
+plot_data <- te_stall_data %>% 
+  mutate(ngram_weight = as.factor(if_else(is.na(ngram_weight), 0, 1))) %>% 
+  group_by(ngram_weight) %>% 
+  mutate(`n` = paste0("N = ", dplyr::n())) %>% 
+  ungroup() %>% 
+  mutate(ngram_weight = fct_recode(ngram_weight, `No stall` = "0", `Stall` = "1"))
+  
+plot_data %>% 
+  ggplot(aes(x = ngram_weight, y = te, fill = ngram_weight)) +
+  geom_violin() +
+  geom_boxplot(width = 0.2, fill = "white", color = "black", outlier.shape = NA) +
+  labs(x = "S. cerevisiae genes", y = "Translation efficiency (log2, a.u.)") +
+  geom_text(aes(x = ngram_weight, label = n),
+            data = plot_data %>% group_by(ngram_weight) %>% slice(1),
+            y = -7, size = 2.8) +
+  scale_y_continuous(limits = c(-7.2, 3)) +
+  scale_fill_manual(values = cbPalette, guide = "none") +
+  NULL
+
+ggsave("../figures/distribution_of_translation_efficiency_for_rqc_stall_containing_saccer_genes.pdf")
+```
+
+# Test if stall-containing genes have lower or higher TE
+
+```{r}
+wilcox.test(te ~ ngram_weight, data = plot_data, alternative = "two.sided")
+```
+
+# Avg TE of stall-containing and other genes
+
+```{r}
+plot_data %>% 
+  group_by(ngram_weight) %>% 
+  summarize(te = mean(te), n = dplyr::n()) %>% 
+  knitr::kable()
+```
+
+# Session Info
+
+```{r}
+sessionInfo()
+```

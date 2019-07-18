@@ -1,0 +1,181 @@
+---
+title: "Plot ribosome density around RQC stall in endogenous genes"
+author: "`r Sys.info()[['user']]`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  github_document:
+    toc: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+```
+
+
+# Load libraries
+```{r}
+library(GenomicAlignments)
+library(GenomicFeatures)
+library(Biostrings)
+library(tidyverse)
+library(plyranges)
+library(rasilabRtemplates)
+```
+
+# Load genome and annotations
+```{r}
+genome <- BSgenome.Scerevisiae.UCSC.sacCer3::BSgenome.Scerevisiae.UCSC.sacCer3
+annotations <- "/fh/fast/subramaniam_a/db/rasi/genomes/yeast/Saccharomyces_cerevisiae/sgd/S288C_reference_genome_R64-1-1_20110203/saccharomyces_cerevisiae_R64-1-1_20110208.gff" %>% 
+  rtracklayer::readGFF() %>% 
+  as_tibble()
+
+tx <- annotations %>% 
+  GRanges() %>% 
+  filter(type == "CDS") %>% 
+  select(Name) %>% 
+  split(.$Name) %>% 
+  print()
+```
+
+# Load RQC stalls for joining with high TE genes
+```{r}
+rqc_stalls <- read_tsv("../../rqc_stalls_in_yeast_orfs/tables/ngrams_annotated.tsv") %>% 
+  bind_rows(read_tsv("../../rqc_stalls_in_yeast_orfs/tables/ngram_control_annotated.tsv")) %>%
+  mutate(seqname = id, start = pos*3 + 1) %>% 
+  mutate(end = start) %>%
+  select(seqname, start, end, stall, id) %>% 
+  GRanges() %>% 
+  mutate(stall = if_else(stall %in% c("KR", "P"), "KPR", stall)) %>% 
+  print()
+```
+
+# Convert RQC stalls to genomic coordinates
+
+```{r}
+rqc_stalls_coords <- mapFromTranscripts(rqc_stalls, tx) %>% 
+  # get rid of mitochondrial sequence
+  filter(seqnames != "chrMito") %>% 
+  mutate(id = seqnames(rqc_stalls)[xHits], stall = rqc_stalls$stall[xHits]) %>% 
+  select(-xHits, -transcriptsHits)
+
+# check that the mapping was done correctly
+rqc_stalls_coords %>% 
+  anchor_5p() %>% 
+  stretch(29) %>% 
+  getSeq(genome, .) %>% 
+  translate()
+```
+
+# Load the alignments
+
+We do not run the codecell below after the first time to save time.
+
+```{r load_aln, eval=F}
+aln <- readGAlignments("../processeddata/mono/accepted_hits.bam") %>% 
+  print()
+```
+
+# Trim the alignments to the P-site and calculate coverage separately for + and - strands
+
+We do not run the codecell below after the first time to save time.
+
+```{r cvg, eval=F}
+cvg_plus <- aln[strand(aln) == "+"] %>% 
+  qnarrow(start = 13, width = 1) %>% 
+  coverage() %>% 
+  print()
+
+cvg_minus <- aln[strand(aln) == "-"] %>% 
+  qnarrow(start = qwidth(.) - 12, width = 1) %>% 
+  coverage() %>% 
+  print()
+
+rtracklayer::export.bw(cvg_plus, "../processeddata/mono/cvg_plus.bw")
+rtracklayer::export.bw(cvg_minus, "../processeddata/mono/cvg_minus.bw")
+```
+
+# Load pre-computed coverage
+
+```{r load_cvg, eval=T}
+cvg_plus <- rtracklayer::import.bw("../processeddata/mono/cvg_plus.bw") %>% 
+  coverage(weight = "score")
+cvg_minus <- rtracklayer::import.bw("../processeddata/mono/cvg_minus.bw") %>% 
+  coverage(weight = "score")
+```
+
+# Expand each stall to 61 nt width
+
+```{r}
+rqc_flank <- rqc_stalls_coords %>% 
+  anchor_5p() %>% 
+  stretch(300) %>% 
+  shift_upstream(150) %>% 
+  mutate(uid = paste0(id, "_", stall)) %>% 
+  print()
+
+rqc_flank_plus <- filter(rqc_flank, strand == "+")
+rqc_flank_minus <- filter(rqc_flank, strand == "-")
+```
+
+# Get the coverage of the 61 nt window arounde each stall
+
+```{r cvg_stall}
+stall_cvg_plus <- cvg_plus[rqc_flank_plus] %>% 
+  setNames(rqc_flank_plus$uid) %>% 
+  GRanges() %>% 
+  as_tibble()
+
+stall_cvg_minus <- cvg_plus[rqc_flank_minus] %>% 
+  setNames(rqc_flank_minus$uid) %>% 
+  GRanges() %>% 
+  as_tibble()
+
+stall_cvg <- bind_rows(stall_cvg_plus, stall_cvg_minus) %>% 
+  # create a sequence from start to stop for each range
+  mutate(pos = map2(start, end, function(x, y) seq(from = x, to = y))) %>% 
+  # expand each range to equal its length
+  unnest()  %>% 
+  # mutate and unnest to create a single pos for each location
+  mutate(start = pos, end = pos) %>% 
+  select(-pos, -width) %>% 
+  print()
+```
+
+# Normalize the cvg within each stall and threshold to stalls with mean cvg >= 1
+
+```{r norm_stall_cvg}
+norm_cvg <- stall_cvg %>% 
+  group_by(seqnames) %>% 
+  mutate(mean_score = mean(score)) %>% 
+  mutate(norm_score = score / mean_score) %>%
+  ungroup() %>% 
+  filter(mean_score >= 1) %>% 
+  print()
+```
+
+# Plot the mean and standard deviation of normalized cvg around stalls
+
+```{r plot_stall_cvg, fig.width=4.5, fig.height=1.8}
+plot_data <- norm_cvg %>% 
+  mutate(stall = str_extract(seqnames, "[^_]+$")) %>% 
+  group_by(start, stall) %>% 
+  summarize(mean_density = mean(norm_score), sd_density = sd(norm_score))
+
+plot_data %>% 
+  ggplot(aes(x = (start - 150), y = mean_density, 
+             ymin = mean_density - sd_density, ymax = mean_density + sd_density)) +
+  facet_wrap(~ stall, ncol = 3, scales = "free") +
+  scale_y_continuous(limits = c(0, 4)) +
+  scale_x_continuous(limits = c(-60, 60)) +
+  labs(x = "Distance from endogenous gene stall (nt)", y = "Mean ribosome density (a.u.)") +
+  geom_line(size = 0.5) 
+
+ggsave("../figures/ribosome_density_around_rqc_stalls_and_controls.pdf")
+```
+
+# Session Info
+
+```{r}
+sessionInfo()
+```
+
