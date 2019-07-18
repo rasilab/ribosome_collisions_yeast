@@ -7,7 +7,7 @@ Heungwon Park  & Arvind R. Subramaniam
 This repository contains raw experimental data, code, and instructions for:
  - running simulations
  - analyzing high-throughput sequencing data and flow cytometry data generated for this study
- - analysis of publicly available datasets performed in our study
+ - analysis of publicly available datasets 
  - quantification of western blots
  - generating figures in the manuscript
 
@@ -19,6 +19,10 @@ This repository contains raw experimental data, code, and instructions for:
     - [[#high-throughput-sequencing][High-Throughput Sequencing]]
     - [[#flow-cytometry][Flow Cytometry]]
     - [[#western-blots][Western Blots]]
+    - [[#identification-of-putative-rqc-stalls][Identification of putative RQC stalls]]
+    - [[#analysis-of-dvir-et-al-2013-data][Analysis of Dvir et al. 2013 data]]
+    - [[#analysis-of-weinberg-et-al-2016-data][Analysis of Weinberg et al. 2016 data]]
+    - [[#analysis-of-sitron-et-al-2017-data][Analysis of Sitron et al. 2017 data]]
 
 ** Modeling
 
@@ -168,7 +172,7 @@ This workflow generates Fig. [[file:analysis/htseq/figures/mrna_level_wt_pgk1_no
 
 *** Flow Cytometry
 
-[[file:data/flow/]] contains the annotations for the 8 flow cytometry experiments in our work.
+[[file:data/flow/]] contains the annotations for the 9 flow cytometry experiments in our work.
 
 [[file:analysis/flow/]] contains the RMarkdown scripts for generating figures from the raw data and annotations.
 
@@ -185,14 +189,65 @@ for file in *.Rmd; do R -e "rmarkdown::render('$file')"; done
 - [[file:analysis/flow/lowmedhigh_8xcgg_4ko.md]] generates Fig. [[file:analysis/flow/figures/lowmedhigh_ccg_4ko_wt.pdf][5A]].
 - [[file:analysis/flow/hel2_asc1_mutants.md]] generates Fig. [[file:analysis/flow/figures/hel2_rescue.pdf][5C top panels]] and [[file:analysis/flow/figures/asc1_rescue.pdf][5C bottom panels]]. The P-values indicated in Fig. 5C in the manuscript are also calculated and displayed in this page. Note: The mKate2 channel measurement did not work properly in this experiment. Hence the YFP fluorescence is not normalized by mKate2 fluorescence in these figures.
 - [[file:analysis/flow/5xcgg_3ko.md]] and [[file:analysis/flow/5xcgg_asc1ko.md]] generate Fig. [[file:analysis/flow/figures/5xcgg_3ko.pdf][S4A left two panels]] and [[file:analysis/flow/figures/5xcgg_asc1ko.pdf][S4A right panels]]. Note: The measurement in the /ΔASC1/ strain background was very noisy due to poor growth in the first experiment. So this measurement was repeated with longer growth times and inoculation with larger /S. cerevisiae/ colonies.
-- [[file:analysis/flow/endogenous_gene_stall.md]] generates Fig. [[file:analysis/flow/endogenous_gene_stall_files/figure-markdown_github/unnamed-chunk-10-1.png][6C]]. The P-values for this figure  panels are also calculated and displayed in this page. 
+- [[file:analysis/flow/endogenous_gene_stall.md]] generates Fig. [[file:analysis/flow/figures/endogenous_stalls.pdf][6B]]. The P-values for this figure  panel are also calculated and displayed in this page. 
 
 *** Western Blots
 
-Un-cropped western blot images corresponding to Fig. 1D, 5C are provided as =.png= images in [[file:data/western/]]. 
+Un-cropped western blot images corresponding to Fig. 1D, 5B, S4C are provided as =.png= images in [[file:data/western/]]. 
 The region in each image cropped for inclusion in the manuscript is shown as a rectangle.
 
 The lanes are quantified using ImageJ (Rectangle Select → Analyze → Measure) and pasted as tab-delimited rows.
 This quantification for all lanes in the manuscript is in [[file:data/western/quantification.tsv]].
 
 Normalization of the lanes for display in figures is carried out in [[file:analysis/western/western_analysis.md]].
+
+The /LTN1Δ/ western blot gel for Fig. 5B had a splotch near the truncated band region (see [[file:data/western/8xccg_ltn1_knockout_flag.png]]), so we repeated this western blot for Fig. S4C (see [[file:data/western/ltn1_truncated_product_flag.png]]) for responding to a reviewer's comment. 
+
+*** Identification of putative RQC stalls
+
+To identify putative RQC stalls used in  Fig. 6, the gene-level annotations in GFF3 format were downloaded for the =saccer3= genomic assembly: https://downloads.yeastgenome.org/sequence/S288C_reference/genome_releases/S288C_reference_genome_R64-1-1_20110203.tgz.
+
+These were analyzed using [[file:analysis/public_datasets/rqc_stalls_in_yeast_orfs/scripts/analyze_rqc_stalls_in_genome.md]] and [[file:analysis/public_datasets/rqc_stalls_in_yeast_orfs/scripts/count_rqc_residues.py]] to generate the putative RQC stalls/controls and their locations in yeast ORFs: [[file:analysis/public_datasets/rqc_stalls_in_yeast_orfs/tables/ngrams_annotated.tsv]] and [[file:analysis/public_datasets/rqc_stalls_in_yeast_orfs/tables/ngram_control_annotated.tsv]].
+
+*** Analysis of Dvir et al. 2013 data
+
+Supplementary table S1 was downloaded from http://www.pnas.org/lookup/suppl/doi:10.1073/pnas.1222534110/-/DCSupplemental/sd01.xlsx. 
+
+This data is analyzed in [[file:analysis/public_datasets/dvir_2013_kozak_library/scripts/plot_kozak_strength.md]] to generate Fig. [[file:analysis/public_datasets/dvir_2013_kozak_library/figures/kozak_mutations_compare_dvir.pdf][S1C]].
+
+*** Analysis of Weinberg et al. 2016 data
+
+
+The annotations for the SRA experiment were downloaded using the script: [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/downloadannotations.py]].
+
+The URL in the annotations were used to download the =.sra= files and convert them to =.fastq.gz= files using the script: [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/downloaddata.py]].
+
+The raw reads were trimmed, aligned to the transcriptome, and used for calculating transcriptomic coverage using the workflow: [[file:analysis/public_datasets/weinberg_2016_riboseq/Makefile]].
+
+The transcriptomic coverage was used to calculate the ribosome density profile around RQC stalls and controls in the script: [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/plot_ribo_density_around_rqc_stalls.md]]. This generates Fig. [[file:analysis/public_datasets/weinberg_2016_riboseq/figures/ribosome_density_around_rqc_stalls_and_controls.pdf][6A]] and [[file:analysis/public_datasets/weinberg_2016_riboseq/figures/ribosome_density_around_rqc_stalls_and_controls.pdf][S5A]]. 
+
+------------------------------
+
+To generate Fig. [[file:analysis/public_datasets/weinberg_2016_riboseq/figures/distribution_of_translation_efficiency_for_rqc_stall_containing_saccer_genes.pdf][6C]], the RPKM values for RNA-seq and Ribo-seq were downloaded from GEO:
+#+BEGIN_SRC :sh
+wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE75nnn/GSE75897/suppl/GSE75897_RPF_RPKMs.txt.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE75nnn/GSE75897/suppl/GSE75897_RiboZero_RPKMs.txt.gz
+# this is the original data from which the above samples were renanalyzed.
+wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE53nnn/GSE53313/suppl/GSE53313_Cerevisiae_RNA_RPF.txt.gz
+#+END_SRC
+
+These are analyzed in the script: [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/analyze_te_genes.md]] to generate [[file:analysis/public_datasets/weinberg_2016_riboseq/figures/distribution_of_translation_efficiency_for_rqc_stall_containing_saccer_genes.pdf][6C]]. The P-values for this figure panel are also calculated in this script.
+
+
+-------------------------------
+
+To generate Fig. [[file:analysis/public_datasets/weinberg_2016_riboseq/figures/distribution_of_te_preceding_stalls_for_rqc_stall_containing_saccer_genes.pdf][S5B]],  the transcriptome-aligned reads from above were analyzed in the script: [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/plot_te_for_only_preceding_stall_region.md]].  The P-values for this figure panel are also calculated in this script.
+
+*** Analysis of Sitron et al. 2017 data
+
+The raw =.fastq= files were obtained from Dr. Onn Brandman.
+
+The raw reads were trimmed, aligned to the transcriptome, and used for calculating total read counts for each ORF using the workflow: [[file:analysis/public_datasets/sitron_2017_rqc_riboseq/Snakefile]]. The workflow was run on a cluster using the submission script: [[file:analysis/public_datasets/sitron_2017_rqc_riboseq/submit_cluster.sh]].
+
+The total read counts and their fold change between /HEL2Δ/ + /ASC1Δ/ strains and /WT/ strains were calculated in the script: [[file:analysis/public_datasets/sitron_2017_rqc_riboseq/scripts/analyze_gene_fold_change.md]] to generate Fig. [[file:analysis/public_datasets/sitron_2017_rqc_riboseq/figures/distribution_of_asc1hel2ko_lfc_for_rqc_stall_containing_saccer_genes.pdf][6D]]. The P-values for this figure panel are also calculated in this script.
+
