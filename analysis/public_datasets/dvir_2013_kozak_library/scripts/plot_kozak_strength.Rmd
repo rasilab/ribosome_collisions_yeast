@@ -1,0 +1,82 @@
+---
+title: Plot Kozak strength of initiation mutations based on Dvir et al. PNAS 2013
+author: "`r Sys.info()[['user']]`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+
+output: 
+  github_document:
+    toc: 2
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
+```
+
+# Load libraries that we use repeatedly
+
+```{r}
+library(tidyverse)
+library(plyranges)
+library(Biostrings)
+library(rasilabRtemplates)
+```
+
+# Download the Table S1 from Dvir et al. that has the protein abundance for 2041 sequence variants.
+
+```{bash}
+cd ../tables/
+wget --no-clobber http://www.pnas.org/lookup/suppl/doi:10.1073/pnas.1222534110/-/DCSupplemental/sd01.xlsx
+```
+
+Read the data from Dvir et al.
+
+```{r}
+dvir_data <- readxl::read_excel("../tables/sd01.xlsx") %>% 
+  print()
+```
+
+The `sequence_variant` column has the 10 nt preceding the start codon.
+Average protein abundance over all positions except the last 4 nt.
+Then arrange from highest to lowest expression.
+
+```{r}
+dvir_data <- dvir_data %>% 
+  mutate(kozak = str_extract(sequence_variant, "\\w{4}$")) %>% 
+  group_by(kozak) %>% 
+  summarize(exp = mean(mean_protein_abundance), 
+            se_exp = sd(mean_protein_abundance)/ sqrt(dplyr::n() - 1)) %>% 
+  arrange(desc(exp)) %>% 
+  print()
+```
+
+# Plot Kozak strength vs Kozak sequence for paper
+
+```{r, fig.width=1.5, fig.height=1.5}
+# intiiation sites are arranged in this order
+initiationmutation_order <- seq(1,8)
+names(initiationmutation_order) <- toupper(c( 'ctgc', 'ccgc', 
+                              'acgc', 'ccga', 'ccac', 'ccaa', 'caaa', 'aaaa'))
+dvir_data %>% 
+  filter(kozak %in% names(initiationmutation_order)) %>% 
+  mutate(kozak = fct_relevel(kozak, names(initiationmutation_order))) %>% 
+  ggplot(aes(x = kozak, y = exp, 
+             ymin = exp - se_exp, ymax = exp + se_exp, group = NA)) +
+  geom_point(size = 1, height = 0, width = 0.1, alpha = 0.5) +
+  geom_line() +
+  geom_errorbar(width = 0.5) +
+  labs(y = 'fluorescence (a.u.)',
+       x = '-4 to -1 nt from ATG') +
+  theme(legend.title = element_text(size = 8),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
+  scale_y_continuous(breaks = seq(3,15, 3))
+
+ggsave("../figures/kozak_mutations_compare_dvir.pdf")
+```
+
+# Session Info
+
+```{r}
+sessionInfo()
+```
+
