@@ -57,9 +57,11 @@ dvir_data <- dvir_data %>%
 initiationmutation_order <- seq(1,8)
 names(initiationmutation_order) <- toupper(c( 'ctgc', 'ccgc', 
                               'acgc', 'ccga', 'ccac', 'ccaa', 'caaa', 'aaaa'))
-dvir_data %>% 
+plot_data <- dvir_data %>% 
   filter(kozak %in% names(initiationmutation_order)) %>% 
-  mutate(kozak = fct_relevel(kozak, names(initiationmutation_order))) %>% 
+  mutate(kozak = fct_relevel(kozak, names(initiationmutation_order)))
+  
+plot_data %>% 
   ggplot(aes(x = kozak, y = exp, 
              ymin = exp - se_exp, ymax = exp + se_exp, group = NA)) +
   geom_point(size = 1, height = 0, width = 0.1, alpha = 0.5) +
@@ -73,6 +75,17 @@ dvir_data %>%
 
 ggsave("../figures/kozak_mutations_compare_dvir.pdf")
 ```
+
+# Source data for S1 Fig panel C
+
+```{r}
+plot_data %>% 
+  arrange(kozak) %>% 
+  select(kozak, exp, se_exp) %>% 
+  mutate_if(is.numeric, funs(round(., 3))) %>% 
+  knitr::kable()
+```
+
 
 # Session Info
 

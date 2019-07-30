@@ -353,7 +353,6 @@ plot_data %>%
 
 ggsave("../figures/distribution_of_te_preceding_stalls_for_rqc_stall_containing_saccer_genes.pdf")
 ```
-
 # Test if stall-containing genes have lower or higher calculated TE preceding stall
 
 ```{r}
@@ -378,3 +377,12 @@ plot_data %>%
 sessionInfo()
 ```
 
+# Source data for S5 Fig panel B
+
+```{r}
+plot_data %>% 
+  rename(x = ngram_weight, y = te) %>% 
+  select(id, x, y) %>% 
+  mutate_if(is.numeric, funs(round(., 3))) %>% 
+  knitr::kable()
+```

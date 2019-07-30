@@ -206,3 +206,13 @@ ggsave("../figures/distribution_of_asc1hel2ko_lfc_for_rqc_stall_containing_sacce
 ```{r}
 wilcox.test(asc1hel2_vs_wt ~ ngram_weight, data = plot_data, alternative = "two.sided")
 ```
+
+# Source data for Fig. 6D
+
+```{r}
+plot_data %>% 
+  select(id, genename, ngram_weight, asc1hel2_vs_wt) %>% 
+  rename(x = ngram_weight, y = asc1hel2_vs_wt) %>% 
+  mutate_if(is.numeric, funs(round(., 3))) %>% 
+  knitr::kable()
+```

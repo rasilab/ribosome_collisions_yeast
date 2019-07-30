@@ -1,11 +1,12 @@
 Plot Kozak strength of initiation mutations based on Dvir et al. PNAS 2013
 ================
 rasi
-17 July, 2019
+30 July, 2019
 
 -   [Load libraries that we use repeatedly](#load-libraries-that-we-use-repeatedly)
 -   [Download the Table S1 from Dvir et al. that has the protein abundance for 2041 sequence variants.](#download-the-table-s1-from-dvir-et-al.-that-has-the-protein-abundance-for-2041-sequence-variants.)
 -   [Plot Kozak strength vs Kozak sequence for paper](#plot-kozak-strength-vs-kozak-sequence-for-paper)
+-   [Source data for S1 Fig panel C](#source-data-for-s1-fig-panel-c)
 -   [Session Info](#session-info)
 
 Load libraries that we use repeatedly
@@ -26,29 +27,29 @@ cd ../tables/
 wget --no-clobber http://www.pnas.org/lookup/suppl/doi:10.1073/pnas.1222534110/-/DCSupplemental/sd01.xlsx
 ```
 
-    ## --2019-07-17 17:20:35--  http://www.pnas.org/lookup/suppl/doi:10.1073/pnas.1222534110/-/DCSupplemental/sd01.xlsx
-    ## Resolving www.pnas.org (www.pnas.org)... 104.16.153.14, 104.16.154.14, 104.16.152.14, ...
+    ## --2019-07-30 13:23:21--  http://www.pnas.org/lookup/suppl/doi:10.1073/pnas.1222534110/-/DCSupplemental/sd01.xlsx
+    ## Resolving www.pnas.org (www.pnas.org)... 104.16.153.14, 104.16.152.14, 104.16.156.14, ...
     ## Connecting to www.pnas.org (www.pnas.org)|104.16.153.14|:80... connected.
     ## HTTP request sent, awaiting response... 301 Moved Permanently
     ## Location: https://www.pnas.org/lookup/suppl/doi:10.1073/pnas.1222534110/-/DCSupplemental/sd01.xlsx [following]
-    ## --2019-07-17 17:20:35--  https://www.pnas.org/lookup/suppl/doi:10.1073/pnas.1222534110/-/DCSupplemental/sd01.xlsx
+    ## --2019-07-30 13:23:22--  https://www.pnas.org/lookup/suppl/doi:10.1073/pnas.1222534110/-/DCSupplemental/sd01.xlsx
     ## Connecting to www.pnas.org (www.pnas.org)|104.16.153.14|:443... connected.
     ## HTTP request sent, awaiting response... 301 Moved Permanently
     ## Location: https://www.pnas.org/highwire/filestream/613140/field_highwire_adjunct_files/1/sd01.xlsx [following]
-    ## --2019-07-17 17:20:35--  https://www.pnas.org/highwire/filestream/613140/field_highwire_adjunct_files/1/sd01.xlsx
+    ## --2019-07-30 13:23:23--  https://www.pnas.org/highwire/filestream/613140/field_highwire_adjunct_files/1/sd01.xlsx
     ## Reusing existing connection to www.pnas.org:443.
     ## HTTP request sent, awaiting response... 302 Found
     ## Location: https://www.pnas.org/content/pnas/suppl/2013/07/05/1222534110.DCSupplemental/sd01.xlsx [following]
-    ## --2019-07-17 17:20:35--  https://www.pnas.org/content/pnas/suppl/2013/07/05/1222534110.DCSupplemental/sd01.xlsx
+    ## --2019-07-30 13:23:23--  https://www.pnas.org/content/pnas/suppl/2013/07/05/1222534110.DCSupplemental/sd01.xlsx
     ## Reusing existing connection to www.pnas.org:443.
     ## HTTP request sent, awaiting response... 200 OK
     ## Length: unspecified [application/vnd.openxmlformats-officedocument.spreadsheetml.sheet]
     ## Saving to: ‘sd01.xlsx’
     ## 
-    ##      0K .......... .......... .......... .......... .......... 20.8M
-    ##     50K .......... .......... .......... ........              3.47M=0.01s
+    ##      0K .......... .......... .......... .......... .......... 40.0M
+    ##     50K .......... .......... .......... ........              66.5M=0.002s
     ## 
-    ## 2019-07-17 17:20:36 (6.53 MB/s) - ‘sd01.xlsx’ saved [91068]
+    ## 2019-07-30 13:23:24 (48.4 MB/s) - ‘sd01.xlsx’ saved [91068]
 
 Read the data from Dvir et al.
 
@@ -107,9 +108,11 @@ Plot Kozak strength vs Kozak sequence for paper
 initiationmutation_order <- seq(1,8)
 names(initiationmutation_order) <- toupper(c( 'ctgc', 'ccgc', 
                               'acgc', 'ccga', 'ccac', 'ccaa', 'caaa', 'aaaa'))
-dvir_data %>% 
+plot_data <- dvir_data %>% 
   filter(kozak %in% names(initiationmutation_order)) %>% 
-  mutate(kozak = fct_relevel(kozak, names(initiationmutation_order))) %>% 
+  mutate(kozak = fct_relevel(kozak, names(initiationmutation_order)))
+  
+plot_data %>% 
   ggplot(aes(x = kozak, y = exp, 
              ymin = exp - se_exp, ymax = exp + se_exp, group = NA)) +
   geom_point(size = 1, height = 0, width = 0.1, alpha = 0.5) +
@@ -127,6 +130,28 @@ dvir_data %>%
 ``` r
 ggsave("../figures/kozak_mutations_compare_dvir.pdf")
 ```
+
+Source data for S1 Fig panel C
+==============================
+
+``` r
+plot_data %>% 
+  arrange(kozak) %>% 
+  select(kozak, exp, se_exp) %>% 
+  mutate_if(is.numeric, funs(round(., 3))) %>% 
+  knitr::kable()
+```
+
+| kozak |     exp|  se\_exp|
+|:------|-------:|--------:|
+| CTGC  |   3.244|    0.619|
+| CCGC  |   6.195|    0.641|
+| ACGC  |   6.633|    0.595|
+| CCGA  |   7.716|    0.649|
+| CCAC  |   7.882|    0.348|
+| CCAA  |   9.788|    0.286|
+| CAAA  |  11.674|    0.213|
+| AAAA  |  11.584|    0.235|
 
 Session Info
 ============
@@ -170,32 +195,32 @@ sessionInfo()
     ## loaded via a namespace (and not attached):
     ##  [1] Biobase_2.40.0              httr_1.3.1                 
     ##  [3] jsonlite_1.5                modelr_0.1.2               
-    ##  [5] assertthat_0.2.0            GenomeInfoDbData_1.1.0     
-    ##  [7] cellranger_1.1.0            Rsamtools_1.32.2           
-    ##  [9] yaml_2.2.0                  pillar_1.3.0               
-    ## [11] backports_1.1.2             lattice_0.20-35            
-    ## [13] glue_1.3.0                  digest_0.6.15              
-    ## [15] rvest_0.3.2                 colorspace_1.3-2           
-    ## [17] htmltools_0.3.6             Matrix_1.2-14              
-    ## [19] plyr_1.8.4                  XML_3.98-1.12              
-    ## [21] pkgconfig_2.0.1             broom_0.5.0                
-    ## [23] haven_1.1.2                 zlibbioc_1.26.0            
-    ## [25] scales_0.5.0                BiocParallel_1.14.2        
-    ## [27] withr_2.1.2                 SummarizedExperiment_1.10.1
-    ## [29] lazyeval_0.2.1              cli_1.0.0                  
-    ## [31] magrittr_1.5                crayon_1.3.4               
-    ## [33] readxl_1.1.0                evaluate_0.11              
-    ## [35] fansi_0.2.3                 nlme_3.1-137               
-    ## [37] xml2_1.2.0                  tools_3.5.1                
-    ## [39] hms_0.4.2                   matrixStats_0.54.0         
-    ## [41] munsell_0.5.0               DelayedArray_0.6.2         
-    ## [43] compiler_3.5.1              rlang_0.2.1                
-    ## [45] grid_3.5.1                  RCurl_1.95-4.11            
-    ## [47] rstudioapi_0.7              bitops_1.0-6               
-    ## [49] rmarkdown_1.10              gtable_0.2.0               
-    ## [51] R6_2.2.2                    GenomicAlignments_1.16.0   
-    ## [53] lubridate_1.7.4             knitr_1.20                 
-    ## [55] rtracklayer_1.40.3          utf8_1.1.4                 
-    ## [57] bindr_0.1.1                 rprojroot_1.3-2            
-    ## [59] stringi_1.2.4               Rcpp_0.12.18               
-    ## [61] tidyselect_0.2.4
+    ##  [5] assertthat_0.2.0            highr_0.7                  
+    ##  [7] GenomeInfoDbData_1.1.0      cellranger_1.1.0           
+    ##  [9] Rsamtools_1.32.2            yaml_2.2.0                 
+    ## [11] pillar_1.3.0                backports_1.1.2            
+    ## [13] lattice_0.20-35             glue_1.3.0                 
+    ## [15] digest_0.6.15               rvest_0.3.2                
+    ## [17] colorspace_1.3-2            htmltools_0.3.6            
+    ## [19] Matrix_1.2-14               plyr_1.8.4                 
+    ## [21] XML_3.98-1.12               pkgconfig_2.0.1            
+    ## [23] broom_0.5.0                 haven_1.1.2                
+    ## [25] zlibbioc_1.26.0             scales_0.5.0               
+    ## [27] BiocParallel_1.14.2         withr_2.1.2                
+    ## [29] SummarizedExperiment_1.10.1 lazyeval_0.2.1             
+    ## [31] cli_1.0.0                   magrittr_1.5               
+    ## [33] crayon_1.3.4                readxl_1.1.0               
+    ## [35] evaluate_0.11               fansi_0.2.3                
+    ## [37] nlme_3.1-137                xml2_1.2.0                 
+    ## [39] tools_3.5.1                 hms_0.4.2                  
+    ## [41] matrixStats_0.54.0          munsell_0.5.0              
+    ## [43] DelayedArray_0.6.2          compiler_3.5.1             
+    ## [45] rlang_0.2.1                 grid_3.5.1                 
+    ## [47] RCurl_1.95-4.11             rstudioapi_0.7             
+    ## [49] bitops_1.0-6                rmarkdown_1.10             
+    ## [51] gtable_0.2.0                R6_2.2.2                   
+    ## [53] GenomicAlignments_1.16.0    lubridate_1.7.4            
+    ## [55] knitr_1.20                  rtracklayer_1.40.3         
+    ## [57] utf8_1.1.4                  bindr_0.1.1                
+    ## [59] rprojroot_1.3-2             stringi_1.2.4              
+    ## [61] Rcpp_0.12.18                tidyselect_0.2.4

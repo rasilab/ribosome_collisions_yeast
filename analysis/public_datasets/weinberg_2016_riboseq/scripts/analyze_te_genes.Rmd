@@ -106,3 +106,13 @@ plot_data %>%
 ```{r}
 sessionInfo()
 ```
+
+# Source data for Fig. 6C
+
+```{r}
+plot_data %>% 
+  rename(x = ngram_weight, y = te) %>% 
+  select(gene, x, y) %>% 
+  mutate_if(is.numeric, funs(round(., 3))) %>% 
+  knitr::kable()
+```
