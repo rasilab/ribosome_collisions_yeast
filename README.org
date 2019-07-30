@@ -26,8 +26,11 @@ This repository contains raw experimental data, code, and instructions for:
     - [[#analysis-of-sitron-et-al-2017-data][Analysis of Sitron et al. 2017 data]]
 
 ** Source Data for Figures
+- [[file:analysis/flow/no_insert.md#source-data-for-fig.-1b][Fig. 1B]] 
+- [[file:analysis/flow/10xaag_wt.md#source-data-for-fig-1c-left-panel][Fig. 1C, 10xAAG and 10xAGA]], [[file:analysis/flow/8xccg_wt.md#source-data-for-fig-1c-middle-panel][Fig. 1C, 8xCCG and 8xCCA]], [[file:analysis/flow/cgg_position_number.md#source-data-for-fig-1c-right-panel][Fig. 1C, 5xCGG and 5xAGA]]
+- [[file:analysis/htseq/analyze_barcode_counts.md#source-data-for-fig-2b][Fig. 2B]]
+- [[file:analysis/htseq/analyze_barcode_counts.md#source-data-for-fig-2c][Fig. 2C]]
 - 
-
 ** Modeling
 
 *** Default Run
