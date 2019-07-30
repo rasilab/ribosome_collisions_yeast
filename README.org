@@ -12,6 +12,7 @@ This repository contains raw experimental data, code, and instructions for:
  - generating figures in the manuscript
 
 ** Contents                                                          :toc_3:
+  - [[#source-data-for-figures][Source Data for Figures]]
   - [[#modeling][Modeling]]
     - [[#default-run][Default Run]]
     - [[#parameter-sweep][Parameter Sweep]]
@@ -23,6 +24,9 @@ This repository contains raw experimental data, code, and instructions for:
     - [[#analysis-of-dvir-et-al-2013-data][Analysis of Dvir et al. 2013 data]]
     - [[#analysis-of-weinberg-et-al-2016-data][Analysis of Weinberg et al. 2016 data]]
     - [[#analysis-of-sitron-et-al-2017-data][Analysis of Sitron et al. 2017 data]]
+
+** Source Data for Figures
+- 
 
 ** Modeling
 

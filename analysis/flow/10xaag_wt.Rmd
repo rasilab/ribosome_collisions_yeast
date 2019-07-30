@@ -154,7 +154,7 @@ avg_data  <- by_file %>%
   print()
 
 normalization <- avg_data %>% 
-  filter(strain == "schp20")
+  filter(strain == "schp19")
 ```
 
 
@@ -193,7 +193,11 @@ plot_data %>%
   scale_color_manual(values = cbPalette)
 
 ggsave('figures/10xaag_wt.pdf')
+```
 
+# Source data for Fig. 1C, left panel
+
+```{r}
 plot_data %>% 
   arrange(codonmutation, initiationmutation) %>% 
   select(codonmutation, initiationmutation, mean_ratio, se_ratio, n) %>% 

@@ -64,37 +64,6 @@ strain_barcode_annotations <- read_tsv("../../data/htseq/strain_barcode_annotati
   print()
 ```
 
-# Plot read count statistics
-
-```{r, fig.width=8, fig.height=4}
-plot_data <- list.files("tables/", full.names = T, 
-                         pattern = "read_counts.tsv") %>% 
-  enframe("sno", "file") %>% 
-  mutate(data = map(file, data.table::fread)) %>% 
-  mutate(barcode = str_extract(file, "[ACTG]{6}")) %>% 
-  unnest() %>% 
-  rename(read_type = type) %>% 
-  select(-sno, -file) %>% 
-  left_join(r2_annotations, by = "barcode") %>% 
-  mutate(count = count / 1e6) %>% 
-  group_by(strain, type) %>% 
-  mutate(read_type = fct_reorder(read_type, count, .desc = T)) %>% 
-  print()
-
-plot_data %>%
-  ggplot(aes(x = read_type, y = count)) +
-  facet_wrap(~ type + strain, ncol = 6, scales = "free", 
-             labeller = label_both) +
-  geom_point() +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        axis.ticks.y = element_blank()) +
-  scale_y_continuous(limits = c(0, NA)) +
-  labs(title = "read preprocessing statistics", y = "read count (millions)")
-
-ggsave("figures/read_preprocessing_stats.pdf")
-```
-
 # Read count data and join with barcode and strain annotations
 
 ```{r}
@@ -138,7 +107,7 @@ lfc_data <- count_data %>%
   filter(!is.na(lfc)) %>%
   # median normalize each group
   group_by(label, strain, init) %>%
-  summarize(mean_lfc = mean(lfc), se_lfc = var(lfc) / sqrt(n() - 1)) %>%
+  summarize(mean_lfc = mean(lfc), se_lfc = var(lfc) / sqrt(n() - 1), n = n()) %>%
   ungroup() %>%
   group_by(label, strain) %>%
   mutate(mean_lfc = mean_lfc - median(mean_lfc)) %>%
@@ -173,6 +142,19 @@ plot_data %>%
   labs(x = "-4 to -1 nt from ATG", y = "mRNA level (log2, a.u.)")
 
 ggsave("figures/mrna_level_wt_4_codons.pdf")
+
+```
+
+# Source data for Fig. 2C
+
+```{r}
+plot_data %>% 
+  # exclude the mutated start codon since this will be shown in previous panel
+  filter(init != "CTG") %>% 
+  select(label, init, mean_lfc, se_lfc, n) %>% 
+  arrange(label, init) %>% 
+  mutate_if(is.numeric, funs(round(., 3))) %>% 
+  knitr::kable()
 ```
 
 # Plot mRNA level of PGK1-YFP, no insert
@@ -193,6 +175,16 @@ plot_data %>%
   labs(x = "-4 to -1 nt from ATG", y = "mRNA level (log2, a.u.)")
 
 ggsave("figures/mrna_level_wt_pgk1_no_insert.pdf")
+```
+
+# Source data for Fig. 2B
+
+```{r}
+plot_data %>% 
+  select(init, mean_lfc, se_lfc, n) %>% 
+  arrange(init) %>% 
+  mutate_if(is.numeric, funs(round(., 3))) %>% 
+  knitr::kable()
 ```
 
 # Plot mRNA levels of  KO codon mutants for paper
@@ -222,4 +214,14 @@ plot_data %>%
   labs(x = "-4 to -1 nt from ATG", y = "mRNA level (log2, a.u.)")
 
 ggsave("figures/mrna_level_ko_2_codons.pdf")
+```
+
+# Source data for Fig. 5C
+
+```{r}
+plot_data %>% 
+  select(strain, label, init, mean_lfc, se_lfc, n) %>% 
+  arrange(strain, label, init) %>% 
+  mutate_if(is.numeric, funs(round(., 3))) %>% 
+  knitr::kable()
 ```

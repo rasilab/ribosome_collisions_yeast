@@ -1,7 +1,7 @@
 Analyze simulation results
 ================
 rasi
-01 January, 2019
+30 July, 2019
 
 -   [Load libraries](#load-libraries)
 -   [Read protein count data](#read-protein-count-data)
@@ -10,10 +10,11 @@ rasi
 -   [Read simulation parameters](#read-simulation-parameters)
 -   [Combine all data into a single table](#combine-all-data-into-a-single-table)
 -   [mRNA lifetime as a function of initiation rate](#mrna-lifetime-as-a-function-of-initiation-rate)
+-   [Source data for Fig. 4B](#source-data-for-fig.-4b)
 -   [PSR as a function of initiation rate](#psr-as-a-function-of-initiation-rate)
--   [Collision rate as a function of initiation rate](#collision-rate-as-a-function-of-initiation-rate)
--   [Same as above but with log Y-scale](#same-as-above-but-with-log-y-scale)
+-   [Source data for Fig. 4C](#source-data-for-fig.-4c)
 -   [PSR as a function of initiation rate for different cleavage rates in SEC model](#psr-as-a-function-of-initiation-rate-for-different-cleavage-rates-in-sec-model)
+-   [Source data for S3 Fig panel A](#source-data-for-s3-fig-panel-a)
 
 Load libraries
 --------------
@@ -87,19 +88,19 @@ collision_data <- read_tsv("tables/collision_stats.tsv") %>%
 ```
 
     ## # A tibble: 270 x 6
-    ##    sim_id mean_p_per_m sd_p_per_m total_collision total_time
-    ##     <int>        <int>      <int>           <int>      <int>
-    ##  1      0            8          9            1855     999764
-    ##  2      1            7          7            1701     999793
-    ##  3     10            6          7             474     999203
-    ##  4    100           35         42           31140     999976
-    ##  5    101           37         42           31755     999997
-    ##  6    102           35         42           31058     995388
-    ##  7    103           29         31           23034     999411
-    ##  8    104           13         14            6282     995477
-    ##  9    105           37         44           32709     999966
-    ## 10    106           35         40           30169     999998
-    ## # ... with 260 more rows, and 1 more variable: collision_freq <dbl>
+    ##    sim_id mean_p_per_m sd_p_per_m total_collision total_time collision_freq
+    ##     <int>        <int>      <int>           <int>      <int>          <dbl>
+    ##  1      0            8          9            1855     999764       0.00186 
+    ##  2      1            7          7            1701     999793       0.00170 
+    ##  3     10            6          7             474     999203       0.000474
+    ##  4    100           35         42           31140     999976       0.0311  
+    ##  5    101           37         42           31755     999997       0.0318  
+    ##  6    102           35         42           31058     995388       0.0312  
+    ##  7    103           29         31           23034     999411       0.0230  
+    ##  8    104           13         14            6282     995477       0.00631 
+    ##  9    105           37         44           32709     999966       0.0327  
+    ## 10    106           35         40           30169     999998       0.0302  
+    ## # ... with 260 more rows
 
 Read simulation parameters
 ==========================
@@ -120,16 +121,16 @@ sim_params <- read_tsv("sim.params.tsv") %>%
     ## # A tibble: 270 x 4
     ##    sim_id cleave_rate cleave_model k_stall
     ##     <int>       <dbl> <chr>          <dbl>
-    ##  1      0    0.       simple        0.0200
-    ##  2      1    0.000100 simple        0.0200
-    ##  3      2    0.000200 simple        0.0200
-    ##  4      3    0.00100  simple        0.0200
-    ##  5      4    0.00500  simple        0.0200
-    ##  6      5    0.000100 hit5          0.0200
-    ##  7      6    0.000200 hit5          0.0200
-    ##  8      7    0.00100  hit5          0.0200
-    ##  9      8    0.00500  hit5          0.0200
-    ## 10      9    0.0100   hit5          0.0200
+    ##  1      0      0      simple          0.02
+    ##  2      1      0.0001 simple          0.02
+    ##  3      2      0.0002 simple          0.02
+    ##  4      3      0.001  simple          0.02
+    ##  5      4      0.005  simple          0.02
+    ##  6      5      0.0001 hit5            0.02
+    ##  7      6      0.0002 hit5            0.02
+    ##  8      7      0.001  hit5            0.02
+    ##  9      8      0.005  hit5            0.02
+    ## 10      9      0.01   hit5            0.02
     ## # ... with 260 more rows
 
 ``` r
@@ -152,18 +153,18 @@ annotations <- list.files("output/", pattern = "params.tsv.gz$", full.names = T)
 ```
 
     ## # A tibble: 270 x 14
-    ##    sim_id k_cleave_5_hit k_cleave_both_hit k_cleave_no_hit k_elong_stall_1
-    ##     <int>          <dbl>             <dbl>           <dbl>           <dbl>
-    ##  1      0       0.                0.              0.                 0.120
-    ##  2      1       0.000100          0.              0.000100           0.120
-    ##  3      2       0.000200          0.              0.000200           0.120
-    ##  4      3       0.00100           0.              0.00100            0.120
-    ##  5      4       0.00500           0.              0.00500            0.120
-    ##  6      5       0.000100          0.000100        0.                 0.120
-    ##  7      6       0.000200          0.000200        0.                 0.120
-    ##  8      7       0.00100           0.00100         0.                 0.120
-    ##  9      8       0.00500           0.00500         0.                 0.120
-    ## 10      9       0.0100            0.0100          0.                 0.120
+    ##    sim_id k_cleave_5_hit k_cleave_both_h… k_cleave_no_hit k_elong_stall_1
+    ##     <int>          <dbl>            <dbl>           <dbl>           <dbl>
+    ##  1      0         0                0               0                 0.12
+    ##  2      1         0.0001           0               0.0001            0.12
+    ##  3      2         0.0002           0               0.0002            0.12
+    ##  4      3         0.001            0               0.001             0.12
+    ##  5      4         0.005            0               0.005             0.12
+    ##  6      5         0.0001           0.0001          0                 0.12
+    ##  7      6         0.0002           0.0002          0                 0.12
+    ##  8      7         0.001            0.001           0                 0.12
+    ##  9      8         0.005            0.005           0                 0.12
+    ## 10      9         0.01             0.01            0                 0.12
     ## # ... with 260 more rows, and 9 more variables: k_elong_stall_2 <dbl>,
     ## #   k_elong_stall_3 <dbl>, k_elong_stall_4 <dbl>, k_elong_stall_5 <dbl>,
     ## #   k_elong_stall_6 <dbl>, k_init <dbl>, cleave_rate <dbl>,
@@ -181,18 +182,18 @@ data <- annotations %>%
 ```
 
     ## # A tibble: 270 x 28
-    ##    sim_id k_cleave_5_hit k_cleave_both_hit k_cleave_no_hit k_elong_stall_1
-    ##     <int>          <dbl>             <dbl>           <dbl>           <dbl>
-    ##  1      0       0.                0.              0.                 0.120
-    ##  2      1       0.000100          0.              0.000100           0.120
-    ##  3      2       0.000200          0.              0.000200           0.120
-    ##  4      3       0.00100           0.              0.00100            0.120
-    ##  5      4       0.00500           0.              0.00500            0.120
-    ##  6      5       0.000100          0.000100        0.                 0.120
-    ##  7      6       0.000200          0.000200        0.                 0.120
-    ##  8      7       0.00100           0.00100         0.                 0.120
-    ##  9      8       0.00500           0.00500         0.                 0.120
-    ## 10      9       0.0100            0.0100          0.                 0.120
+    ##    sim_id k_cleave_5_hit k_cleave_both_h… k_cleave_no_hit k_elong_stall_1
+    ##     <int>          <dbl>            <dbl>           <dbl>           <dbl>
+    ##  1      0         0                0               0                 0.12
+    ##  2      1         0.0001           0               0.0001            0.12
+    ##  3      2         0.0002           0               0.0002            0.12
+    ##  4      3         0.001            0               0.001             0.12
+    ##  5      4         0.005            0               0.005             0.12
+    ##  6      5         0.0001           0.0001          0                 0.12
+    ##  7      6         0.0002           0.0002          0                 0.12
+    ##  8      7         0.001            0.001           0                 0.12
+    ##  9      8         0.005            0.005           0                 0.12
+    ## 10      9         0.01             0.01            0                 0.12
     ## # ... with 260 more rows, and 23 more variables: k_elong_stall_2 <dbl>,
     ## #   k_elong_stall_3 <dbl>, k_elong_stall_4 <dbl>, k_elong_stall_5 <dbl>,
     ## #   k_elong_stall_6 <dbl>, k_init <dbl>, cleave_rate <dbl>,
@@ -213,26 +214,26 @@ plot_data <- data %>%
 ```
 
     ## # A tibble: 18 x 29
-    ##    sim_id k_cleave_5_hit k_cleave_both_hit k_cleave_no_hit k_elong_stall_1
-    ##     <int>          <dbl>             <dbl>           <dbl>           <dbl>
-    ##  1     13        0.00100           0.              0.00100           0.600
-    ##  2     17        0.00100           0.00100         0.                0.600
-    ##  3     43        0.00100           0.              0.00100           0.600
-    ##  4     47        0.00100           0.00100         0.                0.600
-    ##  5     73        0.00100           0.              0.00100           0.600
-    ##  6     77        0.00100           0.00100         0.                0.600
-    ##  7    103        0.00100           0.              0.00100           0.600
-    ##  8    107        0.00100           0.00100         0.                0.600
-    ##  9    133        0.00100           0.              0.00100           0.600
-    ## 10    137        0.00100           0.00100         0.                0.600
-    ## 11    163        0.00100           0.              0.00100           0.600
-    ## 12    167        0.00100           0.00100         0.                0.600
-    ## 13    193        0.00100           0.              0.00100           0.600
-    ## 14    197        0.00100           0.00100         0.                0.600
-    ## 15    223        0.00100           0.              0.00100           0.600
-    ## 16    227        0.00100           0.00100         0.                0.600
-    ## 17    253        0.00100           0.              0.00100           0.600
-    ## 18    257        0.00100           0.00100         0.                0.600
+    ##    sim_id k_cleave_5_hit k_cleave_both_h… k_cleave_no_hit k_elong_stall_1
+    ##     <int>          <dbl>            <dbl>           <dbl>           <dbl>
+    ##  1     13          0.001            0               0.001             0.6
+    ##  2     17          0.001            0.001           0                 0.6
+    ##  3     43          0.001            0               0.001             0.6
+    ##  4     47          0.001            0.001           0                 0.6
+    ##  5     73          0.001            0               0.001             0.6
+    ##  6     77          0.001            0.001           0                 0.6
+    ##  7    103          0.001            0               0.001             0.6
+    ##  8    107          0.001            0.001           0                 0.6
+    ##  9    133          0.001            0               0.001             0.6
+    ## 10    137          0.001            0.001           0                 0.6
+    ## 11    163          0.001            0               0.001             0.6
+    ## 12    167          0.001            0.001           0                 0.6
+    ## 13    193          0.001            0               0.001             0.6
+    ## 14    197          0.001            0.001           0                 0.6
+    ## 15    223          0.001            0               0.001             0.6
+    ## 16    227          0.001            0.001           0                 0.6
+    ## 17    253          0.001            0               0.001             0.6
+    ## 18    257          0.001            0.001           0                 0.6
     ## # ... with 24 more variables: k_elong_stall_2 <dbl>,
     ## #   k_elong_stall_3 <dbl>, k_elong_stall_4 <dbl>, k_elong_stall_5 <dbl>,
     ## #   k_elong_stall_6 <dbl>, k_init <dbl>, cleave_rate <dbl>,
@@ -257,11 +258,41 @@ plot_data %>%
   theme(legend.position = "top")
 ```
 
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-8-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
 ``` r
 ggsave("figures/mrna_lifetime_vs_initiation_rate.pdf", width = 1.7, height = 2)
 ```
+
+Source data for Fig. 4B
+=======================
+
+``` r
+plot_data %>% 
+  select(model, k_init, mean_lifetime) %>% 
+  knitr::kable()
+```
+
+| model |    k\_init|  mean\_lifetime|
+|:------|----------:|---------------:|
+| SEC   |  0.0039062|            1823|
+| CSEC  |  0.0039062|            2121|
+| SEC   |  0.0078125|            1625|
+| CSEC  |  0.0078125|            2107|
+| SEC   |  0.0156250|            1224|
+| CSEC  |  0.0156250|            2094|
+| SEC   |  0.0312500|             700|
+| CSEC  |  0.0312500|            2071|
+| SEC   |  0.0625000|             337|
+| CSEC  |  0.0625000|            1946|
+| SEC   |  0.1250000|             181|
+| CSEC  |  0.1250000|             916|
+| SEC   |  0.2500000|             127|
+| CSEC  |  0.2500000|             196|
+| SEC   |  0.5000000|             104|
+| CSEC  |  0.5000000|             121|
+| SEC   |  1.0000000|              91|
+| CSEC  |  1.0000000|              96|
 
 PSR as a function of initiation rate
 ====================================
@@ -291,61 +322,35 @@ plot_data %>%
 ggsave("figures/psr_vs_initiation_rate.pdf", width = 1.6, height = 2)
 ```
 
-Collision rate as a function of initiation rate
-===============================================
+Source data for Fig. 4C
+=======================
 
 ``` r
-plot_data <- data %>% 
-  filter(cleave_rate == 0.001 & k_stall == 0.1) %>% 
-  mutate(model = cleave_model_names[cleave_model]) 
-
-plot_data %>%
-  ggplot(aes(x = k_init, y = collision_freq, color = model, shape = model)) +
-  geom_point(size = 1.5) +
-  geom_line() +
-  scale_x_continuous(trans = "log2",
-                     labels = scales::trans_format("log2", scales::math_format(2^.x)),
-                     breaks = 2^(seq(-8,0,4))) +
-  # scale_y_continuous(trans = "log2",
-  #                    labels = scales::trans_format("log2", scales::math_format(2^.x))) +
-  scale_color_manual(values = cbPalette[c(3,2,1)]) +
-  scale_shape_manual(values = c(19, 17,  16)) +
-  labs(x = "initiation rate (s-1)", y = "collision frequency (s-1)", color = "", shape = "") +
-  theme(legend.position = "top")
+plot_data %>% 
+  select(model, k_init, psr) %>% 
+  knitr::kable()
 ```
 
-![](analyze_results_files/figure-markdown_github/collision_cshl_poster-1.png)
-
-``` r
-ggsave("figures/collision_rate_vs_initiation_rate.pdf")
-```
-
-Same as above but with log Y-scale
-==================================
-
-``` r
-plot_data <- data %>% 
-  filter(cleave_rate == 0.001 & k_stall == 0.1) %>% 
-  mutate(model = cleave_model_names[cleave_model]) 
-
-plot_data %>%
-  ggplot(aes(x = k_init, y = collision_freq, color = model, shape = model)) +
-  geom_point(size = 1, show.legend = F) +
-  geom_line(show.legend = F) +
-  theme(axis.text = element_text(size = 6)) +
-  scale_x_continuous(trans = "log2",
-                     labels = scales::trans_format("log2", scales::math_format(2^.x)),
-                     breaks = 2^(seq(-8,0,4))) +
-  scale_y_continuous(trans = "log2",
-                     labels = scales::trans_format("log2", scales::math_format(2^.x))) +
-  scale_color_manual(values = cbPalette[c(3,2,1)]) +
-  scale_shape_manual(values = c(19, 17,  16)) +
-  labs(x = "", y = "", color = "", shape = "") +
-
-ggsave("figures/collision_rate_vs_initiation_rate_log_scale.pdf", width=0.8, height=0.8)
-```
-
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-9-1.png)
+| model |    k\_init|       psr|
+|:------|----------:|---------:|
+| SEC   |  0.0039062|  0.003098|
+| CSEC  |  0.0039062|  0.003503|
+| SEC   |  0.0078125|  0.005745|
+| CSEC  |  0.0078125|  0.006808|
+| SEC   |  0.0156250|  0.009386|
+| CSEC  |  0.0156250|  0.013802|
+| SEC   |  0.0312500|  0.013512|
+| CSEC  |  0.0312500|  0.027153|
+| SEC   |  0.0625000|  0.013941|
+| CSEC  |  0.0625000|  0.050775|
+| SEC   |  0.1250000|  0.013965|
+| CSEC  |  0.1250000|  0.045152|
+| SEC   |  0.2500000|  0.014688|
+| CSEC  |  0.2500000|  0.020907|
+| SEC   |  0.5000000|  0.016598|
+| CSEC  |  0.5000000|  0.019538|
+| SEC   |  1.0000000|  0.016410|
+| CSEC  |  1.0000000|  0.020357|
 
 PSR as a function of initiation rate for different cleavage rates in SEC model
 ==============================================================================
@@ -373,3 +378,51 @@ ggsave("figures/psr_vs_initiation_rate_vary_cleave_rate.pdf",
 ```
 
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-10-1.png)
+
+Source data for S3 Fig panel A
+==============================
+
+``` r
+plot_data %>% 
+  select(cleave_rate, k_init, psr) %>% 
+  knitr::kable()
+```
+
+|  cleave\_rate|    k\_init|       psr|
+|-------------:|----------:|---------:|
+|        0.0000|  0.0039062|  0.003409|
+|        0.0001|  0.0039062|  0.003451|
+|        0.0002|  0.0039062|  0.003329|
+|        0.0010|  0.0039062|  0.003098|
+|        0.0000|  0.0078125|  0.006711|
+|        0.0001|  0.0078125|  0.006934|
+|        0.0002|  0.0078125|  0.006451|
+|        0.0010|  0.0078125|  0.005745|
+|        0.0000|  0.0156250|  0.013443|
+|        0.0001|  0.0156250|  0.013153|
+|        0.0002|  0.0156250|  0.012798|
+|        0.0010|  0.0156250|  0.009386|
+|        0.0000|  0.0312500|  0.027415|
+|        0.0001|  0.0312500|  0.025862|
+|        0.0002|  0.0312500|  0.024752|
+|        0.0010|  0.0312500|  0.013512|
+|        0.0000|  0.0625000|  0.053354|
+|        0.0001|  0.0625000|  0.049005|
+|        0.0002|  0.0625000|  0.040060|
+|        0.0010|  0.0625000|  0.013941|
+|        0.0000|  0.1250000|  0.102953|
+|        0.0001|  0.1250000|  0.077481|
+|        0.0002|  0.1250000|  0.056156|
+|        0.0010|  0.1250000|  0.013965|
+|        0.0000|  0.2500000|  0.183772|
+|        0.0001|  0.2500000|  0.094418|
+|        0.0002|  0.2500000|  0.056458|
+|        0.0010|  0.2500000|  0.014688|
+|        0.0000|  0.5000000|  0.205912|
+|        0.0001|  0.5000000|  0.095976|
+|        0.0002|  0.5000000|  0.055083|
+|        0.0010|  0.5000000|  0.016598|
+|        0.0000|  1.0000000|  0.226629|
+|        0.0001|  1.0000000|  0.089002|
+|        0.0002|  1.0000000|  0.053578|
+|        0.0010|  1.0000000|  0.016410|

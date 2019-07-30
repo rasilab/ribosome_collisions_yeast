@@ -160,7 +160,7 @@ normalization <- avg_data %>%
   filter(strain == "schp20")
 ```
 
-# Plot and tabulate background subtracted and normalized YFP/RFP ratio as a function of initiation codon
+# Plot background subtracted and normalized YFP/RFP ratio as a function of initiation codon
 
 ```{r, fig.width=1.5, fig.height=1.5}
 plot_data <- avg_data %>% 
@@ -190,7 +190,11 @@ plot_data %>%
   #                    labels = scales::trans_format("log2", scales::math_format(2^.x)))
 
 ggsave("figures/no_insert.pdf")
+```
 
+# Source data for Fig. 1B
+
+```{r}
 plot_data %>% 
   arrange(initiationmutation) %>% 
   select(initiationmutation, mean_ratio, se_ratio, n) %>% 

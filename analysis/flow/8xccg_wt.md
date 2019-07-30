@@ -1,7 +1,7 @@
 Fluorescence of PGK1 WT reporters with 8xCCG / 8xCCA inserts and varying 5'UTR mutations
 ================
 rasi
-07 January, 2019
+30 July, 2019
 
 -   [Import libraries and analysis specific parameters](#import-libraries-and-analysis-specific-parameters)
 -   [Read data](#read-data)
@@ -9,6 +9,7 @@ rasi
 -   [Rename and calculate average values of fluorescence channels in each well](#rename-and-calculate-average-values-of-fluorescence-channels-in-each-well)
 -   [Calculate mean and standard error over replicates](#calculate-mean-and-standard-error-over-replicates)
 -   [Plot and tabulate background subtracted and normalized YFP/RFP ratio as a function of initiation codon](#plot-and-tabulate-background-subtracted-and-normalized-yfprfp-ratio-as-a-function-of-initiation-codon)
+-   [Source data for Fig. 1C, middle panel](#source-data-for-fig.-1c-middle-panel)
 
 Import libraries and analysis specific parameters
 =================================================
@@ -95,18 +96,18 @@ by_file <- flowdata  %>%
 
     ## # A tibble: 176 x 9
     ## # Groups:   plate [?]
-    ##    plate well      yfp     rfp strain  replicate initiationmutation
-    ##    <int> <chr>   <dbl>   <dbl> <chr>       <int> <chr>             
-    ##  1     1 B10   10425.  22526.  schp619         1 CCAA              
-    ##  2     1 B11    8421.  23356.  schp620         1 CCAC              
-    ##  3     1 B2       56.8    22.5 by4741          1 CAAA              
-    ##  4     1 B3      218.  21641.  schp15          1 CAAA              
-    ##  5     1 B4     2964.  21404.  schp19          1 CAAA              
-    ##  6     1 B5    22643.  19820.  schp20          1 CAAA              
-    ##  7     1 B8    12417.  21590.  schp617         1 CAAA              
-    ##  8     1 B9     6083.  23476.  schp618         1 CCGC              
-    ##  9     1 C10    5493.  25341.  schp629         1 CCAC              
-    ## 10     1 C11    5724.  24444.  schp630         1 CCGA              
+    ##    plate well     yfp    rfp strain replicate initiationmutat…
+    ##    <int> <chr>  <dbl>  <dbl> <chr>      <int> <chr>           
+    ##  1     1 B10   1.04e4 2.25e4 schp6…         1 CCAA            
+    ##  2     1 B11   8.42e3 2.34e4 schp6…         1 CCAC            
+    ##  3     1 B2    5.68e1 2.25e1 by4741         1 CAAA            
+    ##  4     1 B3    2.18e2 2.16e4 schp15         1 CAAA            
+    ##  5     1 B4    2.96e3 2.14e4 schp19         1 CAAA            
+    ##  6     1 B5    2.26e4 1.98e4 schp20         1 CAAA            
+    ##  7     1 B8    1.24e4 2.16e4 schp6…         1 CAAA            
+    ##  8     1 B9    6.08e3 2.35e4 schp6…         1 CCGC            
+    ##  9     1 C10   5.49e3 2.53e4 schp6…         1 CCAC            
+    ## 10     1 C11   5.72e3 2.44e4 schp6…         1 CCGA            
     ## # ... with 166 more rows, and 2 more variables: codonmutation <chr>,
     ## #   gene <chr>
 
@@ -140,18 +141,18 @@ avg_data  <- by_file %>%
 ```
 
     ## # A tibble: 22 x 17
-    ##    plate well       yfp       rfp strain  replicate initiationmutation
-    ##    <int> <chr>    <dbl>     <dbl> <chr>       <int> <chr>             
-    ##  1     1 B2      -182.      -6.81 by4741          1 CAAA              
-    ##  2     1 B3       -20.5  21611.   schp15          1 CAAA              
-    ##  3     1 B4      2725.   21375.   schp19          1 CAAA              
-    ##  4     1 B5     22405.   19791.   schp20          1 CAAA              
-    ##  5     1 B8     12179.   21560.   schp617         1 CAAA              
-    ##  6     1 B9      5844.   23447.   schp618         1 CCGC              
-    ##  7     1 B10    10187.   22497.   schp619         1 CCAA              
-    ##  8     1 B11     8182.   23327.   schp620         1 CCAC              
-    ##  9     1 C2      8009.   23528.   schp621         1 CCGA              
-    ## 10     1 C3      3445.   22145.   schp622         1 CTGC              
+    ##    plate well      yfp     rfp strain replicate initiationmutat…
+    ##    <int> <chr>   <dbl>   <dbl> <chr>      <int> <chr>           
+    ##  1     1 B2    -1.82e2 -6.81e0 by4741         1 CAAA            
+    ##  2     1 B3    -2.05e1  2.16e4 schp15         1 CAAA            
+    ##  3     1 B4     2.72e3  2.14e4 schp19         1 CAAA            
+    ##  4     1 B5     2.24e4  1.98e4 schp20         1 CAAA            
+    ##  5     1 B8     1.22e4  2.16e4 schp6…         1 CAAA            
+    ##  6     1 B9     5.84e3  2.34e4 schp6…         1 CCGC            
+    ##  7     1 B10    1.02e4  2.25e4 schp6…         1 CCAA            
+    ##  8     1 B11    8.18e3  2.33e4 schp6…         1 CCAC            
+    ##  9     1 C2     8.01e3  2.35e4 schp6…         1 CCGA            
+    ## 10     1 C3     3.45e3  2.21e4 schp6…         1 CTGC            
     ## # ... with 12 more rows, and 10 more variables: codonmutation <chr>,
     ## #   gene <chr>, mean_yfp <dbl>, mean_rfp <dbl>, yfp_rfp_ratio <dbl>,
     ## #   mean_ratio <dbl>, se_yfp <dbl>, se_rfp <dbl>, se_ratio <dbl>, n <int>
@@ -179,23 +180,34 @@ plot_data <- avg_data %>%
 plot_data %>% 
   ggplot(aes(x = initiationmutation, y = mean_ratio, 
              ymin = mean_ratio - se_ratio, ymax = mean_ratio + se_ratio,
-             group = codonmutation)) +
-  geom_point(size = 1.5) +
+             group = codonmutation, color = codonmutation, shape = codonmutation)) +
+  geom_errorbar(width = 0.75, color = "black") +
+  geom_point(size = 2) +
   geom_line() +
-  geom_errorbar(width = 0.75) +
-  facet_wrap(~fct_rev(codonmutation), ncol = 1, scales = "free") + 
-  labs(y = 'fluorscence (a.u.)',
-       x = '-4 to -1 from ATG') +
+  # facet_wrap(~fct_rev(codonmutation), ncol = 1, scales = "free") + 
+  labs(y = 'fluorescence (a.u.)',
+       x = '-4 to -1 nt from ATG') +
   theme(legend.title = element_text(size = 8),
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
-  scale_y_continuous(breaks = scales::pretty_breaks(n=4))
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6),
+        legend.position = "None") +
+  scale_y_continuous(trans = "log2",
+                     limits = c(0.4, 5),
+                     breaks = c(0.5, 1, 2, 4),
+                     labels = scales::trans_format("log2", scales::math_format(2^.x))) +
+  # scale_y_continuous(breaks = scales::pretty_breaks(n=4), limits = c(0, NA)) +
+  scale_color_manual(values = cbPalette)
 ```
 
 ![](8xccg_wt_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ``` r
 ggsave('figures/8xccg_wt.pdf')
+```
 
+Source data for Fig. 1C, middle panel
+=====================================
+
+``` r
 plot_data %>% 
   arrange(codonmutation, initiationmutation) %>% 
   select(codonmutation, initiationmutation, mean_ratio, se_ratio, n) %>% 

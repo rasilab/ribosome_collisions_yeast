@@ -99,6 +99,15 @@ plot_data %>%
 ggsave('figures/psr_all_models_medium_stall_medium_pretermintact.pdf') 
 ```
 
+# Source data for Fig. 3B
+
+```{r}
+plot_data %>% 
+  select(model, k_init, psr) %>% 
+  knitr::kable()
+```
+
+
 # Change in maximal protein synthesis as a function of stall elongation rate in TJ model
 ```{r, fig.width=2.25, fig.height=1.45}
 plot_data <- data %>% 
@@ -125,6 +134,14 @@ plot_data %>%
                          
 ggsave('figures/psr_tj_model_vary_stall_strength.pdf') 
 
+```
+
+# Source data for S2 Fig panel A
+
+```{r}
+plot_data %>% 
+  select(k_stall, k_init, psr) %>% 
+  knitr::kable()
 ```
 
 # Change in protein synthesis as a function of abort rate in SAT model
@@ -160,6 +177,14 @@ plot_data %>%
 ggsave('figures/psr_sat_model_vary_abort_rate.pdf', width = 2.25, height = 1.45) 
 ```
 
+# Source data for S2 Fig panel C
+
+```{r}
+plot_data %>% 
+  select(preterm_intact_rate, k_init, psr) %>% 
+  knitr::kable()
+```
+
 # Change in protein synthesis as a function of stall elongation rate in SAT model
 
 ```{r, fig.width=2.25, fig.height=1.45}
@@ -189,6 +214,14 @@ plot_data %>%
              show.legend = F, linetype = "dotted")
                          
 ggsave('figures/psr_sat_model_vary_stall_rate.pdf', width = 2.25, height = 1.45) 
+```
+
+# Source data for S2 Fig panel B
+
+```{r}
+plot_data %>% 
+  select(k_stall, k_init, psr) %>% 
+  knitr::kable()
 ```
 
 
@@ -223,56 +256,10 @@ plot_data %>%
 ggsave('figures/psr_csat_model_vary_stall_rate.pdf', width = 2.25, height = 1.45) 
 ```
 
-# Collision rate as a function of initiation rate 
+# Source data for S2 Fig panel D
 
-```{r, fig.width=1.4, fig.height=2}
-plot_data <- data %>% 
-  mutate(k_stall = round(k_stall, 1)) %>%
-  filter(k_stall == 0.1) %>%
-  filter((preterm_intact_rate == 0.05 & preterm_intact_model == "simple") |
-        (preterm_intact_rate == 1 & preterm_intact_model == "hit5")) %>% 
-  mutate(model = model_names[preterm_intact_model])
-
-plot_data %>%
-  ggplot(aes(x = k_init, y = collision_freq, color = model, shape = model)) +
-  geom_point(size = 1.5) +
-  geom_line() +
-  scale_x_continuous(trans = "log2",
-                     labels = scales::trans_format("log2", scales::math_format(2^.x)),
-                     breaks = 2^(seq(-8,0,4))) +
-  # scale_y_continuous(trans = "log2",
-  #                    labels = scales::trans_format("log2", scales::math_format(2^.x))) +
-  scale_color_manual(values = cbPalette[c(3,2)]) +
-  scale_shape_manual(values = c(19, 17,  16)) +
-  labs(x = "initiation rate (s-1)", y = "collision frequency (s-1)", color = "", shape = "") +
-  theme(legend.position = "top")
-
-ggsave("figures/collision_rate_vs_initiation_rate.pdf")
-```
-
-# Same as above but with log Y-scale
-
-```{r, fig.width=0.8, fig.height=0.8}
-plot_data <- data %>% 
-  mutate(k_stall = round(k_stall, 1)) %>%
-  filter(k_stall == 0.1) %>%
-  filter((preterm_intact_rate == 0.05 & preterm_intact_model == "simple") |
-        (preterm_intact_rate == 1 & preterm_intact_model == "hit5")) %>% 
-  mutate(model = model_names[preterm_intact_model])
-
-plot_data %>%
-  ggplot(aes(x = k_init, y = collision_freq, color = model, shape = model)) +
-  geom_point(size = 1, show.legend = F) +
-  geom_line(show.legend = F) +
-  theme(axis.text = element_text(size = 6)) +
-  scale_x_continuous(trans = "log2",
-                     labels = scales::trans_format("log2", scales::math_format(2^.x)),
-                     breaks = 2^(seq(-8,0,4))) +
-  scale_y_continuous(trans = "log2",
-                     labels = scales::trans_format("log2", scales::math_format(2^.x))) +
-  scale_color_manual(values = cbPalette[c(3,2)]) +
-  scale_shape_manual(values = c(19, 17,  16)) +
-  labs(x = "", y = "", color = "", shape = "") +
-
-ggsave("figures/collision_rate_vs_initiation_rate_log_scale.pdf", width=0.8, height=0.8)
+```{r}
+plot_data %>% 
+  select(k_stall, k_init, psr) %>% 
+  knitr::kable()
 ```

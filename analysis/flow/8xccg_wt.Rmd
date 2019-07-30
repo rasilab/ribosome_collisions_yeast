@@ -193,7 +193,11 @@ plot_data %>%
   scale_color_manual(values = cbPalette)
 
 ggsave('figures/8xccg_wt.pdf')
+```
 
+# Source data for Fig. 1C, middle panel
+
+```{r}
 plot_data %>% 
   arrange(codonmutation, initiationmutation) %>% 
   select(codonmutation, initiationmutation, mean_ratio, se_ratio, n) %>% 

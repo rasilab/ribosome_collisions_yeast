@@ -1,7 +1,7 @@
 Fluorescence of PGK1 WT reporters with 5xCGG inserts at various locations and varying 5'UTR mutations
 ================
 rasi
-07 January, 2019
+30 July, 2019
 
 -   [Import libraries and analysis specific parameters](#import-libraries-and-analysis-specific-parameters)
 -   [Read data](#read-data)
@@ -9,7 +9,9 @@ rasi
 -   [Rename and calculate average values of fluorescence channels in each well](#rename-and-calculate-average-values-of-fluorescence-channels-in-each-well)
 -   [Calculate mean and standard error over replicates](#calculate-mean-and-standard-error-over-replicates)
 -   [Plot and tabulate mean YFP / RFP ratio as a function of initiation codon](#plot-and-tabulate-mean-yfp-rfp-ratio-as-a-function-of-initiation-codon)
+-   [Source data for Fig. 1C, right panel](#source-data-for-fig.-1c-right-panel)
 -   [Plot and tabulate mean YFP / RFP ratio as a function of stall location](#plot-and-tabulate-mean-yfp-rfp-ratio-as-a-function-of-stall-location)
+-   [Source data for S1 Fig panel B](#source-data-for-s1-fig-panel-b)
 
 Import libraries and analysis specific parameters
 =================================================
@@ -76,18 +78,18 @@ annotations  <- read_tsv(paste0(fcs_file_folder, '/annotations.tsv')) %>%
 ```
 
     ## # A tibble: 96 x 8
-    ##    plate well  strain  replicate initiationmutat… codonmutation stallsites
-    ##    <int> <chr> <chr>       <int> <chr>            <chr>         <chr>     
-    ##  1     1 B2    schp15          1 CAAA             <NA>          -         
-    ##  2     1 B3    schp19          1 CAAA             cgg           -         
-    ##  3     1 B4    schp20          1 CAAA             aga           -         
-    ##  4     1 B5    schp76          1 CAAA             aga           -         
-    ##  5     1 B10   schp266         1 CCGA             cgg           5         
-    ##  6     1 C5    schp271         1 CCGC             cgg           5         
-    ##  7     1 C10   schp276         1 CCAA             cgg           5         
-    ##  8     1 D5    schp281         1 CCAC             cgg           5         
-    ##  9     1 D10   schp286         1 CTGC             cgg           5         
-    ## 10     1 E5    schp291         1 AAAA             cgg           5         
+    ##    plate well  strain replicate initiationmutat… codonmutation stallsites
+    ##    <int> <chr> <chr>      <int> <chr>            <chr>         <chr>     
+    ##  1     1 B2    schp15         1 CAAA             <NA>          -         
+    ##  2     1 B3    schp19         1 CAAA             cgg           -         
+    ##  3     1 B4    schp20         1 CAAA             aga           -         
+    ##  4     1 B5    schp76         1 CAAA             aga           -         
+    ##  5     1 B10   schp2…         1 CCGA             cgg           5         
+    ##  6     1 C5    schp2…         1 CCGC             cgg           5         
+    ##  7     1 C10   schp2…         1 CCAA             cgg           5         
+    ##  8     1 D5    schp2…         1 CCAC             cgg           5         
+    ##  9     1 D10   schp2…         1 CTGC             cgg           5         
+    ## 10     1 E5    schp2…         1 AAAA             cgg           5         
     ## # ... with 86 more rows, and 1 more variable: gene <chr>
 
 Rename and calculate average values of fluorescence channels in each well
@@ -109,18 +111,18 @@ by_file <- flowdata  %>%
 
     ## # A tibble: 96 x 10
     ## # Groups:   plate [?]
-    ##    plate well     yfp    rfp strain  replicate initiationmutation
-    ##    <int> <chr>  <dbl>  <dbl> <chr>       <int> <chr>             
-    ##  1     1 B10    8641. 19609. schp266         1 CCGA              
-    ##  2     1 B2      470. 17840. schp15          1 CAAA              
-    ##  3     1 B3     3585. 17445. schp19          1 CAAA              
-    ##  4     1 B4    31805. 16912. schp20          1 CAAA              
-    ##  5     1 B5    21821. 20724. schp76          1 CAAA              
-    ##  6     1 C10    8424. 19496. schp276         1 CCAA              
-    ##  7     1 C5     7112. 19692. schp271         1 CCGC              
-    ##  8     1 D10    4966. 18804. schp286         1 CTGC              
-    ##  9     1 D5     8536. 19519. schp281         1 CCAC              
-    ## 10     1 E10    7598. 20053. schp296         1 ACGC              
+    ##    plate well     yfp    rfp strain replicate initiationmutat…
+    ##    <int> <chr>  <dbl>  <dbl> <chr>      <int> <chr>           
+    ##  1     1 B10    8641. 19609. schp2…         1 CCGA            
+    ##  2     1 B2      470. 17840. schp15         1 CAAA            
+    ##  3     1 B3     3585. 17445. schp19         1 CAAA            
+    ##  4     1 B4    31805. 16912. schp20         1 CAAA            
+    ##  5     1 B5    21821. 20724. schp76         1 CAAA            
+    ##  6     1 C10    8424. 19496. schp2…         1 CCAA            
+    ##  7     1 C5     7112. 19692. schp2…         1 CCGC            
+    ##  8     1 D10    4966. 18804. schp2…         1 CTGC            
+    ##  9     1 D5     8536. 19519. schp2…         1 CCAC            
+    ## 10     1 E10    7598. 20053. schp2…         1 ACGC            
     ## # ... with 86 more rows, and 3 more variables: codonmutation <chr>,
     ## #   stallsites <chr>, gene <chr>
 
@@ -154,18 +156,18 @@ avg_data  <- by_file %>%
 ```
 
     ## # A tibble: 24 x 18
-    ##    plate well        yfp      rfp strain  replicate initiationmutation
-    ##    <int> <chr>     <dbl>    <dbl> <chr>       <int> <chr>             
-    ##  1     1 H2      -304.       1.10 by4741          1 CAAA              
-    ##  2     1 B2        -3.40 17690.   schp15          1 CAAA              
-    ##  3     1 B3      3112.   17294.   schp19          1 CAAA              
-    ##  4     1 B4     31332.   16761.   schp20          1 CAAA              
-    ##  5     1 B10     8167.   19459.   schp266         1 CCGA              
-    ##  6     1 C5      6639.   19541.   schp271         1 CCGC              
-    ##  7     1 C10     7950.   19345.   schp276         1 CCAA              
-    ##  8     1 D5      8063.   19369.   schp281         1 CCAC              
-    ##  9     1 D10     4492.   18653.   schp286         1 CTGC              
-    ## 10     1 E5      4802.   18882.   schp291         1 AAAA              
+    ##    plate well      yfp    rfp strain replicate initiationmutat…
+    ##    <int> <chr>   <dbl>  <dbl> <chr>      <int> <chr>           
+    ##  1     1 H2    -3.04e2 1.10e0 by4741         1 CAAA            
+    ##  2     1 B2    -3.40e0 1.77e4 schp15         1 CAAA            
+    ##  3     1 B3     3.11e3 1.73e4 schp19         1 CAAA            
+    ##  4     1 B4     3.13e4 1.68e4 schp20         1 CAAA            
+    ##  5     1 B10    8.17e3 1.95e4 schp2…         1 CCGA            
+    ##  6     1 C5     6.64e3 1.95e4 schp2…         1 CCGC            
+    ##  7     1 C10    7.95e3 1.93e4 schp2…         1 CCAA            
+    ##  8     1 D5     8.06e3 1.94e4 schp2…         1 CCAC            
+    ##  9     1 D10    4.49e3 1.87e4 schp2…         1 CTGC            
+    ## 10     1 E5     4.80e3 1.89e4 schp2…         1 AAAA            
     ## # ... with 14 more rows, and 11 more variables: codonmutation <chr>,
     ## #   stallsites <chr>, gene <chr>, mean_yfp <dbl>, mean_rfp <dbl>,
     ## #   yfp_rfp_ratio <dbl>, mean_ratio <dbl>, se_yfp <dbl>, se_rfp <dbl>,
@@ -194,23 +196,34 @@ plot_data <- avg_data %>%
 plot_data %>% 
   ggplot(aes(x = initiationmutation, y = mean_ratio, 
              ymin = mean_ratio - se_ratio, ymax = mean_ratio + se_ratio,
-             group = codonmutation)) +
-  geom_point(size = 1, height = 0, width = 0.1, alpha = 0.5) +
+             group = codonmutation, color = codonmutation, shape = codonmutation)) +
+  geom_errorbar(width = 0.75, color = "black") +
+  geom_point(size = 2) +
   geom_line() +
-  geom_errorbar(width = 0.5) +
-  facet_wrap(~codonmutation, ncol = 1, scales = "free") + 
-  labs(y = 'fluorscence (a.u.)',
-       x = 'Kozak (-4 to -1)') +
+  # facet_wrap(~fct_rev(codonmutation), ncol = 1, scales = "free") + 
+  labs(y = 'fluorescence (a.u.)',
+       x = '-4 to -1 nt from ATG') +
   theme(legend.title = element_text(size = 8),
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
-  scale_y_continuous(breaks = scales::pretty_breaks(n=4))
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6),
+        legend.position = "None") +
+  scale_y_continuous(trans = "log2",
+                     limits = c(1, 6),
+                     breaks = c(1, 2, 4),
+                     labels = scales::trans_format("log2", scales::math_format(2^.x))) +
+  # scale_y_continuous(breaks = scales::pretty_breaks(n=4), limits = c(0, NA)) +
+  scale_color_manual(values = cbPalette)
 ```
 
 ![](cgg_position_number_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ``` r
 ggsave('figures/5xcgg_wt.pdf')
+```
 
+Source data for Fig. 1C, right panel
+====================================
+
+``` r
 plot_data %>% 
   arrange(codonmutation, initiationmutation) %>% 
   select(codonmutation, initiationmutation, mean_ratio, se_ratio, n) %>% 
@@ -261,11 +274,16 @@ plot_data %>%
   scale_y_continuous(limits = c(0, NA), breaks = scales::pretty_breaks(n=4))
 ```
 
-![](cgg_position_number_files/figure-markdown_github/unnamed-chunk-10-1.png)
+![](cgg_position_number_files/figure-markdown_github/unnamed-chunk-11-1.png)
 
 ``` r
 ggsave('figures/stall_position_pgk1_cgg.pdf')
+```
 
+Source data for S1 Fig panel B
+==============================
+
+``` r
 plot_data %>% 
   arrange(stallsites) %>% 
   select(stallsites, mean_ratio, se_ratio, n) %>% 

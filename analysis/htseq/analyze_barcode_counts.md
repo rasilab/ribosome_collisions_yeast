@@ -1,16 +1,18 @@
 Analyze initiation codon pair mRNA levels
 ================
 rasi
-01 January, 2019
+30 July, 2019
 
 -   [Load libraries and define analysis-specific parameters](#load-libraries-and-define-analysis-specific-parameters)
 -   [Read barcode and strain annotations](#read-barcode-and-strain-annotations)
--   [Plot read count statistics](#plot-read-count-statistics)
 -   [Read count data and join with barcode and strain annotations](#read-count-data-and-join-with-barcode-and-strain-annotations)
 -   [Calculate log2 fold mRNA levels median normalized within each initiation set](#calculate-log2-fold-mrna-levels-median-normalized-within-each-initiation-set)
 -   [Plot mRNA level of PGK1-YFP with different codons, wild-type cells](#plot-mrna-level-of-pgk1-yfp-with-different-codons-wild-type-cells)
+-   [Source data for Fig. 2C](#source-data-for-fig.-2c)
 -   [Plot mRNA level of PGK1-YFP, no insert](#plot-mrna-level-of-pgk1-yfp-no-insert)
+-   [Source data for Fig. 2B](#source-data-for-fig.-2b)
 -   [Plot mRNA levels of KO codon mutants for paper](#plot-mrna-levels-of-ko-codon-mutants-for-paper)
+-   [Source data for Fig. 5C](#source-data-for-fig.-5c)
 
 Load libraries and define analysis-specific parameters
 ======================================================
@@ -135,60 +137,6 @@ strain_barcode_annotations <- read_tsv("../../data/htseq/strain_barcode_annotati
     ## 10 phpsc364-1 plate1 B2   
     ## # ... with 200 more rows
 
-Plot read count statistics
-==========================
-
-``` r
-plot_data <- list.files("tables/", full.names = T, 
-                         pattern = "read_counts.tsv") %>% 
-  enframe("sno", "file") %>% 
-  mutate(data = map(file, data.table::fread)) %>% 
-  mutate(barcode = str_extract(file, "[ACTG]{6}")) %>% 
-  unnest() %>% 
-  rename(read_type = type) %>% 
-  select(-sno, -file) %>% 
-  left_join(r2_annotations, by = "barcode") %>% 
-  mutate(count = count / 1e6) %>% 
-  group_by(strain, type) %>% 
-  mutate(read_type = fct_reorder(read_type, count, .desc = T)) %>% 
-  print()
-```
-
-    ## # A tibble: 36 x 7
-    ## # Groups:   strain, type [12]
-    ##    barcode read_type count strain_num strain type  primer
-    ##    <chr>   <fct>     <dbl> <chr>      <chr>  <chr> <chr> 
-    ##  1 AAGCTA  total      4.97 scHP1124   BY4741 gdna  oAS129
-    ##  2 AAGCTA  adapter    3.78 scHP1124   BY4741 gdna  oAS129
-    ##  3 AAGCTA  useful     2.69 scHP1124   BY4741 gdna  oAS129
-    ##  4 CCACTC  total      7.78 scHP1129   HEL2Δ  cdna  oAS126
-    ##  5 CCACTC  adapter    6.27 scHP1129   HEL2Δ  cdna  oAS126
-    ##  6 CCACTC  useful     4.58 scHP1129   HEL2Δ  cdna  oAS126
-    ##  7 CGAAAC  total     16.0  scHP1127   DOM34Δ cdna  oAS124
-    ##  8 CGAAAC  adapter   12.9  scHP1127   DOM34Δ cdna  oAS124
-    ##  9 CGAAAC  useful     9.39 scHP1127   DOM34Δ cdna  oAS124
-    ## 10 CGTACG  total      8.49 scHP1128   ASC1Δ  cdna  oAS125
-    ## # ... with 26 more rows
-
-``` r
-plot_data %>%
-  ggplot(aes(x = read_type, y = count)) +
-  facet_wrap(~ type + strain, ncol = 6, scales = "free", 
-             labeller = label_both) +
-  geom_point() +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        axis.ticks.y = element_blank()) +
-  scale_y_continuous(limits = c(0, NA)) +
-  labs(title = "read preprocessing statistics", y = "read count (millions)")
-```
-
-![](analyze_barcode_counts_files/figure-markdown_github/unnamed-chunk-4-1.png)
-
-``` r
-ggsave("figures/read_preprocessing_stats.pdf")
-```
-
 Read count data and join with barcode and strain annotations
 ============================================================
 
@@ -250,7 +198,7 @@ lfc_data <- count_data %>%
   filter(!is.na(lfc)) %>%
   # median normalize each group
   group_by(label, strain, init) %>%
-  summarize(mean_lfc = mean(lfc), se_lfc = var(lfc) / sqrt(n() - 1)) %>%
+  summarize(mean_lfc = mean(lfc), se_lfc = var(lfc) / sqrt(n() - 1), n = n()) %>%
   ungroup() %>%
   group_by(label, strain) %>%
   mutate(mean_lfc = mean_lfc - median(mean_lfc)) %>%
@@ -260,19 +208,19 @@ lfc_data <- count_data %>%
   print()
 ```
 
-    ## # A tibble: 324 x 5
-    ##    label  strain init  mean_lfc  se_lfc
-    ##    <chr>  <chr>  <fct>    <dbl>   <dbl>
-    ##  1 10×aag ASC1Δ  AAAA   -0.198  0.0777 
-    ##  2 10×aag ASC1Δ  ACGC    0.0668 0.00600
-    ##  3 10×aag ASC1Δ  CAAA    0.     0.0123 
-    ##  4 10×aag ASC1Δ  CCAA   -0.410  0.0146 
-    ##  5 10×aag ASC1Δ  CCAC    0.357  0.0839 
-    ##  6 10×aag ASC1Δ  CCGA    0.312  0.0213 
-    ##  7 10×aag ASC1Δ  CCGC   -0.0598 0.0398 
-    ##  8 10×aag ASC1Δ  CTG    -1.71   0.0168 
-    ##  9 10×aag ASC1Δ  CTGC    0.241  0.00870
-    ## 10 10×aag BY4741 AAAA   -0.579  0.00278
+    ## # A tibble: 324 x 6
+    ##    label  strain init  mean_lfc  se_lfc     n
+    ##    <chr>  <chr>  <fct>    <dbl>   <dbl> <int>
+    ##  1 10×aag ASC1Δ  AAAA   -0.198  0.0777      4
+    ##  2 10×aag ASC1Δ  ACGC    0.0668 0.00600     3
+    ##  3 10×aag ASC1Δ  CAAA    0      0.0123      4
+    ##  4 10×aag ASC1Δ  CCAA   -0.410  0.0146      4
+    ##  5 10×aag ASC1Δ  CCAC    0.357  0.0839      3
+    ##  6 10×aag ASC1Δ  CCGA    0.312  0.0213      4
+    ##  7 10×aag ASC1Δ  CCGC   -0.0598 0.0398      4
+    ##  8 10×aag ASC1Δ  CTG    -1.71   0.0168      3
+    ##  9 10×aag ASC1Δ  CTGC    0.241  0.00870     4
+    ## 10 10×aag BY4741 AAAA   -0.579  0.00278     4
     ## # ... with 314 more rows
 
 Plot mRNA level of PGK1-YFP with different codons, wild-type cells
@@ -300,11 +248,59 @@ plot_data %>%
   labs(x = "-4 to -1 nt from ATG", y = "mRNA level (log2, a.u.)")
 ```
 
-![](analyze_barcode_counts_files/figure-markdown_github/unnamed-chunk-7-1.png)
+![](analyze_barcode_counts_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
 ``` r
 ggsave("figures/mrna_level_wt_4_codons.pdf")
 ```
+
+Source data for Fig. 2C
+=======================
+
+``` r
+plot_data %>% 
+  # exclude the mutated start codon since this will be shown in previous panel
+  filter(init != "CTG") %>% 
+  select(label, init, mean_lfc, se_lfc, n) %>% 
+  arrange(label, init) %>% 
+  mutate_if(is.numeric, funs(round(., 3))) %>% 
+  knitr::kable()
+```
+
+| label  | init |  mean\_lfc|  se\_lfc|    n|
+|:-------|:-----|----------:|--------:|----:|
+| 10×aag | CTGC |      0.237|    0.006|    4|
+| 10×aag | CCGC |      0.124|    0.010|    4|
+| 10×aag | ACGC |      0.207|    0.001|    2|
+| 10×aag | CCGA |      0.089|    0.056|    4|
+| 10×aag | CCAC |      0.000|    0.019|    4|
+| 10×aag | CCAA |     -0.522|    0.002|    4|
+| 10×aag | CAAA |     -0.873|    0.007|    4|
+| 10×aag | AAAA |     -1.003|    0.010|    4|
+| 10×aga | CTGC |      0.000|    0.002|    4|
+| 10×aga | CCGC |      0.470|    0.028|    4|
+| 10×aga | ACGC |     -0.002|    0.027|    4|
+| 10×aga | CCGA |      0.097|    0.044|    4|
+| 10×aga | CCAC |      0.007|    0.045|    4|
+| 10×aga | CCAA |     -0.027|    0.027|    4|
+| 10×aga | CAAA |      0.174|    0.051|    4|
+| 10×aga | AAAA |     -0.313|    0.054|    4|
+| 8×cca  | CTGC |      0.033|    0.029|    4|
+| 8×cca  | CCGC |      0.072|    0.042|    4|
+| 8×cca  | ACGC |      0.149|    0.026|    4|
+| 8×cca  | CCGA |     -0.118|    0.224|    4|
+| 8×cca  | CCAC |      0.058|    0.012|    4|
+| 8×cca  | CCAA |      0.000|    0.036|    3|
+| 8×cca  | CAAA |     -0.052|    0.036|    3|
+| 8×cca  | AAAA |     -0.229|    0.049|    4|
+| 8×ccg  | CTGC |      0.000|    0.037|    4|
+| 8×ccg  | CCGC |      0.100|    0.008|    4|
+| 8×ccg  | ACGC |      0.062|    0.033|    4|
+| 8×ccg  | CCGA |      0.008|    0.066|    4|
+| 8×ccg  | CCAC |      0.127|    0.041|    4|
+| 8×ccg  | CCAA |     -0.343|    0.017|    4|
+| 8×ccg  | CAAA |     -0.909|    0.004|    4|
+| 8×ccg  | AAAA |     -0.994|    0.017|    4|
 
 Plot mRNA level of PGK1-YFP, no insert
 ======================================
@@ -330,6 +326,29 @@ plot_data %>%
 ``` r
 ggsave("figures/mrna_level_wt_pgk1_no_insert.pdf")
 ```
+
+Source data for Fig. 2B
+=======================
+
+``` r
+plot_data %>% 
+  select(init, mean_lfc, se_lfc, n) %>% 
+  arrange(init) %>% 
+  mutate_if(is.numeric, funs(round(., 3))) %>% 
+  knitr::kable()
+```
+
+| init |  mean\_lfc|  se\_lfc|    n|
+|:-----|----------:|--------:|----:|
+| CTG  |     -1.997|    0.035|    3|
+| CTGC |      0.077|    0.610|    4|
+| CCGC |     -0.223|    0.005|    4|
+| ACGC |     -0.025|    0.013|    4|
+| CCGA |      0.047|    0.009|    4|
+| CCAC |     -0.217|    0.001|    4|
+| CCAA |      0.100|    0.032|    4|
+| CAAA |      0.000|    0.030|    4|
+| AAAA |      0.036|    0.047|    4|
 
 Plot mRNA levels of KO codon mutants for paper
 ==============================================
@@ -359,8 +378,94 @@ plot_data %>%
   labs(x = "-4 to -1 nt from ATG", y = "mRNA level (log2, a.u.)")
 ```
 
-![](analyze_barcode_counts_files/figure-markdown_github/unnamed-chunk-9-1.png)
+![](analyze_barcode_counts_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
 ``` r
 ggsave("figures/mrna_level_ko_2_codons.pdf")
 ```
+
+Source data for Fig. 5C
+=======================
+
+``` r
+plot_data %>% 
+  select(strain, label, init, mean_lfc, se_lfc, n) %>% 
+  arrange(strain, label, init) %>% 
+  mutate_if(is.numeric, funs(round(., 3))) %>% 
+  knitr::kable()
+```
+
+| strain | label | init |  mean\_lfc|  se\_lfc|    n|
+|:-------|:------|:-----|----------:|--------:|----:|
+| ΔLTN1  | 8×cca | CTG  |     -1.334|    0.324|    3|
+| ΔLTN1  | 8×cca | CTGC |     -0.025|    0.013|    4|
+| ΔLTN1  | 8×cca | CCGC |     -0.456|    0.403|    4|
+| ΔLTN1  | 8×cca | ACGC |      0.177|    0.006|    4|
+| ΔLTN1  | 8×cca | CCGA |      0.149|    0.093|    4|
+| ΔLTN1  | 8×cca | CCAC |      0.134|    0.047|    4|
+| ΔLTN1  | 8×cca | CCAA |      0.000|    0.080|    3|
+| ΔLTN1  | 8×cca | CAAA |      0.043|    0.044|    4|
+| ΔLTN1  | 8×cca | AAAA |     -0.062|    0.017|    2|
+| ΔLTN1  | 8×ccg | CTG  |     -1.417|    0.014|    3|
+| ΔLTN1  | 8×ccg | CTGC |      0.031|    0.020|    4|
+| ΔLTN1  | 8×ccg | CCGC |      0.121|    0.025|    4|
+| ΔLTN1  | 8×ccg | ACGC |      0.114|    0.031|    4|
+| ΔLTN1  | 8×ccg | CCGA |      0.000|    0.060|    4|
+| ΔLTN1  | 8×ccg | CCAC |      0.024|    0.061|    4|
+| ΔLTN1  | 8×ccg | CCAA |     -0.276|    0.013|    4|
+| ΔLTN1  | 8×ccg | CAAA |     -0.751|    0.088|    4|
+| ΔLTN1  | 8×ccg | AAAA |     -1.052|    0.010|    4|
+| ΔDOM34 | 8×cca | CTG  |     -2.034|    0.014|    3|
+| ΔDOM34 | 8×cca | CTGC |      0.000|    0.020|    4|
+| ΔDOM34 | 8×cca | CCGC |      0.017|    0.051|    4|
+| ΔDOM34 | 8×cca | ACGC |      0.275|    0.005|    4|
+| ΔDOM34 | 8×cca | CCGA |      0.070|    0.148|    4|
+| ΔDOM34 | 8×cca | CCAC |      0.021|    0.070|    4|
+| ΔDOM34 | 8×cca | CCAA |     -0.013|    0.001|    3|
+| ΔDOM34 | 8×cca | CAAA |     -0.018|    0.049|    4|
+| ΔDOM34 | 8×cca | AAAA |     -0.025|    0.001|    4|
+| ΔDOM34 | 8×ccg | CTG  |     -1.899|    0.010|    3|
+| ΔDOM34 | 8×ccg | CTGC |      0.000|    0.036|    4|
+| ΔDOM34 | 8×ccg | CCGC |      0.231|    0.020|    4|
+| ΔDOM34 | 8×ccg | ACGC |      0.180|    0.032|    4|
+| ΔDOM34 | 8×ccg | CCGA |      0.007|    0.061|    4|
+| ΔDOM34 | 8×ccg | CCAC |      0.206|    0.058|    4|
+| ΔDOM34 | 8×ccg | CCAA |     -0.176|    0.011|    4|
+| ΔDOM34 | 8×ccg | CAAA |     -0.707|    0.000|    4|
+| ΔDOM34 | 8×ccg | AAAA |     -0.911|    0.010|    4|
+| ΔHEL2  | 8×cca | CTG  |     -1.759|    0.002|    3|
+| ΔHEL2  | 8×cca | CTGC |     -0.007|    0.007|    4|
+| ΔHEL2  | 8×cca | CCGC |     -0.111|    0.039|    4|
+| ΔHEL2  | 8×cca | ACGC |      0.172|    0.013|    4|
+| ΔHEL2  | 8×cca | CCGA |      0.217|    0.034|    4|
+| ΔHEL2  | 8×cca | CCAC |     -0.145|    0.070|    3|
+| ΔHEL2  | 8×cca | CCAA |      0.146|    0.045|    3|
+| ΔHEL2  | 8×cca | CAAA |      0.042|    0.066|    3|
+| ΔHEL2  | 8×cca | AAAA |      0.000|    0.080|    4|
+| ΔHEL2  | 8×ccg | CTG  |     -1.277|    0.022|    3|
+| ΔHEL2  | 8×ccg | CTGC |      0.000|    0.066|    4|
+| ΔHEL2  | 8×ccg | CCGC |      0.192|    0.021|    4|
+| ΔHEL2  | 8×ccg | ACGC |      0.219|    0.017|    4|
+| ΔHEL2  | 8×ccg | CCGA |      0.133|    0.081|    4|
+| ΔHEL2  | 8×ccg | CCAC |      0.206|    0.078|    4|
+| ΔHEL2  | 8×ccg | CCAA |     -0.008|    0.047|    4|
+| ΔHEL2  | 8×ccg | CAAA |     -0.026|    0.123|    4|
+| ΔHEL2  | 8×ccg | AAAA |     -0.340|    0.010|    4|
+| ΔASC1  | 8×cca | CTG  |     -1.681|    0.168|    3|
+| ΔASC1  | 8×cca | CTGC |     -0.059|    0.054|    4|
+| ΔASC1  | 8×cca | CCGC |     -0.306|    0.051|    4|
+| ΔASC1  | 8×cca | ACGC |      0.022|    0.030|    4|
+| ΔASC1  | 8×cca | CCGA |      0.099|    0.093|    4|
+| ΔASC1  | 8×cca | CCAC |     -0.211|    0.075|    4|
+| ΔASC1  | 8×cca | CCAA |      0.000|    0.006|    3|
+| ΔASC1  | 8×cca | CAAA |      0.417|    0.418|    4|
+| ΔASC1  | 8×cca | AAAA |      0.063|    0.027|    4|
+| ΔASC1  | 8×ccg | CTG  |     -1.721|    0.002|    3|
+| ΔASC1  | 8×ccg | CTGC |     -0.277|    0.030|    4|
+| ΔASC1  | 8×ccg | CCGC |      0.000|    0.023|    4|
+| ΔASC1  | 8×ccg | ACGC |      0.048|    0.044|    4|
+| ΔASC1  | 8×ccg | CCGA |     -0.005|    0.069|    4|
+| ΔASC1  | 8×ccg | CCAC |      0.267|    0.061|    4|
+| ΔASC1  | 8×ccg | CCAA |      0.144|    0.033|    4|
+| ΔASC1  | 8×ccg | CAAA |      0.085|    0.065|    4|
+| ΔASC1  | 8×ccg | AAAA |     -0.140|    0.036|    4|

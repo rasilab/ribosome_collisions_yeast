@@ -1,7 +1,7 @@
 Fluorescence of PGK1 constructs with 8xCCG / 8xCCA inserts and varying Kozak, complementation by HEL2 and ASC1 mutants
 ================
 rasi
-07 January, 2019
+30 July, 2019
 
 -   [Import libraries and analysis specific parameters](#import-libraries-and-analysis-specific-parameters)
 -   [Read data](#read-data)
@@ -9,8 +9,10 @@ rasi
 -   [Rename and calculate average values of fluorescence channels in each well](#rename-and-calculate-average-values-of-fluorescence-channels-in-each-well)
 -   [Calculate mean and standard error over replicates](#calculate-mean-and-standard-error-over-replicates)
 -   [Rescue of protein expression at high initiation rate by HEL2 mutants](#rescue-of-protein-expression-at-high-initiation-rate-by-hel2-mutants)
+-   [Source data for Fig. 5D and S4 Fig Panel B (Hel2 mutants)](#source-data-for-fig.-5d-and-s4-fig-panel-b-hel2-mutants)
 -   [Two-sided `t` test for difference in means between Empty and HEL2 mutants for a given 5'UTR mutant (8xCCG only)](#two-sided-t-test-for-difference-in-means-between-empty-and-hel2-mutants-for-a-given-5utr-mutant-8xccg-only)
 -   [Rescue of protein expression at high initiation rate by ASC1 mutants](#rescue-of-protein-expression-at-high-initiation-rate-by-asc1-mutants)
+-   [Source data for Fig. 5D and S4 Fig Panel B (Asc1 mutants)](#source-data-for-fig.-5d-and-s4-fig-panel-b-asc1-mutants)
 -   [Two-sided `t` test for difference in means between Empty and ASC1 mutants for a given 5'UTR mutant (8xCCG only)](#two-sided-t-test-for-difference-in-means-between-empty-and-asc1-mutants-for-a-given-5utr-mutant-8xccg-only)
 
 Import libraries and analysis specific parameters
@@ -78,23 +80,25 @@ Read annotations
 
 ``` r
 annotations  <- read_tsv(paste0(fcs_file_folder, '/annotations.tsv')) %>% 
+  # skip C64,C67A mutant as requested by reviewer
+  filter(complement != "hel2_c64a" | is.na(complement)) %>%
   print()
 ```
 
-    ## # A tibble: 232 x 9
-    ##    plate well  strain  replicate initiationmutation codonmutation gene   
-    ##    <int> <chr> <chr>       <int> <chr>              <chr>         <chr>  
-    ##  1     1 B2    by4741          1 CAAA               <NA>          <NA>   
-    ##  2     1 B3    schp15          1 CAAA               <NA>          <NA>   
-    ##  3     1 B4    schp19          1 CAAA               cgg           maxhis3
-    ##  4     1 B5    schp20          1 CAAA               aga           maxhis3
-    ##  5     1 B8    schp771         1 CAAA               cca           pgk1   
-    ##  6     1 B9    schp772         1 CCAC               cca           pgk1   
-    ##  7     1 B10   schp773         1 CTGC               cca           pgk1   
-    ##  8     1 B11   schp774         1 CAAA               ccg           pgk1   
-    ##  9     1 C2    schp775         1 CCAC               ccg           pgk1   
-    ## 10     1 C3    schp776         1 CTGC               ccg           pgk1   
-    ## # ... with 222 more rows, and 2 more variables: knockout <chr>,
+    ## # A tibble: 208 x 9
+    ##    plate well  strain replicate initiationmutat… codonmutation gene 
+    ##    <int> <chr> <chr>      <int> <chr>            <chr>         <chr>
+    ##  1     1 B2    by4741         1 CAAA             <NA>          <NA> 
+    ##  2     1 B3    schp15         1 CAAA             <NA>          <NA> 
+    ##  3     1 B4    schp19         1 CAAA             cgg           maxh…
+    ##  4     1 B5    schp20         1 CAAA             aga           maxh…
+    ##  5     1 B8    schp7…         1 CAAA             cca           pgk1 
+    ##  6     1 B9    schp7…         1 CCAC             cca           pgk1 
+    ##  7     1 B10   schp7…         1 CTGC             cca           pgk1 
+    ##  8     1 B11   schp7…         1 CAAA             ccg           pgk1 
+    ##  9     1 C2    schp7…         1 CCAC             ccg           pgk1 
+    ## 10     1 C3    schp7…         1 CTGC             ccg           pgk1 
+    ## # ... with 198 more rows, and 2 more variables: knockout <chr>,
     ## #   complement <chr>
 
 Rename and calculate average values of fluorescence channels in each well
@@ -110,26 +114,26 @@ by_file <- flowdata  %>%
   # rename
   rename('yfp' = FITC.A, 'rfp' = PE.Texas.Red.A) %>% 
   # join annotations
-  left_join(annotations, by = c('plate', 'well')) %>% 
+  right_join(annotations, by = c('plate', 'well')) %>% 
   print()
 ```
 
-    ## # A tibble: 232 x 11
+    ## # A tibble: 208 x 11
     ## # Groups:   plate [?]
-    ##    plate well    yfp    rfp strain   replicate initiationmutation
-    ##    <int> <chr> <dbl>  <dbl> <chr>        <int> <chr>             
-    ##  1     1 B10   1807. 28779. schp773          1 CTGC              
-    ##  2     1 B11   5309.  9006. schp774          1 CAAA              
-    ##  3     1 B2    1434.   553. by4741           1 CAAA              
-    ##  4     1 B3     115. 23894. schp15           1 CAAA              
-    ##  5     1 B4     628. 21794. schp19           1 CAAA              
-    ##  6     1 B5    6473. 22040. schp20           1 CAAA              
-    ##  7     1 B8    4017. 25736. schp771          1 CAAA              
-    ##  8     1 B9    2867. 26282. schp772          1 CCAC              
-    ##  9     1 C10   3862.  6242. schp1137         1 CAAA              
-    ## 10     1 C11   2556. 11583. schp1138         1 CCAC              
-    ## # ... with 222 more rows, and 4 more variables: codonmutation <chr>,
-    ## #   gene <chr>, knockout <chr>, complement <chr>
+    ##    plate well    yfp    rfp strain replicate initiationmutat… codonmutation
+    ##    <int> <chr> <dbl>  <dbl> <chr>      <int> <chr>            <chr>        
+    ##  1     1 B2    1434.   553  by4741         1 CAAA             <NA>         
+    ##  2     1 B3     115. 23894. schp15         1 CAAA             <NA>         
+    ##  3     1 B4     628. 21794. schp19         1 CAAA             cgg          
+    ##  4     1 B5    6473. 22040. schp20         1 CAAA             aga          
+    ##  5     1 B8    4017. 25736. schp7…         1 CAAA             cca          
+    ##  6     1 B9    2867. 26282. schp7…         1 CCAC             cca          
+    ##  7     1 B10   1807. 28779. schp7…         1 CTGC             cca          
+    ##  8     1 B11   5309.  9006. schp7…         1 CAAA             ccg          
+    ##  9     1 C2    3579. 17347. schp7…         1 CCAC             ccg          
+    ## 10     1 C3    1625. 26474. schp7…         1 CTGC             ccg          
+    ## # ... with 198 more rows, and 3 more variables: gene <chr>,
+    ## #   knockout <chr>, complement <chr>
 
 Calculate mean and standard error over replicates
 =================================================
@@ -194,7 +198,12 @@ plot_data %>%
 
 ``` r
 ggsave('figures/hel2_rescue.pdf')
+```
 
+Source data for Fig. 5D and S4 Fig Panel B (Hel2 mutants)
+=========================================================
+
+``` r
 plot_data %>% 
   filter(replicate == 1) %>% 
   arrange(complement, codonmutation, initiationmutation) %>% 
@@ -211,12 +220,6 @@ plot_data %>%
 | WT         | ccg           | CTGC               |      0.684|    0.028|    4|
 | WT         | ccg           | CCAC               |      1.856|    0.041|    4|
 | WT         | ccg           | CAAA               |      1.112|    0.096|    4|
-| C64A,C67A  | cca           | CTGC               |      0.637|    0.016|    4|
-| C64A,C67A  | cca           | CCAC               |      2.077|    0.034|    4|
-| C64A,C67A  | cca           | CAAA               |      3.289|    0.030|    4|
-| C64A,C67A  | ccg           | CTGC               |      0.644|    0.006|    4|
-| C64A,C67A  | ccg           | CCAC               |      1.877|    0.024|    4|
-| C64A,C67A  | ccg           | CAAA               |      1.451|    0.020|    4|
 | DRING      | cca           | CTGC               |      0.747|    0.066|    4|
 | DRING      | cca           | CCAC               |      2.284|    0.078|    4|
 | DRING      | cca           | CAAA               |      3.382|    0.089|    4|
@@ -248,27 +251,51 @@ ctrl <- test %>%
 test %>% 
   full_join(ctrl, by = c("initiationmutation", "replicate")) %>% 
   group_by(complement, initiationmutation) %>% 
-  nest() %>% 
-  mutate(t_test = map(data, function(df) broom::tidy(t.test(df[['yfp.x']], df[['yfp.y']])))) %>% 
-  unnest(t_test) %>% 
-  select(complement, initiationmutation, p.value) %>% 
+  # nest() %>% 
+  # mutate(t_test = map(data, function(df) broom::tidy(t.test(df[['yfp.x']], df[['yfp.y']])))) %>% 
+  # unnest(t_test) %>% 
+  # select(complement, initiationmutation, p.value) %>% 
   knitr::kable()
 ```
 
-| complement | initiationmutation |    p.value|
-|:-----------|:-------------------|----------:|
-| WT         | CTGC               |  0.5002226|
-| C64A,C67A  | CTGC               |  0.8998704|
-| DRING      | CTGC               |  0.3792340|
-| Empty      | CTGC               |  1.0000000|
-| WT         | CCAC               |  0.1823603|
-| C64A,C67A  | CCAC               |  0.2064796|
-| DRING      | CCAC               |  0.1823997|
-| Empty      | CCAC               |  1.0000000|
-| WT         | CAAA               |  0.0035040|
-| C64A,C67A  | CAAA               |  0.0535571|
-| DRING      | CAAA               |  0.0858063|
-| Empty      | CAAA               |  1.0000000|
+| complement | initiationmutation |      yfp.x|  replicate|      yfp.y|
+|:-----------|:-------------------|----------:|----------:|----------:|
+| WT         | CTGC               |   674.6403|          1|   584.1706|
+| WT         | CTGC               |   701.8988|          2|   680.3315|
+| WT         | CTGC               |   745.9652|          3|   584.8058|
+| WT         | CTGC               |   613.9902|          4|   747.2693|
+| DRING      | CTGC               |   598.4519|          1|   584.1706|
+| DRING      | CTGC               |   602.0598|          2|   680.3315|
+| DRING      | CTGC               |   624.6223|          3|   584.8058|
+| DRING      | CTGC               |   607.2256|          4|   747.2693|
+| Empty      | CTGC               |   584.1706|          1|   584.1706|
+| Empty      | CTGC               |   680.3315|          2|   680.3315|
+| Empty      | CTGC               |   584.8058|          3|   584.8058|
+| Empty      | CTGC               |   747.2693|          4|   747.2693|
+| WT         | CCAC               |  1896.9191|          1|  1994.4494|
+| WT         | CCAC               |  1821.4098|          2|  2590.2632|
+| WT         | CCAC               |  1946.4523|          3|  1786.1959|
+| WT         | CCAC               |  1760.2360|          4|  2250.7101|
+| DRING      | CCAC               |  1945.4501|          1|  1994.4494|
+| DRING      | CCAC               |  1897.2807|          2|  2590.2632|
+| DRING      | CCAC               |  1804.8422|          3|  1786.1959|
+| DRING      | CCAC               |  1777.6982|          4|  2250.7101|
+| Empty      | CCAC               |  1994.4494|          1|  1994.4494|
+| Empty      | CCAC               |  2590.2632|          2|  2590.2632|
+| Empty      | CCAC               |  1786.1959|          3|  1786.1959|
+| Empty      | CCAC               |  2250.7101|          4|  2250.7101|
+| WT         | CAAA               |  1022.9723|          1|  1684.2049|
+| WT         | CAAA               |   997.3129|          2|  2009.1261|
+| WT         | CAAA               |  1398.3570|          3|  1569.0197|
+| WT         | CAAA               |  1030.6135|          4|  1688.7409|
+| DRING      | CAAA               |  1287.5795|          1|  1684.2049|
+| DRING      | CAAA               |  1625.0337|          2|  2009.1261|
+| DRING      | CAAA               |  1536.5435|          3|  1569.0197|
+| DRING      | CAAA               |  1512.5678|          4|  1688.7409|
+| Empty      | CAAA               |  1684.2049|          1|  1684.2049|
+| Empty      | CAAA               |  2009.1261|          2|  2009.1261|
+| Empty      | CAAA               |  1569.0197|          3|  1569.0197|
+| Empty      | CAAA               |  1688.7409|          4|  1688.7409|
 
 Rescue of protein expression at high initiation rate by ASC1 mutants
 ====================================================================
@@ -300,11 +327,16 @@ plot_data %>%
   scale_y_continuous(breaks = scales::pretty_breaks(n=3))
 ```
 
-![](hel2_asc1_mutants_files/figure-markdown_github/unnamed-chunk-11-1.png)
+![](hel2_asc1_mutants_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
 ``` r
 ggsave('figures/asc1_rescue.pdf')
+```
 
+Source data for Fig. 5D and S4 Fig Panel B (Asc1 mutants)
+=========================================================
+
+``` r
 plot_data %>% 
   filter(replicate == 1) %>% 
   arrange(complement, codonmutation, initiationmutation) %>% 

@@ -210,7 +210,11 @@ plot_data %>%
   scale_color_manual(values = cbPalette)
 
 ggsave('figures/5xcgg_wt.pdf')
+```
 
+# Source data for Fig. 1C, right panel
+
+```{r}
 plot_data %>% 
   arrange(codonmutation, initiationmutation) %>% 
   select(codonmutation, initiationmutation, mean_ratio, se_ratio, n) %>% 
@@ -241,7 +245,11 @@ plot_data %>%
   scale_y_continuous(limits = c(0, NA), breaks = scales::pretty_breaks(n=4))
 
 ggsave('figures/stall_position_pgk1_cgg.pdf')
+```
 
+# Source data for S1 Fig panel B
+
+```{r}
 plot_data %>% 
   arrange(stallsites) %>% 
   select(stallsites, mean_ratio, se_ratio, n) %>% 

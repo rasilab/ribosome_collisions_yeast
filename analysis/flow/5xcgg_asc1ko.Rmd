@@ -204,7 +204,11 @@ plot_data %>%
   scale_y_continuous(breaks = scales::pretty_breaks(n=4))
 
 ggsave('figures/5xcgg_asc1ko.pdf')
+```
 
+# Source data for S4 Fig panel A, right two columns
+
+```{r}
 plot_data %>% 
   arrange(knockout, codonmutation, initiationmutation) %>% 
   select(knockout, codonmutation, initiationmutation, mean_ratio, se_ratio, n) %>% 

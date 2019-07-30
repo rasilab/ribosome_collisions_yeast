@@ -1,13 +1,14 @@
 Analyze simulation results
 ================
 rasi
-02 January, 2019
+30 July, 2019
 
 -   [Load libraries](#load-libraries)
 -   [Read protein count data](#read-protein-count-data)
 -   [Read simulation parameters](#read-simulation-parameters)
 -   [Combine all data into a single table](#combine-all-data-into-a-single-table)
 -   [PSR as a function of number of stalls for supplementary figure](#psr-as-a-function-of-number-of-stalls-for-supplementary-figure)
+-   [Source data for S3 Fig panel B](#source-data-for-s3-fig-panel-b)
 
 Load libraries
 --------------
@@ -72,16 +73,16 @@ annotations <- list.files("output/", pattern = "params.tsv.gz$", full.names = T)
     ## # A tibble: 90 x 12
     ##    sim_id k_elong_stall_1 k_elong_stall_2 k_elong_stall_3 k_elong_stall_4
     ##     <int>           <dbl>           <dbl>           <dbl>           <dbl>
-    ##  1      0           0.100          NA                  NA              NA
-    ##  2      1           0.100          NA                  NA              NA
-    ##  3      2           0.100          NA                  NA              NA
-    ##  4      3           0.100          NA                  NA              NA
-    ##  5      4           0.100          NA                  NA              NA
-    ##  6      5           0.100          NA                  NA              NA
-    ##  7      6           0.100          NA                  NA              NA
-    ##  8      7           0.100          NA                  NA              NA
-    ##  9      8           0.100          NA                  NA              NA
-    ## 10      9           0.200           0.200              NA              NA
+    ##  1      0             0.1            NA                NA              NA
+    ##  2      1             0.1            NA                NA              NA
+    ##  3      2             0.1            NA                NA              NA
+    ##  4      3             0.1            NA                NA              NA
+    ##  5      4             0.1            NA                NA              NA
+    ##  6      5             0.1            NA                NA              NA
+    ##  7      6             0.1            NA                NA              NA
+    ##  8      7             0.1            NA                NA              NA
+    ##  9      8             0.1            NA                NA              NA
+    ## 10      9             0.2             0.2              NA              NA
     ## # ... with 80 more rows, and 7 more variables: k_elong_stall_5 <dbl>,
     ## #   k_elong_stall_6 <dbl>, k_elong_stall_7 <dbl>, k_elong_stall_8 <dbl>,
     ## #   k_elong_stall_9 <dbl>, k_init <dbl>, n_stall <dbl>
@@ -100,16 +101,16 @@ data <- annotations %>%
     ## # A tibble: 54 x 17
     ##    sim_id k_elong_stall_1 k_elong_stall_2 k_elong_stall_3 k_elong_stall_4
     ##     <int>           <dbl>           <dbl>           <dbl>           <dbl>
-    ##  1      0           0.100          NA                  NA              NA
-    ##  2      1           0.100          NA                  NA              NA
-    ##  3      2           0.100          NA                  NA              NA
-    ##  4      3           0.100          NA                  NA              NA
-    ##  5      4           0.100          NA                  NA              NA
-    ##  6      5           0.100          NA                  NA              NA
-    ##  7      6           0.100          NA                  NA              NA
-    ##  8      7           0.100          NA                  NA              NA
-    ##  9      8           0.100          NA                  NA              NA
-    ## 10      9           0.200           0.200              NA              NA
+    ##  1      0             0.1            NA                NA              NA
+    ##  2      1             0.1            NA                NA              NA
+    ##  3      2             0.1            NA                NA              NA
+    ##  4      3             0.1            NA                NA              NA
+    ##  5      4             0.1            NA                NA              NA
+    ##  6      5             0.1            NA                NA              NA
+    ##  7      6             0.1            NA                NA              NA
+    ##  8      7             0.1            NA                NA              NA
+    ##  9      8             0.1            NA                NA              NA
+    ## 10      9             0.2             0.2              NA              NA
     ## # ... with 44 more rows, and 12 more variables: k_elong_stall_5 <dbl>,
     ## #   k_elong_stall_6 <dbl>, k_elong_stall_7 <dbl>, k_elong_stall_8 <dbl>,
     ## #   k_elong_stall_9 <dbl>, k_init <dbl>, n_stall <fct>,
@@ -141,8 +142,74 @@ plot_data %>%
       )
 ```
 
-![](analyze_results_files/figure-markdown_github/unnamed-chunk-6-1.png)
+![](analyze_results_files/figure-markdown_github/unnamed-chunk-5-1.png)
 
 ``` r
 ggsave("figures/psr_vs_initiation_rate_vary_n_stalls.pdf")
 ```
+
+Source data for S3 Fig panel B
+==============================
+
+``` r
+plot_data %>% 
+  select(n_stall, k_init, psr) %>% 
+  knitr::kable()
+```
+
+| n\_stall |    k\_init|       psr|
+|:---------|----------:|---------:|
+| 1        |  0.0039062|  0.003315|
+| 1        |  0.0078125|  0.006653|
+| 1        |  0.0156250|  0.013309|
+| 1        |  0.0312500|  0.026320|
+| 1        |  0.0625000|  0.044162|
+| 1        |  0.1250000|  0.038605|
+| 1        |  0.2500000|  0.018621|
+| 1        |  0.5000000|  0.020688|
+| 1        |  1.0000000|  0.020902|
+| 2        |  0.0039062|  0.003454|
+| 2        |  0.0078125|  0.006878|
+| 2        |  0.0156250|  0.013330|
+| 2        |  0.0312500|  0.027553|
+| 2        |  0.0625000|  0.047173|
+| 2        |  0.1250000|  0.039676|
+| 2        |  0.2500000|  0.019955|
+| 2        |  0.5000000|  0.017741|
+| 2        |  1.0000000|  0.020997|
+| 3        |  0.0039062|  0.003476|
+| 3        |  0.0078125|  0.006950|
+| 3        |  0.0156250|  0.013578|
+| 3        |  0.0312500|  0.026602|
+| 3        |  0.0625000|  0.049207|
+| 3        |  0.1250000|  0.042888|
+| 3        |  0.2500000|  0.018867|
+| 3        |  0.5000000|  0.018156|
+| 3        |  1.0000000|  0.019478|
+| 4        |  0.0039062|  0.003397|
+| 4        |  0.0078125|  0.006864|
+| 4        |  0.0156250|  0.013187|
+| 4        |  0.0312500|  0.026930|
+| 4        |  0.0625000|  0.048940|
+| 4        |  0.1250000|  0.044049|
+| 4        |  0.2500000|  0.021119|
+| 4        |  0.5000000|  0.018760|
+| 4        |  1.0000000|  0.019611|
+| 5        |  0.0039062|  0.003510|
+| 5        |  0.0078125|  0.006771|
+| 5        |  0.0156250|  0.013581|
+| 5        |  0.0312500|  0.026761|
+| 5        |  0.0625000|  0.049855|
+| 5        |  0.1250000|  0.047190|
+| 5        |  0.2500000|  0.020213|
+| 5        |  0.5000000|  0.019033|
+| 5        |  1.0000000|  0.021675|
+| 6        |  0.0039062|  0.003503|
+| 6        |  0.0078125|  0.006808|
+| 6        |  0.0156250|  0.013802|
+| 6        |  0.0312500|  0.027153|
+| 6        |  0.0625000|  0.050775|
+| 6        |  0.1250000|  0.045152|
+| 6        |  0.2500000|  0.020907|
+| 6        |  0.5000000|  0.019538|
+| 6        |  1.0000000|  0.020357|

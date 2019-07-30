@@ -202,6 +202,11 @@ plot_data %>%
                      labels = scales::trans_format("log2", scales::math_format(2^.x))) 
 
 ggsave('figures/lowmedhigh_ccg_4ko_wt.pdf')
+```
+
+# Source data for Fig. 5A
+
+```{r}
 
 plot_data %>% 
   arrange(knockout, codonmutation, initiationmutation) %>% 

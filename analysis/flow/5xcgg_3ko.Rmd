@@ -161,13 +161,13 @@ normalization <- avg_data %>%
 
 # Plot mean YFP / RFP ratio as a function of initiation codon
 
-```{r, fig.width=6, fig.height=3}
+```{r, fig.width=4, fig.height=3}
 plot_data <- avg_data %>% 
   mutate(mean_ratio = mean_ratio / normalization[[1, "mean_ratio"]]) %>%
   mutate(se_ratio = se_ratio / normalization[[1, "mean_ratio"]]) %>%
-  filter(gene == "pgk1") %>% 
+  filter(gene == "pgk1", knockout != "ΔASC1") %>% 
   mutate(codonmutation = forcats::fct_rev(paste0("5×", toupper(codonmutation)))) %>%
-  mutate(knockout = forcats::fct_relevel(knockout, "ΔLTN1", "ΔHEL2", "ΔASC1")) %>% 
+  mutate(knockout = forcats::fct_relevel(knockout, "ΔLTN1", "ΔHEL2")) %>% 
   filter(initiationmutation != "CTG") %>%
   # arrange initiationmutation in this order
   mutate(initiationmutation = fct_reorder(
@@ -182,7 +182,7 @@ plot_data %>%
   geom_errorbar(width = 0.5, color = "black") +
   geom_point(size = 2, height = 0, width = 0.1) +
   geom_line(size = 0.5) +
-  facet_wrap(codonmutation ~ knockout, ncol = 3, scales = "free") +
+  facet_wrap(codonmutation ~ knockout, ncol = 2, scales = "free") +
   scale_color_manual(values = cbPalette[c(2,1)]) +
   scale_shape_manual(values = c(17,16)) +
   labs(y = 'fluorescence (a.u.)',
@@ -192,7 +192,11 @@ plot_data %>%
   scale_y_continuous(breaks = scales::pretty_breaks(n=4))
 
 ggsave('figures/5xcgg_3ko.pdf')
+```
 
+# Source data for S4 Fig panel A, left and middle columns
+
+```{r}
 plot_data %>% 
   arrange(knockout, codonmutation, initiationmutation) %>% 
   select(knockout, codonmutation, initiationmutation, mean_ratio, se_ratio, n) %>% 

@@ -88,3 +88,10 @@ plot_data %>%
 ggsave("figures/psr_vs_initiation_rate_vary_n_stalls.pdf")
 ```
 
+# Source data for S3 Fig panel B
+
+```{r}
+plot_data %>% 
+  select(n_stall, k_init, psr) %>% 
+  knitr::kable()
+```

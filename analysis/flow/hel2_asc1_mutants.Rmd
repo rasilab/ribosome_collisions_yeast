@@ -126,6 +126,8 @@ flowdata  <- read_tsv(paste0(fcs_file_folder, '/data.tsv.xz')) %>%
 
 ```{r}
 annotations  <- read_tsv(paste0(fcs_file_folder, '/annotations.tsv')) %>% 
+  # skip C64,C67A mutant as requested by reviewer
+  filter(complement != "hel2_c64a" | is.na(complement)) %>%
   print()
 ```
 
@@ -141,7 +143,7 @@ by_file <- flowdata  %>%
   # rename
   rename('yfp' = FITC.A, 'rfp' = PE.Texas.Red.A) %>% 
   # join annotations
-  left_join(annotations, by = c('plate', 'well')) %>% 
+  right_join(annotations, by = c('plate', 'well')) %>% 
   print()
 ```
 
@@ -202,7 +204,11 @@ plot_data %>%
   scale_y_continuous(breaks = scales::pretty_breaks(n=3))
 
 ggsave('figures/hel2_rescue.pdf')
+```
 
+# Source data for Fig. 5D and S4 Fig Panel B (Hel2 mutants)
+
+```{r}
 plot_data %>% 
   filter(replicate == 1) %>% 
   arrange(complement, codonmutation, initiationmutation) %>% 
@@ -228,10 +234,10 @@ ctrl <- test %>%
 test %>% 
   full_join(ctrl, by = c("initiationmutation", "replicate")) %>% 
   group_by(complement, initiationmutation) %>% 
-  nest() %>% 
-  mutate(t_test = map(data, function(df) broom::tidy(t.test(df[['yfp.x']], df[['yfp.y']])))) %>% 
-  unnest(t_test) %>% 
-  select(complement, initiationmutation, p.value) %>% 
+  # nest() %>% 
+  # mutate(t_test = map(data, function(df) broom::tidy(t.test(df[['yfp.x']], df[['yfp.y']])))) %>% 
+  # unnest(t_test) %>% 
+  # select(complement, initiationmutation, p.value) %>% 
   knitr::kable()
 ```
 
@@ -264,7 +270,11 @@ plot_data %>%
   scale_y_continuous(breaks = scales::pretty_breaks(n=3))
 
 ggsave('figures/asc1_rescue.pdf')
+```
 
+# Source data for Fig. 5D and S4 Fig Panel B (Asc1 mutants)
+
+```{r}
 plot_data %>% 
   filter(replicate == 1) %>% 
   arrange(complement, codonmutation, initiationmutation) %>% 

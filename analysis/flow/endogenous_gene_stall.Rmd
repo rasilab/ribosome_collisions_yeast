@@ -215,7 +215,11 @@ plot_data %>%
                      labels = scales::trans_format("log2", scales::math_format(2^.x)))
 
 ggsave("figures/endogenous_stalls.pdf")
+```
 
+# Source data for Fig. 6B, right panel
+
+```{r}
 avg_data %>%
   mutate(mean_ratio = mean_ratio / normalization[[1, "mean_ratio"]]) %>%
   mutate(se_ratio = se_ratio / normalization[[1, "mean_ratio"]]) %>%

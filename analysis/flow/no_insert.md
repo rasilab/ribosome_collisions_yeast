@@ -1,14 +1,15 @@
 Fluorescence of PGK1 WT reporters with no inserts and varying 5'UTR mutations
 ================
 rasi
-07 January, 2019
+30 July, 2019
 
 -   [Import libraries and analysis-specific parameters](#import-libraries-and-analysis-specific-parameters)
 -   [Read data](#read-data)
 -   [Read annotations](#read-annotations)
 -   [Rename and calculate average values of fluorescence channels in each well](#rename-and-calculate-average-values-of-fluorescence-channels-in-each-well)
 -   [Calculate mean and standard error over replicates](#calculate-mean-and-standard-error-over-replicates)
--   [Plot and tabulate background subtracted and normalized YFP/RFP ratio as a function of initiation codon](#plot-and-tabulate-background-subtracted-and-normalized-yfprfp-ratio-as-a-function-of-initiation-codon)
+-   [Plot background subtracted and normalized YFP/RFP ratio as a function of initiation codon](#plot-background-subtracted-and-normalized-yfprfp-ratio-as-a-function-of-initiation-codon)
+-   [Source data for Fig. 1B](#source-data-for-fig.-1b)
 
 Import libraries and analysis-specific parameters
 =================================================
@@ -95,18 +96,18 @@ by_file <- flowdata  %>%
 
     ## # A tibble: 78 x 8
     ## # Groups:   plate [?]
-    ##    plate well      yfp     rfp strain  replicate initiationmutation gene  
-    ##    <int> <chr>   <dbl>   <dbl> <chr>       <int> <chr>              <chr> 
-    ##  1     1 B2       61.9    34.5 by4741          1 CAAA               <NA>  
-    ##  2     1 B3      255.  17537.  schp15          1 CAAA               <NA>  
-    ##  3     1 B4     2887.  17279.  schp19          1 CAAA               maxhi…
-    ##  4     1 B5    22305.  16433.  schp20          1 CAAA               maxhi…
-    ##  5     1 D10   43311.  19291.  schp977         1 AAAA               pgk1  
-    ##  6     1 D11   16555.  19609.  schp978         1 ACGC               pgk1  
-    ##  7     1 D4    42875.  19134.  schp971         1 CAAA               pgk1  
-    ##  8     1 D5    15041.  21224.  schp972         1 CCGC               pgk1  
-    ##  9     1 D6    27767.  16539.  schp973         1 CCAA               pgk1  
-    ## 10     1 D7    21303.  17632.  schp974         1 CCAC               pgk1  
+    ##    plate well      yfp     rfp strain  replicate initiationmutation gene   
+    ##    <int> <chr>   <dbl>   <dbl> <chr>       <int> <chr>              <chr>  
+    ##  1     1 B2       61.9    34.5 by4741          1 CAAA               <NA>   
+    ##  2     1 B3      255.  17537.  schp15          1 CAAA               <NA>   
+    ##  3     1 B4     2887.  17279.  schp19          1 CAAA               maxhis3
+    ##  4     1 B5    22305.  16433.  schp20          1 CAAA               maxhis3
+    ##  5     1 D10   43311.  19291.  schp977         1 AAAA               pgk1   
+    ##  6     1 D11   16555.  19609.  schp978         1 ACGC               pgk1   
+    ##  7     1 D4    42875.  19134.  schp971         1 CAAA               pgk1   
+    ##  8     1 D5    15041.  21224.  schp972         1 CCGC               pgk1   
+    ##  9     1 D6    27767.  16539.  schp973         1 CCAA               pgk1   
+    ## 10     1 D7    21303.  17632.  schp974         1 CCAC               pgk1   
     ## # ... with 68 more rows
 
 Calculate mean and standard error over replicates
@@ -137,11 +138,11 @@ avg_data  <- by_file %>%
   ungroup()
 
 normalization <- avg_data %>% 
-  filter(strain == "schp19")
+  filter(strain == "schp20")
 ```
 
-Plot and tabulate background subtracted and normalized YFP/RFP ratio as a function of initiation codon
-======================================================================================================
+Plot background subtracted and normalized YFP/RFP ratio as a function of initiation codon
+=========================================================================================
 
 ``` r
 plot_data <- avg_data %>% 
@@ -161,18 +162,27 @@ plot_data %>%
   geom_point(size = 1.5) +
   geom_line() +
   geom_errorbar(width = 0.75) +
-  labs(y = 'fluorescence (a.u.)',
+  labs(y = 'protein level (a.u.)',
        x = '-4 to -1 nt from ATG') +
   theme(legend.title = element_text(size = 8),
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 6)) +
-  scale_y_continuous(breaks = seq(3,15, 3))
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 6))
 ```
 
 ![](no_insert_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ``` r
-ggsave("figures/no_insert.pdf")
+  # scale_y_continuous(trans = "log2",
+  #                    limits = c(3, 16),
+  #                    breaks = c(2, 4, 8, 16),
+  #                    labels = scales::trans_format("log2", scales::math_format(2^.x)))
 
+ggsave("figures/no_insert.pdf")
+```
+
+Source data for Fig. 1B
+=======================
+
+``` r
 plot_data %>% 
   arrange(initiationmutation) %>% 
   select(initiationmutation, mean_ratio, se_ratio, n) %>% 
@@ -182,11 +192,11 @@ plot_data %>%
 
 | initiationmutation |  mean\_ratio|  se\_ratio|    n|
 |:-------------------|------------:|----------:|----:|
-| CTGC               |        3.277|      0.035|    6|
-| CCGC               |        5.471|      0.155|    6|
-| ACGC               |        5.846|      0.079|    6|
-| CCGA               |        7.362|      0.067|    6|
-| CCAC               |        8.074|      0.096|    6|
-| CCAA               |       11.204|      0.199|    6|
-| CAAA               |       15.013|      0.224|    6|
-| AAAA               |       15.523|      0.243|    6|
+| CTGC               |        0.376|      0.004|    6|
+| CCGC               |        0.627|      0.018|    6|
+| ACGC               |        0.670|      0.009|    6|
+| CCGA               |        0.844|      0.008|    6|
+| CCAC               |        0.926|      0.011|    6|
+| CCAA               |        1.285|      0.023|    6|
+| CAAA               |        1.722|      0.026|    6|
+| AAAA               |        1.780|      0.028|    6|

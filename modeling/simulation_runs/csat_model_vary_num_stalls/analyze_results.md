@@ -1,13 +1,14 @@
 Analyze simulation results
 ================
 rasi
-01 January, 2019
+30 July, 2019
 
 -   [Load libraries](#load-libraries)
 -   [Read protein count data](#read-protein-count-data)
 -   [Read simulation parameters](#read-simulation-parameters)
 -   [Combine all data into a single table](#combine-all-data-into-a-single-table)
 -   [How does PSR vary as a function of initiation rate and number of stall sites with low stall elongation rate and medium preterm\_intact\_rate?](#how-does-psr-vary-as-a-function-of-initiation-rate-and-number-of-stall-sites-with-low-stall-elongation-rate-and-medium-preterm_intact_rate)
+-   [Source data for Fig. 3C](#source-data-for-fig.-3c)
 
 Load libraries
 --------------
@@ -67,18 +68,18 @@ annotations  <- read_tsv('sim.params.tsv',
 ```
 
     ## # A tibble: 54 x 8
-    ##    sim_id  k_init k_elong_stall k_stall x_stall  n_stall preterm_intact_m…
-    ##     <int>   <dbl>         <dbl> <fct>   <list>   <fct>   <chr>            
-    ##  1      0 0.00391         0.100 0.1     <chr [1… 1       hit5             
-    ##  2      1 0.00781         0.100 0.1     <chr [1… 1       hit5             
-    ##  3      2 0.0156          0.100 0.1     <chr [1… 1       hit5             
-    ##  4      3 0.0312          0.100 0.1     <chr [1… 1       hit5             
-    ##  5      4 0.0625          0.100 0.1     <chr [1… 1       hit5             
-    ##  6      5 0.125           0.100 0.1     <chr [1… 1       hit5             
-    ##  7      6 0.250           0.100 0.1     <chr [1… 1       hit5             
-    ##  8      7 0.500           0.100 0.1     <chr [1… 1       hit5             
-    ##  9      8 1.00            0.100 0.1     <chr [1… 1       hit5             
-    ## 10      9 0.00391         0.200 0.1     <chr [2… 2       hit5             
+    ##    sim_id  k_init k_elong_stall k_stall x_stall n_stall preterm_intact_…
+    ##     <int>   <dbl>         <dbl> <fct>   <list>  <fct>   <chr>           
+    ##  1      0 0.00391           0.1 0.1     <chr [… 1       hit5            
+    ##  2      1 0.00781           0.1 0.1     <chr [… 1       hit5            
+    ##  3      2 0.0156            0.1 0.1     <chr [… 1       hit5            
+    ##  4      3 0.0312            0.1 0.1     <chr [… 1       hit5            
+    ##  5      4 0.0625            0.1 0.1     <chr [… 1       hit5            
+    ##  6      5 0.125             0.1 0.1     <chr [… 1       hit5            
+    ##  7      6 0.25              0.1 0.1     <chr [… 1       hit5            
+    ##  8      7 0.5               0.1 0.1     <chr [… 1       hit5            
+    ##  9      8 1                 0.1 0.1     <chr [… 1       hit5            
+    ## 10      9 0.00391           0.2 0.1     <chr [… 2       hit5            
     ## # ... with 44 more rows, and 1 more variable: preterm_intact_rate <int>
 
 Combine all data into a single table
@@ -91,18 +92,18 @@ data <- annotations %>%
 ```
 
     ## # A tibble: 54 x 13
-    ##    sim_id  k_init k_elong_stall k_stall x_stall  n_stall preterm_intact_m…
-    ##     <int>   <dbl>         <dbl> <fct>   <list>   <fct>   <chr>            
-    ##  1      0 0.00391         0.100 0.1     <chr [1… 1       hit5             
-    ##  2      1 0.00781         0.100 0.1     <chr [1… 1       hit5             
-    ##  3      2 0.0156          0.100 0.1     <chr [1… 1       hit5             
-    ##  4      3 0.0312          0.100 0.1     <chr [1… 1       hit5             
-    ##  5      4 0.0625          0.100 0.1     <chr [1… 1       hit5             
-    ##  6      5 0.125           0.100 0.1     <chr [1… 1       hit5             
-    ##  7      6 0.250           0.100 0.1     <chr [1… 1       hit5             
-    ##  8      7 0.500           0.100 0.1     <chr [1… 1       hit5             
-    ##  9      8 1.00            0.100 0.1     <chr [1… 1       hit5             
-    ## 10      9 0.00391         0.200 0.1     <chr [2… 2       hit5             
+    ##    sim_id  k_init k_elong_stall k_stall x_stall n_stall preterm_intact_…
+    ##     <int>   <dbl>         <dbl> <fct>   <list>  <fct>   <chr>           
+    ##  1      0 0.00391           0.1 0.1     <chr [… 1       hit5            
+    ##  2      1 0.00781           0.1 0.1     <chr [… 1       hit5            
+    ##  3      2 0.0156            0.1 0.1     <chr [… 1       hit5            
+    ##  4      3 0.0312            0.1 0.1     <chr [… 1       hit5            
+    ##  5      4 0.0625            0.1 0.1     <chr [… 1       hit5            
+    ##  6      5 0.125             0.1 0.1     <chr [… 1       hit5            
+    ##  7      6 0.25              0.1 0.1     <chr [… 1       hit5            
+    ##  8      7 0.5               0.1 0.1     <chr [… 1       hit5            
+    ##  9      8 1                 0.1 0.1     <chr [… 1       hit5            
+    ## 10      9 0.00391           0.2 0.1     <chr [… 2       hit5            
     ## # ... with 44 more rows, and 6 more variables: preterm_intact_rate <int>,
     ## #   mean_p_per_m <int>, sd_p_per_m <chr>, total_p <int>, total_time <int>,
     ## #   psr <dbl>
@@ -139,3 +140,69 @@ plot_data %>%
 ``` r
 ggsave('figures/psr_csat_effect_of_num_stalls.pdf') 
 ```
+
+Source data for Fig. 3C
+=======================
+
+``` r
+plot_data %>% 
+  select(n_stall, k_init, psr) %>% 
+  knitr::kable()
+```
+
+| n\_stall |    k\_init|       psr|
+|:---------|----------:|---------:|
+| 1        |  0.0039062|  0.003724|
+| 1        |  0.0078125|  0.007280|
+| 1        |  0.0156250|  0.013378|
+| 1        |  0.0312500|  0.023417|
+| 1        |  0.0625000|  0.036739|
+| 1        |  0.1250000|  0.049985|
+| 1        |  0.2500000|  0.058442|
+| 1        |  0.5000000|  0.061305|
+| 1        |  1.0000000|  0.060412|
+| 2        |  0.0039062|  0.003783|
+| 2        |  0.0078125|  0.007135|
+| 2        |  0.0156250|  0.013648|
+| 2        |  0.0312500|  0.023481|
+| 2        |  0.0625000|  0.035553|
+| 2        |  0.1250000|  0.045035|
+| 2        |  0.2500000|  0.046326|
+| 2        |  0.5000000|  0.041519|
+| 2        |  1.0000000|  0.038015|
+| 3        |  0.0039062|  0.003649|
+| 3        |  0.0078125|  0.007297|
+| 3        |  0.0156250|  0.013465|
+| 3        |  0.0312500|  0.023318|
+| 3        |  0.0625000|  0.035354|
+| 3        |  0.1250000|  0.043345|
+| 3        |  0.2500000|  0.041182|
+| 3        |  0.5000000|  0.033440|
+| 3        |  1.0000000|  0.028347|
+| 4        |  0.0039062|  0.003722|
+| 4        |  0.0078125|  0.007153|
+| 4        |  0.0156250|  0.013363|
+| 4        |  0.0312500|  0.023306|
+| 4        |  0.0625000|  0.035036|
+| 4        |  0.1250000|  0.042452|
+| 4        |  0.2500000|  0.038158|
+| 4        |  0.5000000|  0.028869|
+| 4        |  1.0000000|  0.023725|
+| 5        |  0.0039062|  0.003750|
+| 5        |  0.0078125|  0.007219|
+| 5        |  0.0156250|  0.013525|
+| 5        |  0.0312500|  0.023497|
+| 5        |  0.0625000|  0.035256|
+| 5        |  0.1250000|  0.041879|
+| 5        |  0.2500000|  0.036454|
+| 5        |  0.5000000|  0.026476|
+| 5        |  1.0000000|  0.020762|
+| 6        |  0.0039062|  0.003779|
+| 6        |  0.0078125|  0.007300|
+| 6        |  0.0156250|  0.013627|
+| 6        |  0.0312500|  0.023620|
+| 6        |  0.0625000|  0.035599|
+| 6        |  0.1250000|  0.041983|
+| 6        |  0.2500000|  0.035981|
+| 6        |  0.5000000|  0.024722|
+| 6        |  1.0000000|  0.019223|
