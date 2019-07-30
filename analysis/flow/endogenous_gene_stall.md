@@ -10,7 +10,7 @@ rasi
 -   [Calculate mean and standard error over replicates](#calculate-mean-and-standard-error-over-replicates)
 -   [Plot and tabulate background subtracted ratio of YFP/RFP between ASC1KO and WT strains (used for calculating P-value)](#plot-and-tabulate-background-subtracted-ratio-of-yfprfp-between-asc1ko-and-wt-strains-used-for-calculating-p-value)
 -   [Plot and tabulate background subtracted YFP/RFP ratio for endogenous stalls](#plot-and-tabulate-background-subtracted-yfprfp-ratio-for-endogenous-stalls)
--   [Source data for Fig. 6B, right panel](#source-data-for-fig.-6b-right-panel)
+-   [Source data for Fig 6B, right panel](#source-data-for-fig-6b-right-panel)
 -   [Display t.test P-value for difference in YFP/RFP ratio between WT and ASC1 strains for each stall](#display-t.test-p-value-for-difference-in-yfprfp-ratio-between-wt-and-asc1-strains-for-each-stall)
 
 Import libraries and analysis-specific parameters
@@ -268,7 +268,7 @@ plot_data %>%
 ggsave("figures/endogenous_stalls.pdf")
 ```
 
-Source data for Fig. 6B, right panel
+Source data for Fig 6B, right panel
 ====================================
 
 ``` r

@@ -9,7 +9,7 @@ rasi
 -   [Rename and calculate average values of fluorescence channels in each well](#rename-and-calculate-average-values-of-fluorescence-channels-in-each-well)
 -   [Calculate mean and standard error over replicates](#calculate-mean-and-standard-error-over-replicates)
 -   [Plot and tabulate mean YFP / RFP ratio as a function of initiation codon](#plot-and-tabulate-mean-yfp-rfp-ratio-as-a-function-of-initiation-codon)
--   [Source data for Fig. 1C, right panel](#source-data-for-fig.-1c-right-panel)
+-   [Source data for Fig 1C, right panel](#source-data-for-fig-1c-right-panel)
 -   [Plot and tabulate mean YFP / RFP ratio as a function of stall location](#plot-and-tabulate-mean-yfp-rfp-ratio-as-a-function-of-stall-location)
 -   [Source data for S1 Fig panel B](#source-data-for-s1-fig-panel-b)
 
@@ -220,7 +220,7 @@ plot_data %>%
 ggsave('figures/5xcgg_wt.pdf')
 ```
 
-Source data for Fig. 1C, right panel
+Source data for Fig 1C, right panel
 ====================================
 
 ``` r

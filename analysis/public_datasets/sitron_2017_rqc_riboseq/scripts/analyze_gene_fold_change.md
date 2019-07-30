@@ -17,7 +17,7 @@ rasi
 -   [Join fold-change with RQC stall presence](#join-fold-change-with-rqc-stall-presence)
 -   [Plot log2 fold-change ASC1 / HEL2 vs WT as a function of stall strength](#plot-log2-fold-change-asc1-hel2-vs-wt-as-a-function-of-stall-strength)
 -   [Test if stall-containing genes have lower or higher Log2 fold change between ASC1+HEL2 KO vs WT](#test-if-stall-containing-genes-have-lower-or-higher-log2-fold-change-between-asc1hel2-ko-vs-wt)
--   [Source data for Fig. 6D](#source-data-for-fig.-6d)
+-   [Source data for Fig 6D](#source-data-for-fig-6d)
 
 Import libraries
 ================
@@ -386,7 +386,7 @@ wilcox.test(asc1hel2_vs_wt ~ ngram_weight, data = plot_data, alternative = "two.
     ## W = 1714200, p-value = 0.7003
     ## alternative hypothesis: true location shift is not equal to 0
 
-Source data for Fig. 6D
+Source data for Fig 6D
 =======================
 
 ``` r

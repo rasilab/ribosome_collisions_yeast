@@ -9,10 +9,10 @@ rasi
 -   [Rename and calculate average values of fluorescence channels in each well](#rename-and-calculate-average-values-of-fluorescence-channels-in-each-well)
 -   [Calculate mean and standard error over replicates](#calculate-mean-and-standard-error-over-replicates)
 -   [Rescue of protein expression at high initiation rate by HEL2 mutants](#rescue-of-protein-expression-at-high-initiation-rate-by-hel2-mutants)
--   [Source data for Fig. 5D and S4 Fig Panel B (Hel2 mutants)](#source-data-for-fig.-5d-and-s4-fig-panel-b-hel2-mutants)
+-   [Source data for Fig 5D and S4 Fig Panel B (Hel2 mutants)](#source-data-for-fig-5d-and-s4-fig-panel-b-hel2-mutants)
 -   [Two-sided `t` test for difference in means between Empty and HEL2 mutants for a given 5'UTR mutant (8xCCG only)](#two-sided-t-test-for-difference-in-means-between-empty-and-hel2-mutants-for-a-given-5utr-mutant-8xccg-only)
 -   [Rescue of protein expression at high initiation rate by ASC1 mutants](#rescue-of-protein-expression-at-high-initiation-rate-by-asc1-mutants)
--   [Source data for Fig. 5D and S4 Fig Panel B (Asc1 mutants)](#source-data-for-fig.-5d-and-s4-fig-panel-b-asc1-mutants)
+-   [Source data for Fig 5D and S4 Fig Panel B (Asc1 mutants)](#source-data-for-fig-5d-and-s4-fig-panel-b-asc1-mutants)
 -   [Two-sided `t` test for difference in means between Empty and ASC1 mutants for a given 5'UTR mutant (8xCCG only)](#two-sided-t-test-for-difference-in-means-between-empty-and-asc1-mutants-for-a-given-5utr-mutant-8xccg-only)
 
 Import libraries and analysis specific parameters
@@ -200,7 +200,7 @@ plot_data %>%
 ggsave('figures/hel2_rescue.pdf')
 ```
 
-Source data for Fig. 5D and S4 Fig Panel B (Hel2 mutants)
+Source data for Fig 5D and S4 Fig Panel B (Hel2 mutants)
 =========================================================
 
 ``` r
@@ -333,7 +333,7 @@ plot_data %>%
 ggsave('figures/asc1_rescue.pdf')
 ```
 
-Source data for Fig. 5D and S4 Fig Panel B (Asc1 mutants)
+Source data for Fig 5D and S4 Fig Panel B (Asc1 mutants)
 =========================================================
 
 ``` r

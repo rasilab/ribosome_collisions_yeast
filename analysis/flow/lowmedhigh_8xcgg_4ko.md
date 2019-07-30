@@ -9,7 +9,7 @@ rasi
 -   [Rename and calculate average values of fluorescence channels in each well](#rename-and-calculate-average-values-of-fluorescence-channels-in-each-well)
 -   [Calculate mean and standard error over replicates](#calculate-mean-and-standard-error-over-replicates)
 -   [Plot mean YFP / RFP ratio as a function of initiation codon](#plot-mean-yfp-rfp-ratio-as-a-function-of-initiation-codon)
--   [Source data for Fig. 5A](#source-data-for-fig.-5a)
+-   [Source data for Fig 5A](#source-data-for-fig-5a)
 
 Import libraries and analysis specific parameters
 =================================================
@@ -213,7 +213,7 @@ plot_data %>%
 ggsave('figures/lowmedhigh_ccg_4ko_wt.pdf')
 ```
 
-Source data for Fig. 5A
+Source data for Fig 5A
 =======================
 
 ``` r

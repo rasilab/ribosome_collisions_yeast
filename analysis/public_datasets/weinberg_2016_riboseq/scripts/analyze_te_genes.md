@@ -12,7 +12,7 @@ rasi
 -   [Test if stall-containing genes have lower or higher TE](#test-if-stall-containing-genes-have-lower-or-higher-te)
 -   [Avg TE of stall-containing and other genes](#avg-te-of-stall-containing-and-other-genes)
 -   [Session Info](#session-info)
--   [Source data for Fig. 6C](#source-data-for-fig.-6c)
+-   [Source data for Fig 6C](#source-data-for-fig-6c)
 
 Load libraries
 ==============
@@ -255,7 +255,7 @@ sessionInfo()
     ## [69] assertthat_0.2.0            broom_0.5.0                
     ## [71] GenomicAlignments_1.16.0    memoise_1.1.0
 
-Source data for Fig. 6C
+Source data for Fig 6C
 =======================
 
 ``` r

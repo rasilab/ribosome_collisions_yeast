@@ -195,7 +195,7 @@ plot_data %>%
 ggsave('figures/8xccg_wt.pdf')
 ```
 
-# Source data for Fig. 1C, middle panel
+# Source data for Fig 1C, middle panel
 
 ```{r}
 plot_data %>% 

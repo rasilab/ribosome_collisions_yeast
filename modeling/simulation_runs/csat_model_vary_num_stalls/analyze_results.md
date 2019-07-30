@@ -8,7 +8,7 @@ rasi
 -   [Read simulation parameters](#read-simulation-parameters)
 -   [Combine all data into a single table](#combine-all-data-into-a-single-table)
 -   [How does PSR vary as a function of initiation rate and number of stall sites with low stall elongation rate and medium preterm\_intact\_rate?](#how-does-psr-vary-as-a-function-of-initiation-rate-and-number-of-stall-sites-with-low-stall-elongation-rate-and-medium-preterm_intact_rate)
--   [Source data for Fig. 3C](#source-data-for-fig.-3c)
+-   [Source data for Fig 3C](#source-data-for-fig-3c)
 
 Load libraries
 --------------
@@ -141,7 +141,7 @@ plot_data %>%
 ggsave('figures/psr_csat_effect_of_num_stalls.pdf') 
 ```
 
-Source data for Fig. 3C
+Source data for Fig 3C
 =======================
 
 ``` r

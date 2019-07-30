@@ -9,7 +9,7 @@ rasi
     -   [Read simulation parameters](#read-simulation-parameters)
     -   [Combine all data into a single table](#combine-all-data-into-a-single-table)
     -   [How does PSR vary as a function of initiation rate in all models with low stall elongation rate and medium preterm\_intact\_rate?](#how-does-psr-vary-as-a-function-of-initiation-rate-in-all-models-with-low-stall-elongation-rate-and-medium-preterm_intact_rate)
--   [Source data for Fig. 3B](#source-data-for-fig.-3b)
+-   [Source data for Fig 3B](#source-data-for-fig-3b)
 -   [Change in maximal protein synthesis as a function of stall elongation rate in TJ model](#change-in-maximal-protein-synthesis-as-a-function-of-stall-elongation-rate-in-tj-model)
 -   [Source data for S1 Fig panel A](#source-data-for-s1-fig-panel-a)
 -   [Change in protein synthesis as a function of abort rate in SAT model](#change-in-protein-synthesis-as-a-function-of-abort-rate-in-sat-model)
@@ -184,7 +184,7 @@ plot_data %>%
 ggsave('figures/psr_all_models_medium_stall_medium_pretermintact.pdf') 
 ```
 
-Source data for Fig. 3B
+Source data for Fig 3B
 =======================
 
 ``` r

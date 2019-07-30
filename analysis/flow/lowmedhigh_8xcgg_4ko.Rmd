@@ -204,7 +204,7 @@ plot_data %>%
 ggsave('figures/lowmedhigh_ccg_4ko_wt.pdf')
 ```
 
-# Source data for Fig. 5A
+# Source data for Fig 5A
 
 ```{r}
 

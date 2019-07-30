@@ -99,7 +99,7 @@ plot_data %>%
 ggsave('figures/psr_all_models_medium_stall_medium_pretermintact.pdf') 
 ```
 
-# Source data for Fig. 3B
+# Source data for Fig 3B
 
 ```{r}
 plot_data %>% 

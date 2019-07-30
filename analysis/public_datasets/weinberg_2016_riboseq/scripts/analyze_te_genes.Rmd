@@ -107,7 +107,7 @@ plot_data %>%
 sessionInfo()
 ```
 
-# Source data for Fig. 6C
+# Source data for Fig 6C
 
 ```{r}
 plot_data %>% 

@@ -14,7 +14,7 @@ rasi
 -   [Get the coverage of the 61 nt window arounde each stall](#get-the-coverage-of-the-61-nt-window-arounde-each-stall)
 -   [Normalize the cvg within each stall and threshold to stalls with mean cvg &gt;= 1](#normalize-the-cvg-within-each-stall-and-threshold-to-stalls-with-mean-cvg-1)
 -   [Plot the mean and standard deviation of normalized cvg around stalls](#plot-the-mean-and-standard-deviation-of-normalized-cvg-around-stalls)
--   [Source data for Fig. 6A and S5 Fig panel A](#source-data-for-fig.-6a-and-s5-fig-panel-a)
+-   [Source data for Fig 6A and S5 Fig panel A](#source-data-for-fig-6a-and-s5-fig-panel-a)
 -   [Session Info](#session-info)
 
 Load libraries
@@ -298,7 +298,7 @@ plot_data %>%
 ggsave("../figures/ribosome_density_around_rqc_stalls_and_controls.pdf")
 ```
 
-Source data for Fig. 6A and S5 Fig panel A
+Source data for Fig 6A and S5 Fig panel A
 ==========================================
 
 ``` r

@@ -10,9 +10,9 @@ rasi
 -   [Read simulation parameters](#read-simulation-parameters)
 -   [Combine all data into a single table](#combine-all-data-into-a-single-table)
 -   [mRNA lifetime as a function of initiation rate](#mrna-lifetime-as-a-function-of-initiation-rate)
--   [Source data for Fig. 4B](#source-data-for-fig.-4b)
+-   [Source data for Fig 4B](#source-data-for-fig-4b)
 -   [PSR as a function of initiation rate](#psr-as-a-function-of-initiation-rate)
--   [Source data for Fig. 4C](#source-data-for-fig.-4c)
+-   [Source data for Fig 4C](#source-data-for-fig-4c)
 -   [PSR as a function of initiation rate for different cleavage rates in SEC model](#psr-as-a-function-of-initiation-rate-for-different-cleavage-rates-in-sec-model)
 -   [Source data for S3 Fig panel A](#source-data-for-s3-fig-panel-a)
 
@@ -264,7 +264,7 @@ plot_data %>%
 ggsave("figures/mrna_lifetime_vs_initiation_rate.pdf", width = 1.7, height = 2)
 ```
 
-Source data for Fig. 4B
+Source data for Fig 4B
 =======================
 
 ``` r
@@ -322,7 +322,7 @@ plot_data %>%
 ggsave("figures/psr_vs_initiation_rate.pdf", width = 1.6, height = 2)
 ```
 
-Source data for Fig. 4C
+Source data for Fig 4C
 =======================
 
 ``` r

@@ -8,11 +8,11 @@ rasi
 -   [Read count data and join with barcode and strain annotations](#read-count-data-and-join-with-barcode-and-strain-annotations)
 -   [Calculate log2 fold mRNA levels median normalized within each initiation set](#calculate-log2-fold-mrna-levels-median-normalized-within-each-initiation-set)
 -   [Plot mRNA level of PGK1-YFP with different codons, wild-type cells](#plot-mrna-level-of-pgk1-yfp-with-different-codons-wild-type-cells)
--   [Source data for Fig. 2C](#source-data-for-fig.-2c)
+-   [Source data for Fig 2C](#source-data-for-fig-2c)
 -   [Plot mRNA level of PGK1-YFP, no insert](#plot-mrna-level-of-pgk1-yfp-no-insert)
--   [Source data for Fig. 2B](#source-data-for-fig.-2b)
+-   [Source data for Fig 2B](#source-data-for-fig-2b)
 -   [Plot mRNA levels of KO codon mutants for paper](#plot-mrna-levels-of-ko-codon-mutants-for-paper)
--   [Source data for Fig. 5C](#source-data-for-fig.-5c)
+-   [Source data for Fig 5C](#source-data-for-fig-5c)
 
 Load libraries and define analysis-specific parameters
 ======================================================
@@ -254,7 +254,7 @@ plot_data %>%
 ggsave("figures/mrna_level_wt_4_codons.pdf")
 ```
 
-Source data for Fig. 2C
+Source data for Fig 2C
 =======================
 
 ``` r
@@ -327,7 +327,7 @@ plot_data %>%
 ggsave("figures/mrna_level_wt_pgk1_no_insert.pdf")
 ```
 
-Source data for Fig. 2B
+Source data for Fig 2B
 =======================
 
 ``` r
@@ -384,7 +384,7 @@ plot_data %>%
 ggsave("figures/mrna_level_ko_2_codons.pdf")
 ```
 
-Source data for Fig. 5C
+Source data for Fig 5C
 =======================
 
 ``` r

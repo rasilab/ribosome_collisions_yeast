@@ -217,7 +217,7 @@ plot_data %>%
 ggsave("figures/endogenous_stalls.pdf")
 ```
 
-# Source data for Fig. 6B, right panel
+# Source data for Fig 6B, right panel
 
 ```{r}
 avg_data %>%

@@ -9,7 +9,7 @@ rasi
 -   [Rename and calculate average values of fluorescence channels in each well](#rename-and-calculate-average-values-of-fluorescence-channels-in-each-well)
 -   [Calculate mean and standard error over replicates](#calculate-mean-and-standard-error-over-replicates)
 -   [Plot and tabulate background subtracted and normalized YFP/RFP ratio as a function of initiation codon](#plot-and-tabulate-background-subtracted-and-normalized-yfprfp-ratio-as-a-function-of-initiation-codon)
--   [Source data for Fig. 1C, left panel](#source-data-for-fig.-1c-left-panel)
+-   [Source data for Fig 1C, left panel](#source-data-for-fig-1c-left-panel)
 
 Import libraries and analysis specific parameters
 =================================================
@@ -204,7 +204,7 @@ plot_data %>%
 ggsave('figures/10xaag_wt.pdf')
 ```
 
-Source data for Fig. 1C, left panel
+Source data for Fig 1C, left panel
 ===================================
 
 ``` r

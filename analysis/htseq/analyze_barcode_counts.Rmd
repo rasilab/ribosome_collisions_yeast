@@ -145,7 +145,7 @@ ggsave("figures/mrna_level_wt_4_codons.pdf")
 
 ```
 
-# Source data for Fig. 2C
+# Source data for Fig 2C
 
 ```{r}
 plot_data %>% 
@@ -177,7 +177,7 @@ plot_data %>%
 ggsave("figures/mrna_level_wt_pgk1_no_insert.pdf")
 ```
 
-# Source data for Fig. 2B
+# Source data for Fig 2B
 
 ```{r}
 plot_data %>% 
@@ -216,7 +216,7 @@ plot_data %>%
 ggsave("figures/mrna_level_ko_2_codons.pdf")
 ```
 
-# Source data for Fig. 5C
+# Source data for Fig 5C
 
 ```{r}
 plot_data %>% 

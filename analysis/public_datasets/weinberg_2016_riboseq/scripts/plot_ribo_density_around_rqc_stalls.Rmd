@@ -173,7 +173,7 @@ plot_data %>%
 ggsave("../figures/ribosome_density_around_rqc_stalls_and_controls.pdf")
 ```
 
-# Source data for Fig. 6A and S5 Fig panel A
+# Source data for Fig 6A and S5 Fig panel A
 
 ```{r}
 plot_data %>% 

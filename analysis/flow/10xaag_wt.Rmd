@@ -195,7 +195,7 @@ plot_data %>%
 ggsave('figures/10xaag_wt.pdf')
 ```
 
-# Source data for Fig. 1C, left panel
+# Source data for Fig 1C, left panel
 
 ```{r}
 plot_data %>% 

@@ -207,7 +207,7 @@ ggsave("../figures/distribution_of_asc1hel2ko_lfc_for_rqc_stall_containing_sacce
 wilcox.test(asc1hel2_vs_wt ~ ngram_weight, data = plot_data, alternative = "two.sided")
 ```
 
-# Source data for Fig. 6D
+# Source data for Fig 6D
 
 ```{r}
 plot_data %>% 

@@ -112,7 +112,7 @@ plot_data %>%
 ggsave("figures/mrna_lifetime_vs_initiation_rate.pdf", width = 1.7, height = 2)
 ```
 
-# Source data for Fig. 4B
+# Source data for Fig 4B
 
 ```{r}
 plot_data %>% 
@@ -143,7 +143,7 @@ plot_data %>%
 ggsave("figures/psr_vs_initiation_rate.pdf", width = 1.6, height = 2)
 ```
 
-# Source data for Fig. 4C
+# Source data for Fig 4C
 
 ```{r}
 plot_data %>% 

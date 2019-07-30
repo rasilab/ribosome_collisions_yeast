@@ -83,7 +83,7 @@ plot_data %>%
 ggsave('figures/psr_csat_effect_of_num_stalls.pdf') 
 ```
 
-# Source data for Fig. 3C
+# Source data for Fig 3C
 
 ```{r}
 plot_data %>% 

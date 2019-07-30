@@ -206,7 +206,7 @@ plot_data %>%
 ggsave('figures/hel2_rescue.pdf')
 ```
 
-# Source data for Fig. 5D and S4 Fig Panel B (Hel2 mutants)
+# Source data for Fig 5D and S4 Fig Panel B (Hel2 mutants)
 
 ```{r}
 plot_data %>% 
@@ -272,7 +272,7 @@ plot_data %>%
 ggsave('figures/asc1_rescue.pdf')
 ```
 
-# Source data for Fig. 5D and S4 Fig Panel B (Asc1 mutants)
+# Source data for Fig 5D and S4 Fig Panel B (Asc1 mutants)
 
 ```{r}
 plot_data %>% 
