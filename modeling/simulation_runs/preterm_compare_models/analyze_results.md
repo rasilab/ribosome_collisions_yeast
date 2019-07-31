@@ -1,4 +1,4 @@
-Analyze simulation results
+nalyze simulation results
 ================
 rasi
 30 July, 2019
@@ -11,13 +11,13 @@ rasi
     -   [How does PSR vary as a function of initiation rate in all models with low stall elongation rate and medium preterm\_intact\_rate?](#how-does-psr-vary-as-a-function-of-initiation-rate-in-all-models-with-low-stall-elongation-rate-and-medium-preterm_intact_rate)
 -   [Source data for Fig 3B](#source-data-for-fig-3b)
 -   [Change in maximal protein synthesis as a function of stall elongation rate in TJ model](#change-in-maximal-protein-synthesis-as-a-function-of-stall-elongation-rate-in-tj-model)
--   [Source data for S1 Fig panel A](#source-data-for-s1-fig-panel-a)
+-   [Source data for S2 Fig panel A](#source-data-for-s2-fig-panel-a)
 -   [Change in protein synthesis as a function of abort rate in SAT model](#change-in-protein-synthesis-as-a-function-of-abort-rate-in-sat-model)
--   [Source data for S1 Fig panel C](#source-data-for-s1-fig-panel-c)
+-   [Source data for S2 Fig panel C](#source-data-for-s2-fig-panel-c)
 -   [Change in protein synthesis as a function of stall elongation rate in SAT model](#change-in-protein-synthesis-as-a-function-of-stall-elongation-rate-in-sat-model)
--   [Source data for S1 Fig panel B](#source-data-for-s1-fig-panel-b)
+-   [Source data for S2 Fig panel B](#source-data-for-s2-fig-panel-b)
 -   [Change in protein synthesis as a function of stall elongation rate in CSAT model](#change-in-protein-synthesis-as-a-function-of-stall-elongation-rate-in-csat-model)
--   [Source data for S1 Fig panel D](#source-data-for-s1-fig-panel-d)
+-   [Source data for S2 Fig panel D](#source-data-for-s2-fig-panel-d)
 
 Load libraries
 --------------
@@ -265,7 +265,7 @@ plot_data %>%
 ggsave('figures/psr_tj_model_vary_stall_strength.pdf') 
 ```
 
-Source data for S1 Fig panel A
+Source data for S2 Fig panel A
 ==============================
 
 ``` r
@@ -340,7 +340,7 @@ ggsave('figures/psr_sat_model_vary_abort_rate.pdf', width = 2.25, height = 1.45)
 
 ![](analyze_results_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
-Source data for S1 Fig panel C
+Source data for S2 Fig panel C
 ==============================
 
 ``` r
@@ -424,7 +424,7 @@ plot_data %>%
 ggsave('figures/psr_sat_model_vary_stall_rate.pdf', width = 2.25, height = 1.45) 
 ```
 
-Source data for S1 Fig panel B
+Source data for S2 Fig panel B
 ==============================
 
 ``` r
@@ -499,7 +499,7 @@ plot_data %>%
 ggsave('figures/psr_csat_model_vary_stall_rate.pdf', width = 2.25, height = 1.45) 
 ```
 
-Source data for S1 Fig panel D
+Source data for S2 Fig panel D
 ==============================
 
 ``` r
