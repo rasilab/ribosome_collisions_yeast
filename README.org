@@ -26,11 +26,33 @@ This repository contains raw experimental data, code, and instructions for:
     - [[#analysis-of-sitron-et-al-2017-data][Analysis of Sitron et al. 2017 data]]
 
 ** Source Data for Figures
-- [[file:analysis/flow/no_insert.md#source-data-for-fig.-1b][Fig. 1B]] 
-- [[file:analysis/flow/10xaag_wt.md#source-data-for-fig-1c-left-panel][Fig. 1C, 10xAAG and 10xAGA]], [[file:analysis/flow/8xccg_wt.md#source-data-for-fig-1c-middle-panel][Fig. 1C, 8xCCG and 8xCCA]], [[file:analysis/flow/cgg_position_number.md#source-data-for-fig-1c-right-panel][Fig. 1C, 5xCGG and 5xAGA]]
-- [[file:analysis/htseq/analyze_barcode_counts.md#source-data-for-fig-2b][Fig. 2B]]
-- [[file:analysis/htseq/analyze_barcode_counts.md#source-data-for-fig-2c][Fig. 2C]]
-- 
+- [[file:analysis/flow/no_insert.md#source-data-for-fig-1b][Fig 1B]] 
+- [[file:analysis/flow/10xaag_wt.md#source-data-for-fig-1c-left-panel][Fig 1C, 10xAAG and 10xAGA]]; [[file:analysis/flow/8xccg_wt.md#source-data-for-fig-1c-middle-panel][Fig 1C, 8xCCG and 8xCCA]]; [[file:analysis/flow/cgg_position_number.md#source-data-for-fig-1c-right-panel][Fig 1C, 5xCGG and 5xAGA]]
+- [[file:analysis/htseq/analyze_barcode_counts.md#source-data-for-fig-2b][Fig 2B]]
+- [[file:analysis/htseq/analyze_barcode_counts.md#source-data-for-fig-2c][Fig 2C]]
+- [[file:modeling/simulation_runs/preterm_compare_models/analyze_results.md#source-data-for-fig-3b][Fig 3B]]
+- [[file:modeling/simulation_runs/csat_model_vary_num_stalls/analyze_results.md#source-data-for-fig-3c][Fig 3C]]
+- [[file:modeling/simulation_runs/mrna_endocleave_compare_models/analyze_results.md#source-data-for-fig-4b][Fig 4B]]
+- [[file:modeling/simulation_runs/mrna_endocleave_compare_models/analyze_results.md#source-data-for-fig-4c][Fig 4C]]
+- [[file:analysis/flow/lowmedhigh_8xcgg_4ko.md#source-data-for-fig-5a][Fig 5A]]
+- [[file:analysis/htseq/analyze_barcode_counts.md#source-data-for-fig-5c][Fig 5C]]
+- [[file:analysis/flow/hel2_asc1_mutants.md#source-data-for-fig-5d-and-s4-fig-panel-b-hel2-mutants][Fig 5D, Hel2 mutants]]; [[file:analysis/flow/hel2_asc1_mutants.md#source-data-for-fig-5d-and-s4-fig-panel-b-asc1-mutants][Fig 5D, Asc1 mutants]]
+- [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/plot_ribo_density_around_rqc_stalls.md#source-data-for-fig-6a-and-s5-fig-panel-a][Fig 6A]]
+- [[file:analysis/flow/endogenous_gene_stall.md#source-data-for-fig-6b-right-panel][Fig 6B]]
+- [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/analyze_te_genes.md#source-data-for-fig-6c][Fig 6C]]
+- [[file:analysis/public_datasets/sitron_2017_rqc_riboseq/scripts/analyze_gene_fold_change.Rmd#source-data-for-fig-6d][Fig 6D]]
+- [[file:analysis/flow/cgg_position_number.md#source-data-for-s1-fig-panel-b][S1 Fig Panel B]]
+- [[file:public_datasets/dvir_2013_kozak_library/scripts/plot_kozak_strength.md#source-data-for-s1-fig-panel-c][S1 Fig Panel C]]
+- [[file:modeling/simulation_runs/preterm_compare_models/analyze_results.md#source-data-for-s2-fig-panel-a][S2 Fig Panel A]]
+- [[file:modeling/simulation_runs/preterm_compare_models/analyze_results.md#source-data-for-s2-fig-panel-a][S2 Fig Panel B]]
+- [[file:modeling/simulation_runs/preterm_compare_models/analyze_results.md#source-data-for-s2-fig-panel-a][S2 Fig Panel C]]
+- [[file:modeling/simulation_runs/preterm_compare_models/analyze_results.md#source-data-for-s2-fig-panel-a][S2 Fig Panel D]]
+- [[file:modeling/simulation_runs/mrna_endocleave_compare_models/analyze_results.md#source-data-for-s3-fig-panel-a][S3 Fig Panel A]]
+- [[file:modeling/simulation_runs/csec_model_vary_num_stalls/analyze_results.md#source-data-for-s3-fig-panel-b][S3 Fig Panel B]]
+- [[file:analysis/flow/5xcgg_3ko.md#source-data-for-s4-fig-panel-a-left-and-middle-columns][S4 Fig Panel A, ΔLTN1 and ΔHEL2]]; [[file:analysis/flow/5xcgg_asc1ko.md#source-data-for-s4-fig-panel-a-right-two-columns][S4 Fig Panel A, ΔASC1]]
+- [[file:analysis/flow/hel2_asc1_mutants.md#source-data-for-fig-5d-and-s4-fig-panel-b-hel2-mutants][S4 Fig Panel B, Hel2 mutants]]; [[file:analysis/flow/hel2_asc1_mutants.md#source-data-for-fig-5d-and-s4-fig-panel-b-asc1-mutants][S4 Fig Panel B, Asc1 mutants]]
+- [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/plot_ribo_density_around_rqc_stalls.md#source-data-for-fig-6a-and-s5-fig-panel-a][S5 Fig Panel A]]
+- [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/plot_te_for_only_preceding_stall_region.md#source-data-for-s5-fig-panel-b][S5 Fig Panel B]]
 ** Modeling
 
 *** Default Run
