@@ -42,7 +42,7 @@ This repository contains raw experimental data, code, and instructions for:
 - [[file:analysis/public_datasets/weinberg_2016_riboseq/scripts/analyze_te_genes.md#source-data-for-fig-6c][Fig 6C]]
 - [[file:analysis/public_datasets/sitron_2017_rqc_riboseq/scripts/analyze_gene_fold_change.md#source-data-for-fig-6d][Fig 6D]]
 - [[file:analysis/flow/cgg_position_number.md#source-data-for-s1-fig-panel-b][S1 Fig Panel B]]
-- [[file:public_datasets/dvir_2013_kozak_library/scripts/plot_kozak_strength.md#source-data-for-s1-fig-panel-c][S1 Fig Panel C]]
+- [[file:analysis/public_datasets/dvir_2013_kozak_library/scripts/plot_kozak_strength.md#source-data-for-s1-fig-panel-c][S1 Fig Panel C]]
 - [[file:modeling/simulation_runs/preterm_compare_models/analyze_results.md#source-data-for-s2-fig-panel-a][S2 Fig Panel A]]
 - [[file:modeling/simulation_runs/preterm_compare_models/analyze_results.md#source-data-for-s2-fig-panel-a][S2 Fig Panel B]]
 - [[file:modeling/simulation_runs/preterm_compare_models/analyze_results.md#source-data-for-s2-fig-panel-a][S2 Fig Panel C]]
