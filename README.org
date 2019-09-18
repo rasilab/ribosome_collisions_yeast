@@ -1,6 +1,8 @@
 #+TITLE: Inverted Translational Control of Eukaryotic Gene Expression by Ribosome Collisions
 
-Heungwon Park  & Arvind R. Subramaniam
+Park H, Subramaniam AR. PLoS Biol 17(9): e3000396 (2019)
+
+https://doi.org/10.1371/journal.pbio.3000396
 
 [[http://rasilab.fredhutch.org/]]
 
