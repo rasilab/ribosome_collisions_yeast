@@ -13,7 +13,6 @@ knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
 
 # Load libraries
 ```{r}
-library(topGO)
 library(tidyverse)
 library(rasilabRtemplates)
 # disable scientific notation
@@ -89,7 +88,8 @@ ggsave("../figures/distribution_of_translation_efficiency_for_rqc_stall_containi
 # Test if stall-containing genes have lower or higher TE
 
 ```{r}
-wilcox.test(te ~ ngram_weight, data = plot_data, alternative = "two.sided")
+wilcox.test(te ~ ngram_weight, data = plot_data, alternative = "two.sided") %>% 
+  broom::tidy()
 ```
 
 # Avg TE of stall-containing and other genes
@@ -112,7 +112,8 @@ sessionInfo()
 ```{r}
 plot_data %>% 
   rename(x = ngram_weight, y = te) %>% 
-  select(gene, x, y) %>% 
+  select(gene, id, x, y) %>%
   mutate_if(is.numeric, funs(round(., 3))) %>% 
+  write_tsv('../tables/source_data_fig_6c.tsv') %>% 
   knitr::kable()
 ```
